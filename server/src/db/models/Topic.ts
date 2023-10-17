@@ -4,7 +4,9 @@ export interface ITopic {
     name: string;
 };
 
-export type TopicModelType = HydratedDocument<ITopic> & { createdAt?: Date; updatedAt?: Date };
+
+export type TopicModelType = HydratedDocument<ITopic>
+    & { createdAt?: Date; updatedAt?: Date };
 
 // Topics are akin to tags or categories
 
@@ -14,7 +16,8 @@ const TopicSchema = new Schema({
         required: true,
         unique: true,
         maxLength: 150,
-        trim: true
+        trim: true,
+        match: /^[a-zA-Z0-9\s]+$/i
     }
 }, {
     id: false,

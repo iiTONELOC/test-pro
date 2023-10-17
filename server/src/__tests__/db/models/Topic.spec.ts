@@ -1,16 +1,14 @@
 import { afterAll, beforeAll, expect, test } from 'bun:test';
-import TopicModel, { TopicModelType } from '../../models/Topic';
-import { dbConnection, dbClose } from '../../connection';
+import TopicModel, { TopicModelType } from '../../../db/models/Topic';
+import { dbConnection, dbClose } from '../../../db/connection';
 
 beforeAll(async () => {
     await dbConnection(process.env.TEST_DB_NAME);
-    return Promise.resolve();
 });
 
 afterAll(async () => {
     await TopicModel.deleteMany({});
     await dbClose();
-    return Promise.resolve();
 });
 
 test('TopicModel', async () => {
@@ -28,7 +26,6 @@ test('TopicModel', async () => {
         await TopicModel.findByIdAndDelete(createdTopic?._id);
 
         expect(await TopicModel.findOne({ name: 'test' })).toBeNull();
-        return Promise.resolve();
     } catch (error) {
         console.log(error);
         return Promise.reject(error);

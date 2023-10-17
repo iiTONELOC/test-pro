@@ -3,7 +3,6 @@ import cors from 'cors';
 
 const port = process.env.PORT ?? '3000';
 
-
 const routes = () => {
     const router = Router();
     const mainRoute = router.use('/', (req, res) => {
@@ -21,10 +20,6 @@ export const startServer = async (callback?: Function) => {
     server.use(express.json());
     server.use(express.urlencoded({ extended: true }));
     server.use(cors());
-
-    // disable insecure headers
-    server.disable('x-powered-by');
-    server.disable('etag');
 
     // attach routes
     server.use(routes());

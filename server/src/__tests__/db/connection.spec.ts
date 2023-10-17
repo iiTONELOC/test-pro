@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { dbConnection, dbClose } from '../connection';
+import { dbConnection, dbClose } from '../../db/connection';
 
 import mongoose from 'mongoose';
 

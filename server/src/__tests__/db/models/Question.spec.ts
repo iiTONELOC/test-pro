@@ -1,20 +1,18 @@
 import { afterAll, beforeAll, expect, test } from 'bun:test';
-import { dbConnection, dbClose } from '../../connection';
+import { dbConnection, dbClose } from '../../../db/connection';
 
-import { Topic, Question } from '../../models';
-import type { TopicModelType, QuestionModelType, PopulatedQuestionModelType } from '../../types';
+import { Topic, Question } from '../../../db/models';
+import type { TopicModelType, QuestionModelType, PopulatedQuestionModelType } from '../../../db/types';
 
 
 beforeAll(async () => {
     await dbConnection(process.env.TEST_DB_NAME);
-    return Promise.resolve();
 });
 
 afterAll(async () => {
     await Topic.deleteMany({});
     await Question.deleteMany({});
     await dbClose();
-    return Promise.resolve();
 });
 
 test('QuestionModel', async () => {
@@ -46,7 +44,6 @@ test('QuestionModel', async () => {
         expect(newTestQuestion?.explanation).toBe('test');
         expect(newTestQuestion?.areaToReview[0]).toBe('test');
 
-        return Promise.resolve();
     } catch (error) {
         console.log(error);
         return Promise.reject(error);

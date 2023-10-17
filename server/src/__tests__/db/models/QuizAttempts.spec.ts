@@ -1,19 +1,17 @@
 import { afterAll, beforeAll, expect, test } from 'bun:test';
-import { dbConnection, dbClose } from '../../connection';
+import { dbConnection, dbClose } from '../../../db/connection';
 
 import mongoose from 'mongoose';
-import { QuizAttempt } from '../../models';
-import type { QuizAttemptType } from '../../types';
+import { QuizAttempt } from '../../../db/models';
+import type { QuizAttemptType } from '../../../db/types';
 
 beforeAll(async () => {
     await dbConnection(process.env.TEST_DB_NAME);
-    return Promise.resolve();
 });
 
 afterAll(async () => {
     await QuizAttempt.deleteMany({});
     await dbClose();
-    return Promise.resolve();
 });
 
 test('QuizAttemptModel', async () => {
@@ -45,8 +43,6 @@ test('QuizAttemptModel', async () => {
         expect(newQuizAttempt.passed).toBe(passed);
         expect(newQuizAttempt.dateTaken).toBe(dateTaken);
         expect(newQuizAttempt.elapsedTimeInMs).toBe(elapsedTimeInMs);
-
-        return Promise.resolve();
 
     } catch (error) {
         console.log(error);

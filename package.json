@@ -10,6 +10,7 @@
   },
   "scripts": {
     "tests": "cd server && bun test",
-    "start": "bun server/index.ts"
+    "start": "bun server/index.ts",
+    "dev": "bun run --watch server/index.ts"
   }
 }

@@ -74,7 +74,7 @@ export const getTopicById = async (id: string, showTimestamps = false): Promise<
 
 // create topic
 export const createTopic = async (topic: string): Promise<TopicModelType> =>
-    await Topic.create({ name: topic }) as TopicModelType;
+    await Topic.create({ name: topic });
 
 // update topic by id
 export const updateTopicById = async (id: string, topic: string, showTimestamps = false): Promise<TopicModelType | null> => {

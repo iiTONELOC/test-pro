@@ -1,5 +1,5 @@
 import { Schema, model, ObjectId, HydratedDocument } from 'mongoose';
-import { IQuestion, ITopic } from './types';
+import { IQuestion, ITopic, PopulatedQuestionModelType } from './types';
 
 export interface IQuiz {
     name: string;
@@ -8,7 +8,7 @@ export interface IQuiz {
 };
 
 export type QuizModelType = HydratedDocument<IQuiz> & { createdAt?: Date; updatedAt?: Date };
-export type PopulatedQuizModel = QuizModelType & { topics: [ITopic], questions: [IQuestion] };
+export type PopulatedQuizModel = QuizModelType & { topics: [ITopic], questions: [PopulatedQuestionModelType] };
 
 
 const QuizSchema = new Schema({

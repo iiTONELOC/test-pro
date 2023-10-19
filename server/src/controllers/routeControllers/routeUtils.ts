@@ -1,4 +1,13 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
+
+export const httpStatusCodes = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+    CONFLICT: 409,
+    INTERNAL_SERVER_ERROR: 500,
+};
 
 /**
  * Determines whether timestamps should be shown in the response. This information is
@@ -21,36 +30,49 @@ export const shouldShowTimestamps = (req: Request): boolean => {
  * @param error
  * @returns the actual error message if applicable, or a generic error message
  */
-export const handleRouteErrorMessages = (error: any): string => {
-    if (error.message.includes('duplicate key error')) {
+export const handleRouteErrorMessages = (msg: string): string => {
+    if (msg.includes('duplicate key error')) {
         return 'Already exists';
     }
 
-    if (error.message.includes('Error: request size did not match content length')) {
+    if (msg.includes('Error: request size did not match content length')) {
         return 'Invalid request body';
     }
 
-    return error.message as string ?? 'Something went wrong';
+    return msg as string ?? 'Something went wrong';
 }
 
+/**
+ * Sanitizes the error message and returns the appropriate HTTP status code.
+ * @param errorMsg : The error message to be sanitized
+ * @returns the appropriate HTTP status code
+ */
 export const handleRouteErrorCodes = (errorMsg: string): number => {
     if (errorMsg.includes('Already exists')) {
-        return 409;
-    }
-
-    if (
+        return httpStatusCodes.CONFLICT;
+    } else if (
         errorMsg.includes('Invalid request body')
         || errorMsg.includes('Cast to ObjectId failed')
-        || errorMsg.includes('required')) {
-        return 400;
+        || errorMsg.includes('required')
+        || errorMsg.includes('validation failed')
+    ) {
+        return httpStatusCodes.BAD_REQUEST;
+    } else if (errorMsg.includes('not found')) {
+        return httpStatusCodes.NOT_FOUND;
+    } else {
+        return httpStatusCodes.INTERNAL_SERVER_ERROR;
     }
+}
 
-    if (errorMsg.includes('Something went wrong')) {
-        return 500;
-    }
-
-    console.error(errorMsg);
-
-    return 500;
+/**
+ * Sanitizes the error message and returns the appropriate HTTP Response.
+ * @param res : Express Response object
+ * @param errorMsg : The error message to be sanitized
+ * @returns an Express Response object with the appropriate HTTP status code and error message
+ */
+export const handleRouteError = (res: Response, errorMsg: string): Response => {
+    const message = handleRouteErrorMessages(errorMsg);
+    const statusCode = handleRouteErrorCodes(message);
+    return res.status(statusCode).json({ error: message });
 }
 

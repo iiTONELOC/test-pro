@@ -1,6 +1,21 @@
-import { Schema, model, HydratedDocument, ObjectId } from 'mongoose';
-import { ITopic } from './types';
+import { Schema, model, HydratedDocument, Types } from 'mongoose';
+import { TopicModelType } from './types';
 
+
+
+/**
+ * ```ts
+ *  enum QuestionTypeEnums {
+ *     MultipleChoice = 'MultipleChoice',
+ *     TrueFalse = 'TrueFalse',
+ *     FillInTheBlank = 'FillInTheBlank',
+ *     ShortAnswer = 'ShortAnswer',
+ *     Matching = 'Matching',
+ *     Ordering = 'Ordering',
+ *     Image = 'Image'
+ *  }
+ * ```
+ */
 export enum QuestionTypeEnums {
     MultipleChoice = 'MultipleChoice',
     TrueFalse = 'TrueFalse',
@@ -11,18 +26,77 @@ export enum QuestionTypeEnums {
     Image = 'Image'
 };
 
+/**
+ * ```ts
+ * interface IQuestion {
+ *    questionType: QuestionTypeEnums;
+ *    question: string;
+ *    topics: ObjectId[],
+ *    options: string[],
+ *    answer: string;
+ *    explanation: string;
+ *    areaToReview: string[];
+ *    explanation: string;
+ *    areaToReview: string[];
+ * }
+ * ```
+ */
 export interface IQuestion {
     questionType: QuestionTypeEnums;
     question: string;
-    topics: [ObjectId],
-    options: [string],
+    topics: Types.ObjectId[],
+    options: string[],
     answer: string;
     explanation: string;
-    areaToReview: [string];
+    areaToReview: string[];
 };
 
+/***
+ * ```ts
+ *  type QuestionModelType = {
+ *    _id: ObjectId;
+ *    questionType: QuestionTypeEnums;
+ *    question: string;
+ *    topics: ObjectId[],
+ *    options: string[],
+ *    answer: string;
+ *    explanation: string;
+ *    areaToReview: string[];
+ *    explanation: string;
+ *    areaToReview: string[];
+ *    createdAt?: Date;
+ *    updatedAt?: Date;
+ * }
+ * ```
+ */
 export type QuestionModelType = HydratedDocument<IQuestion> & { createdAt?: Date; updatedAt?: Date };
-export type PopulatedQuestionModelType = QuestionModelType & { topics: [ITopic] };
+
+/***
+ * ```ts
+ *  type QuestionModelType = {
+ *    _id: ObjectId;
+ *    questionType: QuestionTypeEnums;
+ *    question: string;
+ *    topics: [
+ *        {
+ *           _id: ObjectId;
+ *           name: string;
+ *           createdAt?: Date;
+ *           updatedAt?: Date;
+ *       }
+ *    ],
+ *    options: string[],
+ *    answer: string;
+ *    explanation: string;
+ *    areaToReview: string[];
+ *    explanation: string;
+ *    areaToReview: string[];
+ *    createdAt?: Date;
+ *    updatedAt?: Date;
+ * }
+ * ```
+ */
+export type PopulatedQuestionModelType = QuestionModelType & { topics: TopicModelType[] };
 
 const QuestionSchema = new Schema({
     questionType: {

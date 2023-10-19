@@ -34,7 +34,6 @@ let testID: string | null = null;
 
 describe('Topic Controller', () => {
     test('It should be defined and have all methods described in the interface', () => {
-        console.log('test');
         const TC: ITopicController = topicController;
         expect(TC).toBeDefined();
         expect(TC.createTopic).toBeDefined();

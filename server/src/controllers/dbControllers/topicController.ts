@@ -1,8 +1,8 @@
 import { Topic, Question, Quiz } from '../../db/models';
+import { createSelectTerms } from './controllerUtils';
 import type { TopicModelType, PopulatedQuestionModelType, PopulatedQuizModel } from '../../db/models/types';
 
 
-const createSelectTerms = (showTimeStamp: boolean) => showTimeStamp ? '-__v' : '-createdAt -updatedAt -__v';
 
 /**
  * Topic Controller
@@ -90,41 +90,43 @@ export const deleteTopicById = async (id: string): Promise<TopicModelType | null
     // then we can delete the topic
     const deleteTopic = async (id: string): Promise<TopicModelType | null> => await Topic.findByIdAndDelete({ _id: id });
 
-    // look for questions where the topic property includes the id
-    const questions: PopulatedQuestionModelType[] = await Question.find({ topics: { $in: [id] } })
-        .populate({
-            path: 'topics',
-            select: createSelectTerms(false)
-        });
-    // look for quizzes where the topic property includes the id
-    const quizzes: PopulatedQuizModel[] = await Quiz.find({ topics: { $in: [id] } })
-        .populate({
-            path: 'topics',
-            select: createSelectTerms(false)
-        });
+    // // look for questions where the topic property includes the id
+    // const questions: PopulatedQuestionModelType[] = await Question.find({ topics: { $in: [id] } })
+    //     .populate({
+    //         path: 'topics',
+    //         select: createSelectTerms(false)
+    //     });
+    // // look for quizzes where the topic property includes the id
+    // const quizzes: PopulatedQuizModel[] = await Quiz.find({ topics: { $in: [id] } })
+    //     .populate({
+    //         path: 'topics',
+    //         select: createSelectTerms(false)
+    //     });
 
-    // consolidate the questions and quizzes to modify into one array
-    const dataToEdit: (PopulatedQuestionModelType | PopulatedQuizModel)[] = [...questions, ...quizzes];
+    // // consolidate the questions and quizzes to modify into one array
+    // const dataToEdit: (PopulatedQuestionModelType | PopulatedQuizModel)[] = [...questions, ...quizzes];
 
-    if (dataToEdit.length > 0) {
-        // we need to update the questions and quizzes to remove the topic
-        const updateData = async (data: (PopulatedQuestionModelType | PopulatedQuizModel)[]) => {
-            const promises = data.map(async (item: PopulatedQuestionModelType | PopulatedQuizModel) => {
-                const topics = item.topics.filter(topic => topic.toString() !== id);
-                if (item instanceof Question) {
-                    return await Question.findByIdAndUpdate({ _id: item._id }, { topics });
-                } else {
-                    return await Quiz.findByIdAndUpdate({ _id: item._id }, { topics });
-                }
-            });
-            return await Promise.all(promises);
-        };
+    // if (dataToEdit.length > 0) {
+    //     // we need to update the questions and quizzes to remove the topic
+    //     const updateData = async (data: (PopulatedQuestionModelType | PopulatedQuizModel)[]) => {
+    //         const promises = data.map(async (item: PopulatedQuestionModelType | PopulatedQuizModel) => {
+    //             const topics = item.topics.filter(topic => topic.toString() !== id);
+    //             if (item instanceof Question) {
+    //                 return await Question.findByIdAndUpdate({ _id: item._id }, { topics });
+    //             } else {
+    //                 return await Quiz.findByIdAndUpdate({ _id: item._id }, { topics });
+    //             }
+    //         });
+    //         return await Promise.all(promises);
+    //     };
 
-        await updateData(dataToEdit);
-        return await deleteTopic(id);
-    } else {
-        return await deleteTopic(id);
-    }
+    //     await updateData(dataToEdit);
+    //     return await deleteTopic(id);
+    // } else {
+    //     return await deleteTopic(id);
+    // }
+
+    return await deleteTopic(id);
 }
 
 export const topicController: ITopicController = {

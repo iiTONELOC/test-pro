@@ -6,3 +6,8 @@ export {
     updateTopicById,
     deleteTopicById
 } from './topicController';
+
+export {
+    default as questionController,
+    getAllQuestions,
+} from './questionController';

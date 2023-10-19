@@ -2,15 +2,17 @@ import { Question } from '../../db/models';
 import { createSelectTerms } from './controllerUtils';
 import { IQuestion, PopulatedQuestionModelType } from '../../db/types';
 
-
 /**
  * ```ts
  *   type IQuestionController = {
  *      getAllQuestions: (showTimestamps?: boolean) => Promise<PopulatedQuestionModelType[]>
- *      getQuestionsByQuizId: (quizId: string, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType[]>
+ *
  *      getQuestionById: (questionId: string, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
+ *
  *      createQuestion: (question: IQuestion) => Promise<PopulatedQuestionModelType>
+ *
  *      updateQuestionById: (questionId: string, question: IQuestion, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
+ *
  *      deleteQuestionById: (questionId: string) => Promise<PopulatedQuestionModelType>
  *   }
  * ```

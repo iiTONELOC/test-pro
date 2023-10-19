@@ -31,11 +31,9 @@ export enum QuestionTypeEnums {
  * interface IQuestion {
  *    questionType: QuestionTypeEnums;
  *    question: string;
- *    topics: ObjectId[],
+ *    topics: Types.ObjectId[],
  *    options: string[],
  *    answer: string;
- *    explanation: string;
- *    areaToReview: string[];
  *    explanation: string;
  *    areaToReview: string[];
  * }
@@ -54,10 +52,10 @@ export interface IQuestion {
 /***
  * ```ts
  *  type QuestionModelType = {
- *    _id: ObjectId;
+ *    _id: Types.ObjectId;
  *    questionType: QuestionTypeEnums;
  *    question: string;
- *    topics: ObjectId[],
+ *    topics: Types.ObjectId[],
  *    options: string[],
  *    answer: string;
  *    explanation: string;
@@ -74,12 +72,12 @@ export type QuestionModelType = HydratedDocument<IQuestion> & { createdAt?: Date
 /***
  * ```ts
  *  type QuestionModelType = {
- *    _id: ObjectId;
+ *    _id: Types.ObjectId;
  *    questionType: QuestionTypeEnums;
  *    question: string;
  *    topics: [
  *        {
- *           _id: ObjectId;
+ *           _id: Types.ObjectId;
  *           name: string;
  *           createdAt?: Date;
  *           updatedAt?: Date;
@@ -93,6 +91,7 @@ export type QuestionModelType = HydratedDocument<IQuestion> & { createdAt?: Date
  *    areaToReview: string[];
  *    createdAt?: Date;
  *    updatedAt?: Date;
+ *    __v?: number;
  * }
  * ```
  */

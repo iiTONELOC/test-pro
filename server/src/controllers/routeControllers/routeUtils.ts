@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 
 export const httpStatusCodes = {
     OK: 200,
@@ -6,7 +6,7 @@ export const httpStatusCodes = {
     BAD_REQUEST: 400,
     NOT_FOUND: 404,
     CONFLICT: 409,
-    INTERNAL_SERVER_ERROR: 500,
+    INTERNAL_SERVER_ERROR: 500
 };
 
 /**
@@ -39,7 +39,7 @@ export const handleRouteErrorMessages = (msg: string): string => {
         return 'Invalid request body';
     }
 
-    return msg as string ?? 'Something went wrong';
+    return msg ?? 'Something went wrong';
 }
 
 /**
@@ -51,10 +51,11 @@ export const handleRouteErrorCodes = (errorMsg: string): number => {
     if (errorMsg.includes('Already exists')) {
         return httpStatusCodes.CONFLICT;
     } else if (
-        errorMsg.includes('Invalid request body')
+        errorMsg.includes('Invalid request body') //NOSONAR
         || errorMsg.includes('Cast to ObjectId failed')
         || errorMsg.includes('required')
         || errorMsg.includes('validation failed')
+        || errorMsg.includes('Nothing to update')
     ) {
         return httpStatusCodes.BAD_REQUEST;
     } else if (errorMsg.includes('not found')) {
@@ -75,4 +76,3 @@ export const handleRouteError = (res: Response, errorMsg: string): Response => {
     const statusCode = handleRouteErrorCodes(message);
     return res.status(statusCode).json({ error: message });
 }
-

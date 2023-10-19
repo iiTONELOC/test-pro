@@ -11,7 +11,7 @@ import type { IQuestionController } from '../../../controllers/types';
 let testTopic: TopicModelType | null = null;
 
 beforeAll(async () => {
-    await dbConnection(process.env.TEST_DB_NAME);
+    await dbConnection();
     testTopic = await Topic.create({ name: 'test' });
 });
 

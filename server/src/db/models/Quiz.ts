@@ -1,14 +1,66 @@
-import { Schema, model, ObjectId, HydratedDocument } from 'mongoose';
-import { IQuestion, ITopic, PopulatedQuestionModelType } from './types';
+import { Schema, model, HydratedDocument, Types } from 'mongoose';
+import { PopulatedQuestionModelType, TopicModelType } from './types';
 
+/**
+ * ```ts
+ * interface IQuiz {
+ *   name: string;
+ *   topics: [Types.ObjectId];
+ *   questions: [Types.ObjectId];
+ * }
+ * ```
+ */
 export interface IQuiz {
     name: string;
-    topics: [ObjectId];
-    questions: [ObjectId];
+    topics: Types.ObjectId[];
+    questions: Types.ObjectId[];
 };
 
+/**
+ * ```ts
+ * type QuizModelType = {
+ *  _id: Types.ObjectId;
+ *  name: string;
+ *  topics: [Types.ObjectId];
+ *  questions: [Types.ObjectId];
+ *  createdAt?: Date;
+ *  updatedAt?: Date;
+ *  __v?: number;
+ * }
+ * ```
+ */
 export type QuizModelType = HydratedDocument<IQuiz> & { createdAt?: Date; updatedAt?: Date };
-export type PopulatedQuizModel = QuizModelType & { topics: [ITopic], questions: [PopulatedQuestionModelType] };
+
+/**
+ * ```ts
+ * type PopulatedQuizModel = {
+ *  _id: Types.ObjectId;
+ *  name: string;
+ *  topics: [{
+ *      _id: Types.ObjectId,
+ *       name: string,
+ *       createdAt?: Date,
+ *       updatedAt?: Date,
+ *       __v?: number
+ *  }}];
+ *  questions: [{
+ *      _id: Types.ObjectId,
+ *      questionType: QuestionTypeEnums,
+ *      question: string,
+ *      topics:[{
+ *       _id: Types.ObjectId,
+ *         name: string,
+ *         createdAt?: Date,
+ *         updatedAt?: Date,
+ *          __v?: number
+ *      }];
+ *  createdAt?: Date;
+ *  updatedAt?: Date;
+ *  __v?: number;
+ * }
+ * ```
+ */
+export type PopulatedQuizModel = QuizModelType & { topics: [TopicModelType], questions: [PopulatedQuestionModelType] };
 
 
 const QuizSchema = new Schema({

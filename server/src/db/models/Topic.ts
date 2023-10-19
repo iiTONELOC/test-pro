@@ -1,10 +1,26 @@
 import { Schema, model, HydratedDocument } from 'mongoose';
 
+/**
+ * ```ts
+ * interface ITopic {
+ *    name: string;
+ * }
+ */
 export interface ITopic {
     name: string;
 };
 
-
+/**
+ * ```ts
+ * type TopicModelType = {
+ *      _id: Types.ObjectId;
+ *      name: string;
+ *      createdAt?: Date;
+ *      updatedAt?: Date;
+ *      __v?: number;
+ *     }
+ * ```
+ */
 export type TopicModelType = HydratedDocument<ITopic>
     & { createdAt?: Date; updatedAt?: Date };
 

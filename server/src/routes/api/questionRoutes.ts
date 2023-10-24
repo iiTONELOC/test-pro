@@ -6,17 +6,17 @@ const router = Router();
 // api/questions
 router.route('/')
     // GET all questions
-    .get(questionRouteController.getAllQuestions)
+    .get(questionRouteController.getAll)
     // CREATE a question
-    .post(questionRouteController.createQuestion);
+    .post(questionRouteController.create);
 
 // api/questions/:id
 router.route('/:id')
     // GET a question by id
-    .get(questionRouteController.getQuestionById)
+    .get(questionRouteController.getById)
     // UPDATE a question by id
-    .put(questionRouteController.updateQuestionById)
+    .put(questionRouteController.updateById)
     // DELETE a question by id
-    .delete(questionRouteController.deleteQuestionById);
+    .delete(questionRouteController.deleteById);
 
 export default router;

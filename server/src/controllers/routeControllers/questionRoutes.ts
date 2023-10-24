@@ -6,57 +6,57 @@ import type { IApiResponse } from '../types';
 import type { PopulatedQuestionModelType } from '../../db/types';
 
 export interface IQuestionRouteController {
-    getAllQuestions: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType[]>>;
-    getQuestionById: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
-    createQuestion: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
-    updateQuestionById: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
-    deleteQuestionById: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
+    getAll: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType[]>>;
+    getById: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
+    create: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
+    updateById: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
+    deleteById: (req: Request, res: Response) => Promise<IApiResponse<PopulatedQuestionModelType>>;
 }
 
 export const questionRouteController: IQuestionRouteController = {
-    getAllQuestions: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType[]>> => {
+    getAll: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType[]>> => {
         const showTimestamps = shouldShowTimestamps(req);
         try {
-            const questions = await questionController.getAllQuestions(showTimestamps);
+            const questions = await questionController.getAll(showTimestamps);
             return res.status(httpStatusCodes.OK).json({ data: questions });
         } catch (error: any) {
             return handleRouteError(res, error.message)
         }
     },
-    createQuestion: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
+    create: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
         try {
-            const created = await questionController.createQuestion({ ...req.body });
+            const created = await questionController.create({ ...req.body });
             return res.status(201).json({ data: created });
         } catch (error: any) {
             return handleRouteError(res, error.message)
         }
     },
-    getQuestionById: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
+    getById: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
         const showTimestamps = shouldShowTimestamps(req);
         const { id } = req.params as { id: string };
         try {
-            const question = await questionController.getQuestionById(id, showTimestamps);
+            const question = await questionController.getById(id, showTimestamps);
             if (!question) throw new Error('Question not found');
             return res.status(httpStatusCodes.OK).json({ data: question });
         } catch (error: any) {
             return handleRouteError(res, error.message)
         }
     },
-    updateQuestionById: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
+    updateById: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
         const showTimestamps = shouldShowTimestamps(req);
         const { id } = req.params as { id: string };
         try {
-            const updated = await questionController.updateQuestionById(id, { ...req.body }, showTimestamps);
+            const updated = await questionController.updateById(id, { ...req.body }, showTimestamps);
             if (!updated) throw new Error('Question not found');
             return res.status(httpStatusCodes.OK).json({ data: updated });
         } catch (error: any) {
             return handleRouteError(res, error.message)
         }
     },
-    deleteQuestionById: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
+    deleteById: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuestionModelType>> => {
         const { id } = req.params as { id: string };
         try {
-            const deleted = await questionController.deleteQuestionById(id);
+            const deleted = await questionController.deleteById(id);
             if (!deleted) throw new Error('Question not found');
             return res.status(httpStatusCodes.OK).json({ data: deleted });
         } catch (error: any) {

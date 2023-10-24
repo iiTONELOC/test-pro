@@ -1,26 +1,86 @@
-import { Schema, model, HydratedDocument, ObjectId } from 'mongoose';
-import { QuizModelType, PopulatedQuizModel, QuestionModelType, PopulatedQuestionModelType } from './types';
+import { Schema, model, HydratedDocument, Types } from 'mongoose';
+import { QuestionModelType, PopulatedQuestionModelType } from './types';
 
+/**
+ * ```ts
+ * interface IQuizQuestionResult {
+ *    quizAttempt: Types.ObjectId;
+ *    question: Types.ObjectId;
+ *    selectedAnswer: string;
+ *    isCorrect: boolean;
+ * };
+ * ```
+ */
 export interface IQuizQuestionResult {
-    quiz: ObjectId;
-    question: ObjectId;
+    quizAttempt: Types.ObjectId;
+    question: Types.ObjectId;
     selectedAnswer: string;
     isCorrect: boolean;
+    elapsedTimeInMs: number;
 };
 
+/**
+ * ```ts
+ * type QuizQuestionResultType = {
+ *    _id: Types.ObjectId;
+ *    quizAttempt: Types.ObjectId;
+ *    question: Types.ObjectId;
+ *    selectedAnswer: string;
+ *    isCorrect: boolean;
+ *    elapsedTimeInMs: number;
+ *    createdAt?: Date;
+ *    updatedAt?: Date;
+ *    __v?: number;
+ * }
+ * ```
+ */
 export type QuizQuestionResultType = HydratedDocument<IQuizQuestionResult> &
 { createdAt?: Date; updatedAt?: Date };
 
+
+/**
+ * ```ts
+ * type PopulatedQuizQuestionResultType = {
+ *    _id: Types.ObjectId;
+ *    quizAttempt: Types.ObjectId;
+ *    question: {
+ *      _id: Types.ObjectId;
+ *      questionType: QuestionTypeEnums;
+ *      question: string;
+ *      topics: [
+ *          {
+ *              _id: Types.ObjectId;
+ *              name: string;
+ *              createdAt?: Date;
+ *              updatedAt?: Date;
+ *          }
+ *      ];
+ *      options: string[];
+ *      answer: string;
+ *      explanation: string;
+ *      areaToReview: string;
+ *      createdAt?: Date;
+ *      updatedAt?: Date;
+ *      __v?: number;
+ *    };
+ *    selectedAnswer: string;
+ *    isCorrect: boolean;
+ *    elapsedTimeInMs: number;
+ *    createdAt?: Date;
+ *    updatedAt?: Date;
+ *    __v?: number;
+ * };
+ * ```
+ */
 export type PopulatedQuizQuestionResultType = QuizQuestionResultType &
 {
-    quiz: QuizModelType | PopulatedQuizModel;
+    quizAttempt: Types.ObjectId;
     question: QuestionModelType | PopulatedQuestionModelType
 };
 
 const QuizQuestionResultSchema = new Schema({
-    quiz: {
+    quizAttempt: {
         type: Schema.Types.ObjectId,
-        ref: 'Quiz',
         required: true
     },
     question: {
@@ -34,6 +94,10 @@ const QuizQuestionResultSchema = new Schema({
     },
     isCorrect: {
         type: Boolean,
+        required: true
+    },
+    elapsedTimeInMs: {
+        type: Number,
         required: true
     }
 }, {

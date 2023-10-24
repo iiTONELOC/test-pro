@@ -60,8 +60,6 @@ export interface IQuestion {
  *    answer: string;
  *    explanation: string;
  *    areaToReview: string[];
- *    explanation: string;
- *    areaToReview: string[];
  *    createdAt?: Date;
  *    updatedAt?: Date;
  * }
@@ -81,12 +79,11 @@ export type QuestionModelType = HydratedDocument<IQuestion> & { createdAt?: Date
  *           name: string;
  *           createdAt?: Date;
  *           updatedAt?: Date;
+ *           __v?: number;
  *       }
  *    ],
  *    options: string[],
  *    answer: string;
- *    explanation: string;
- *    areaToReview: string[];
  *    explanation: string;
  *    areaToReview: string[];
  *    createdAt?: Date;

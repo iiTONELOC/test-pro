@@ -5,25 +5,25 @@ import { IQuiz, QuizModelType, PopulatedQuizModel } from '../../db/types';
 /**
  * ```ts
  *  interface IQuizController {
- *      getAllQuizzes: () => Promise<PopulatedQuizModel[]>;
- *      createQuiz: (quiz: IQuiz) => Promise<QuizModelType>;
- *      getQuizById: (id: string) => Promise<PopulatedQuizModel | null>;
- *      updateQuizById: (id: string, quiz: Partial<IQuiz>) => Promise<PopulatedQuizModel | null>;
- *      deleteQuizById: (id: string) => Promise<PopulatedQuizModel | null>;
- *      getQuizzesByTopics: (Topics: string[]) => Promise<PopulatedQuizModel[]>;
+ *      getAll: () => Promise<PopulatedQuizModel[]>;
+ *      create: (quiz: IQuiz) => Promise<QuizModelType>;
+ *      getById: (id: string) => Promise<PopulatedQuizModel | null>;
+ *      updateById: (id: string, quiz: Partial<IQuiz>) => Promise<PopulatedQuizModel | null>;
+ *      deleteById: (id: string) => Promise<PopulatedQuizModel | null>;
+ *      geManyByTopics: (Topics: string[]) => Promise<PopulatedQuizModel[]>;
  *  }
  * ```
  */
 export interface IQuizController {
-    getAllQuizzes: (showTimestamps?: boolean) => Promise<PopulatedQuizModel[]>;
-    createQuiz: (quiz: IQuiz, showTimestamps?: boolean) => Promise<PopulatedQuizModel>;
-    getQuizById: (id: string, showTimestamps?: boolean) => Promise<PopulatedQuizModel | null>;
-    updateQuizById: (id: string, quiz: Partial<IQuiz>, showTimestamps?: boolean) => Promise<PopulatedQuizModel | null>;
-    deleteQuizById: (id: string, showTimestamps?: boolean) => Promise<PopulatedQuizModel | null>;
-    getQuizzesByTopics: (Topics: string[], showTimestamps?: boolean) => Promise<PopulatedQuizModel[]>;
+    getAll: (showTimestamps?: boolean) => Promise<PopulatedQuizModel[]>;
+    create: (quiz: IQuiz, showTimestamps?: boolean) => Promise<PopulatedQuizModel>;
+    getById: (id: string, showTimestamps?: boolean) => Promise<PopulatedQuizModel | null>;
+    updateById: (id: string, quiz: Partial<IQuiz>, showTimestamps?: boolean) => Promise<PopulatedQuizModel | null>;
+    deleteById: (id: string, showTimestamps?: boolean) => Promise<PopulatedQuizModel | null>;
+    geManyByTopics: (Topics: string[], showTimestamps?: boolean) => Promise<PopulatedQuizModel[]>;
 }
 
-export const getAllQuizzes = async (showTimestamps = false): Promise<PopulatedQuizModel[]> => {
+export const getAll = async (showTimestamps = false): Promise<PopulatedQuizModel[]> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const quizzes: PopulatedQuizModel[] = await Quiz.find({}).populate([
         { path: 'topics', select: selectTerms },
@@ -33,7 +33,7 @@ export const getAllQuizzes = async (showTimestamps = false): Promise<PopulatedQu
     return quizzes;
 };
 
-export const createQuiz = async (quiz: IQuiz, showTimestamps = false): Promise<PopulatedQuizModel> => {
+export const create = async (quiz: IQuiz, showTimestamps = false): Promise<PopulatedQuizModel> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const newQuiz: QuizModelType = (await Quiz.create({ ...quiz }));
     const populatedQuiz: PopulatedQuizModel = await Quiz.findById({ _id: newQuiz._id }).populate([
@@ -44,7 +44,7 @@ export const createQuiz = async (quiz: IQuiz, showTimestamps = false): Promise<P
     return populatedQuiz;
 };
 
-export const getQuizById = async (id: string, showTimestamps = false): Promise<PopulatedQuizModel | null> => {
+export const getById = async (id: string, showTimestamps = false): Promise<PopulatedQuizModel | null> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const foundQuiz = await Quiz.findById({ _id: id }).populate([
         { path: 'topics', select: selectTerms },
@@ -54,7 +54,7 @@ export const getQuizById = async (id: string, showTimestamps = false): Promise<P
     return foundQuiz;
 };
 
-export const updateQuizById = async (id: string, quiz: Partial<IQuiz>, showTimestamps = false): Promise<PopulatedQuizModel | null> => {
+export const updateById = async (id: string, quiz: Partial<IQuiz>, showTimestamps = false): Promise<PopulatedQuizModel | null> => {
     const selectTerms = createSelectTerms(showTimestamps);
     // while we can have a partial ensure that the quiz is not an empty object
     if (Object.keys(quiz).length === 0) {
@@ -69,7 +69,7 @@ export const updateQuizById = async (id: string, quiz: Partial<IQuiz>, showTimes
     return updatedQuiz;
 };
 
-export const deleteQuizById = async (id: string, showTimestamps = false): Promise<PopulatedQuizModel | null> => {
+export const deleteById = async (id: string, showTimestamps = false): Promise<PopulatedQuizModel | null> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const deletedQuiz = await Quiz.findByIdAndDelete({ _id: id }).populate([
         { path: 'topics', select: selectTerms },
@@ -79,7 +79,7 @@ export const deleteQuizById = async (id: string, showTimestamps = false): Promis
     return deletedQuiz;
 };
 
-export const getQuizzesByTopics = async (topics: string[], showTimestamps = false): Promise<PopulatedQuizModel[]> => {
+export const geManyByTopics = async (topics: string[], showTimestamps = false): Promise<PopulatedQuizModel[]> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const quizzes = await Quiz.find({ topics: { $in: topics } }).populate([
         { path: 'topics', select: selectTerms },
@@ -91,12 +91,12 @@ export const getQuizzesByTopics = async (topics: string[], showTimestamps = fals
 
 
 const quizController: IQuizController = {
-    getAllQuizzes,
-    createQuiz,
-    getQuizById,
-    updateQuizById,
-    deleteQuizById,
-    getQuizzesByTopics
+    getAll,
+    create,
+    getById,
+    updateById,
+    deleteById,
+    geManyByTopics
 };
 
 export default quizController;

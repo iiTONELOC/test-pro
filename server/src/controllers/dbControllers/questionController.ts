@@ -5,27 +5,27 @@ import { IQuestion, PopulatedQuestionModelType } from '../../db/types';
 /**
  * ```ts
  *   type IQuestionController = {
- *      getAllQuestions: (showTimestamps?: boolean) => Promise<PopulatedQuestionModelType[]>
+ *      getAll: (showTimestamps?: boolean) => Promise<PopulatedQuestionModelType[]>
  *
- *      getQuestionById: (questionId: string, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
+ *      getById: (questionId: string, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
  *
- *      createQuestion: (question: IQuestion) => Promise<PopulatedQuestionModelType>
+ *      create: (question: IQuestion) => Promise<PopulatedQuestionModelType>
  *
- *      updateQuestionById: (questionId: string, question: IQuestion, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
+ *      updateById: (questionId: string, question: IQuestion, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
  *
- *      deleteQuestionById: (questionId: string) => Promise<PopulatedQuestionModelType>
+ *      deleteById: (questionId: string) => Promise<PopulatedQuestionModelType>
  *   }
  * ```
  */
 export interface IQuestionController {
-    getAllQuestions: (showTimestamps?: boolean) => Promise<PopulatedQuestionModelType[]>
-    getQuestionById: (questionId: string, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
-    createQuestion: (question: IQuestion) => Promise<PopulatedQuestionModelType>
-    updateQuestionById: (questionId: string, question: Partial<IQuestion>, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
-    deleteQuestionById: (questionId: string) => Promise<PopulatedQuestionModelType>
+    getAll: (showTimestamps?: boolean) => Promise<PopulatedQuestionModelType[]>
+    getById: (questionId: string, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
+    create: (question: IQuestion) => Promise<PopulatedQuestionModelType>
+    updateById: (questionId: string, question: Partial<IQuestion>, showTimestamps?: boolean) => Promise<PopulatedQuestionModelType>
+    deleteById: (questionId: string) => Promise<PopulatedQuestionModelType>
 }
 
-export const getAllQuestions = async (showTimestamps = false): Promise<PopulatedQuestionModelType[]> => {
+export const getAll = async (showTimestamps = false): Promise<PopulatedQuestionModelType[]> => {
     const selectTerms = createSelectTerms(showTimestamps)
     const questions: PopulatedQuestionModelType[] = await Question
         .find({}, selectTerms)
@@ -34,7 +34,7 @@ export const getAllQuestions = async (showTimestamps = false): Promise<Populated
     return questions
 };
 
-export const getQuestionById = async (questionId: string, showTimestamps = false): Promise<PopulatedQuestionModelType> => {
+export const getById = async (questionId: string, showTimestamps = false): Promise<PopulatedQuestionModelType> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const question: PopulatedQuestionModelType = await Question
         .findById({ _id: questionId })
@@ -43,7 +43,7 @@ export const getQuestionById = async (questionId: string, showTimestamps = false
     return question
 };
 
-export const createQuestion = async (question: IQuestion): Promise<PopulatedQuestionModelType> => {
+export const create = async (question: IQuestion): Promise<PopulatedQuestionModelType> => {
     const newQuestion = await Question.create(question);
     const selectTerms = createSelectTerms(false);
 
@@ -55,7 +55,7 @@ export const createQuestion = async (question: IQuestion): Promise<PopulatedQues
     return populatedQuestion;
 };
 
-export const updateQuestionById = async (questionId: string, question: Partial<IQuestion>, showTimestamps = false): Promise<PopulatedQuestionModelType> => {
+export const updateById = async (questionId: string, question: Partial<IQuestion>, showTimestamps = false): Promise<PopulatedQuestionModelType> => {
     const selectTerms = createSelectTerms(showTimestamps);
 
     const updatedQuestion = await Question
@@ -66,7 +66,7 @@ export const updateQuestionById = async (questionId: string, question: Partial<I
     return updatedQuestion;
 };
 
-export const deleteQuestionById = async (questionId: string): Promise<PopulatedQuestionModelType> => {
+export const deleteById = async (questionId: string): Promise<PopulatedQuestionModelType> => {
     const selectTerms = createSelectTerms(false);
     const deletedQuestion = await Question
         .findByIdAndDelete({ _id: questionId })
@@ -76,11 +76,11 @@ export const deleteQuestionById = async (questionId: string): Promise<PopulatedQ
 };
 
 const questionController: IQuestionController = {
-    getAllQuestions,
-    getQuestionById,
-    createQuestion,
-    updateQuestionById,
-    deleteQuestionById
+    getAll,
+    getById,
+    create,
+    updateById,
+    deleteById
 }
 
 export default questionController;

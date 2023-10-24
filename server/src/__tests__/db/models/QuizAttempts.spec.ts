@@ -18,7 +18,7 @@ test('QuizAttemptModel', async () => {
     try {
         //create ids
         const quizId = new mongoose.Types.ObjectId();
-        const questions = [new mongoose.Types.ObjectId()];
+        const answeredQuestions = [new mongoose.Types.ObjectId()];
         const earnedPoints = 1;
         const passingPoints = 1;
         const passed = true;
@@ -27,7 +27,7 @@ test('QuizAttemptModel', async () => {
 
         const newQuizAttempt: QuizAttemptType = await QuizAttempt.create({
             quizId,
-            questions,
+            answeredQuestions,
             earnedPoints,
             passingPoints,
             passed,
@@ -37,13 +37,14 @@ test('QuizAttemptModel', async () => {
 
         expect(newQuizAttempt).toBeDefined();
         expect(newQuizAttempt.quizId).toBe(quizId);
-        expect(newQuizAttempt.questions[0]).toBe(questions[0]);
+        expect(newQuizAttempt.answeredQuestions[0]).toBe(answeredQuestions[0]);
         expect(newQuizAttempt.earnedPoints).toBe(earnedPoints);
         expect(newQuizAttempt.passingPoints).toBe(passingPoints);
         expect(newQuizAttempt.passed).toBe(passed);
         expect(newQuizAttempt.dateTaken).toBe(dateTaken);
         expect(newQuizAttempt.elapsedTimeInMs).toBe(elapsedTimeInMs);
 
+        return Promise.resolve();
     } catch (error) {
         console.log(error);
         return Promise.reject(error);

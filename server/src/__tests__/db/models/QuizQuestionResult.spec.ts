@@ -16,23 +16,25 @@ afterAll(async () => {
 
 test('QuizQuestionResultModel', async () => {
     try {
-        const quizId = new mongoose.Types.ObjectId();
+        const quizAttempt = new mongoose.Types.ObjectId();
         const questionId = new mongoose.Types.ObjectId();
         const selectedAnswer = 'test';
         const isCorrect = true;
 
         const newQuizQuestionResult: QuizQuestionResultType = await QuizQuestionResult.create({
-            quiz: quizId,
+            quizAttempt,
             question: questionId,
             selectedAnswer,
-            isCorrect
+            isCorrect,
+            elapsedTimeInMs: 0
         }).then(data => data);
 
         expect(newQuizQuestionResult).toBeDefined();
-        expect(newQuizQuestionResult.quiz).toBe(quizId);
-        expect(newQuizQuestionResult.question).toBe(questionId);
+        expect(newQuizQuestionResult.quizAttempt.toString()).toBe(quizAttempt.toString());
+        expect(newQuizQuestionResult.question.toString()).toBe(questionId.toString());
         expect(newQuizQuestionResult.selectedAnswer).toBe(selectedAnswer);
         expect(newQuizQuestionResult.isCorrect).toBe(isCorrect);
+        expect(newQuizQuestionResult.elapsedTimeInMs).toBe(0);
     } catch (error) {
         console.log(error);
         return Promise.reject(error);

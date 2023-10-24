@@ -36,23 +36,23 @@ describe('Topic Controller', () => {
     test('It should be defined and have all methods described in the interface', () => {
         const TC: ITopicController = topicController;
         expect(TC).toBeDefined();
-        expect(TC.createTopic).toBeDefined();
-        expect(TC.getAllTopics).toBeDefined();
-        expect(TC.getTopicById).toBeDefined();
-        expect(TC.updateTopicById).toBeDefined();
-        expect(TC.deleteTopicById).toBeDefined();
+        expect(TC.create).toBeDefined();
+        expect(TC.getAll).toBeDefined();
+        expect(TC.getById).toBeDefined();
+        expect(TC.updateById).toBeDefined();
+        expect(TC.deleteById).toBeDefined();
     });
 
-    describe('createTopic()', () => {
+    describe('create()', () => {
         test('It should create a new topic', async () => {
-            const newTopic = await topicController.createTopic(testTopicList[0]);
+            const newTopic = await topicController.create(testTopicList[0]);
             expect(newTopic).toBeDefined();
             expect(newTopic).toHaveProperty('name', testTopicList[0]);
         });
 
         test('It should throw an error if the topic already exists', async () => {
             try {
-                await topicController.createTopic(testTopicList[0]);
+                await topicController.create(testTopicList[0]);
             } catch (err: any) {
                 expect(err).toBeDefined();
                 expect(err).toHaveProperty('message');
@@ -77,7 +77,7 @@ describe('Topic Controller', () => {
             for (const topic of invalidTopicList) {
                 try {
                     // @ts-ignore
-                    await topicController.createTopic(topic);
+                    await topicController.create(topic);
                 } catch (err: any) {
                     expect(err).toBeDefined();
                     expect(err).toHaveProperty('message');
@@ -88,9 +88,9 @@ describe('Topic Controller', () => {
         });
     });
 
-    describe('getAllTopics()', () => {
+    describe('getAll()', () => {
         test('It should return an array of all topics', async () => {
-            const topics = await topicController.getAllTopics();
+            const topics = await topicController.getAll();
 
             expect(topics).toBeDefined();
             expect(topics).toHaveLength(1);
@@ -98,26 +98,26 @@ describe('Topic Controller', () => {
         });
     });
 
-    describe('getTopicById()', () => {
+    describe('getById()', () => {
         test('It should return a topic by a valid topic id', async () => {
             await getTestTopic1ByName();
-            const topic = await topicController.getTopicById(testID as string);
+            const topic = await topicController.getById(testID as string);
 
             expect(topic).toBeDefined();
             expect(topic).toHaveProperty('name', testTopicList[0]);
         });
 
         test('It should return null if no topic is found', async () => {
-            const topic = await topicController.getTopicById(new Types.ObjectId().toString());
+            const topic = await topicController.getById(new Types.ObjectId().toString());
             expect(topic).toBeNull();
         });
     });
 
-    describe('updateTopicById()', () => {
+    describe('updateById()', () => {
         test('It should update a topic by a valid topic id', async () => {
             const runTest = async () => {
                 const updatedTopic = await topicController
-                    .updateTopicById(testID as string, 'Updated Topic Name Test');
+                    .updateById(testID as string, 'Updated Topic Name Test');
 
                 expect(updatedTopic).toBeDefined();
                 expect(updatedTopic).toHaveProperty('name', 'Updated Topic Name Test');
@@ -130,21 +130,21 @@ describe('Topic Controller', () => {
                 await runTest();
             }
             // reset the topic name
-            await topicController.updateTopicById(testID as string, testTopicList[0]);
+            await topicController.updateById(testID as string, testTopicList[0]);
         });
     });
 
-    describe('deleteTopicById()', () => {
+    describe('deleteById()', () => {
         test('It should delete a topic by a valid topic id', async () => {
             await getTestTopic1ByName();
-            const deletedTopic = await topicController.deleteTopicById(testID as string);
+            const deletedTopic = await topicController.deleteById(testID as string);
 
             expect(deletedTopic).toBeDefined();
             expect(deletedTopic).toHaveProperty('name', testTopicList[0]);
         });
 
         test('It should return null if no topic is found', async () => {
-            const topic = await topicController.deleteTopicById(new Types.ObjectId().toString());
+            const topic = await topicController.deleteById(new Types.ObjectId().toString());
             expect(topic).toBeNull();
         });
     });

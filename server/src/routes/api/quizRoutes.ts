@@ -6,17 +6,17 @@ const router = Router();
 // api/quizzes
 router.route('/')
     // GET all quizzes
-    .get(quizRouteController.getAllQuizzes)
+    .get(quizRouteController.getAll)
     // CREATE a quiz
-    .post(quizRouteController.createQuiz);
+    .post(quizRouteController.create);
 
 // api/quizzes/:id
 router.route('/:id')
     // GET a quiz by id
-    .get(quizRouteController.getQuizById)
+    .get(quizRouteController.getById)
     // UPDATE a quiz by id
-    .put(quizRouteController.updateQuizById)
+    .put(quizRouteController.updateById)
     // DELETE a quiz by id
-    .delete(quizRouteController.deleteQuizById);
+    .delete(quizRouteController.deleteById);
 
 export default router;

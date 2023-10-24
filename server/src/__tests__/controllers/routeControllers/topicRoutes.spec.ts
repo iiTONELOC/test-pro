@@ -32,7 +32,7 @@ describe('Topic Routes', () => {
         });
 
         test('Should return an array of topics with their timestamps', async () => {
-            await Topic.create({ name: 'GetAllTopicsShowTimestamps' });
+            await Topic.create({ name: 'getAllShowTimestamps' });
             const response: Response = await fetch(`http://localhost:${PORT}/api/topics?timestamps=true`);
             const topics: IApiResponse<TopicModelType[]> = await response.json() as IApiResponse<TopicModelType[]>;
             expect(response.status).toBe(200);
@@ -43,11 +43,11 @@ describe('Topic Routes', () => {
 
     describe('GET /api/topics/:id', async () => {
         test('Get a topic by id', async () => {
-            const topic: TopicModelType = await Topic.create({ name: 'GetTopicById' });
+            const topic: TopicModelType = await Topic.create({ name: 'getById' });
             const response: Response = await fetch(`http://localhost:${PORT}/api/topics/${topic._id}`);
             const topicResponse: IApiResponse<TopicModelType> = await response.json() as IApiResponse<TopicModelType>;
             expect(response.status).toBe(200);
-            expect(topicResponse.data?.name).toBe('GetTopicById');
+            expect(topicResponse.data?.name).toBe('getById');
         });
 
         test('Should return a 400 if not a real ID', async () => {
@@ -99,7 +99,7 @@ describe('Topic Routes', () => {
 
     describe('PUT /api/topics/:id', async () => {
         test('Update a topic', async () => {
-            const topic = await Topic.create({ name: 'UpdateTopicById' });
+            const topic = await Topic.create({ name: 'updateById' });
 
             const updated = await fetch(`http://localhost:${PORT}/api/topics/${topic._id}`, {
                 method: 'PUT',
@@ -116,7 +116,7 @@ describe('Topic Routes', () => {
 
     describe('DELETE /api/topics/:id', async () => {
         test('Delete a topic', async () => {
-            const topic = await Topic.create({ name: 'DeleteTopicById' });
+            const topic = await Topic.create({ name: 'deleteById' });
 
             const deleted = await fetch(`http://localhost:${PORT}/api/topics/${topic._id}`, {
                 method: 'DELETE',
@@ -126,7 +126,7 @@ describe('Topic Routes', () => {
             const deletedTopic: IApiResponse<TopicModelType> = await deleted.json() as IApiResponse<TopicModelType>;
 
             expect(deleted.status).toBe(200);
-            expect(deletedTopic?.data?.name).toBe('DeleteTopicById');
+            expect(deletedTopic?.data?.name).toBe('deleteById');
         });
     });
 });

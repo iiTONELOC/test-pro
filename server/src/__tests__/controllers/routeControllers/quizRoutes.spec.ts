@@ -40,14 +40,14 @@ beforeAll(async () => {
     })
 
     // create a topic
-    const testTopic: TopicModelType = await topicController.createTopic(testTopicData.name);
+    const testTopic: TopicModelType = await topicController.create(testTopicData.name);
     const testTopicId: Types.ObjectId = testTopic._id;
 
     // add the topic id to the testQuestionData
     testQuestionData.topics.push(testTopicId);
 
     // create a question
-    const testQuestion: PopulatedQuestionModelType = await questionController.createQuestion(testQuestionData);
+    const testQuestion: PopulatedQuestionModelType = await questionController.create(testQuestionData);
     const testQuestionId: Types.ObjectId = testQuestion._id;
 
     // add the question id to the testQuizData

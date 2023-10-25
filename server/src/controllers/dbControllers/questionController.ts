@@ -57,9 +57,18 @@ export const create = async (question: IQuestion): Promise<PopulatedQuestionMode
 
 export const updateById = async (questionId: string, question: Partial<IQuestion>, showTimestamps = false): Promise<PopulatedQuestionModelType> => {
     const selectTerms = createSelectTerms(showTimestamps);
+    const { topics, ...rest } = question;
+    let updateOptions = {};
+
+    // ensure we don't overwrite topics when updating
+    if (topics?.length === 0) {
+        updateOptions = { ...rest }
+    } else {
+        updateOptions = { ...rest, $addToSet: { topics } }
+    }
 
     const updatedQuestion = await Question
-        .findByIdAndUpdate({ _id: questionId }, question, { new: true, runValidators: true })
+        .findByIdAndUpdate({ _id: questionId }, updateOptions, { new: true, runValidators: true })
         .populate({ path: 'topics', select: selectTerms })
         .select(selectTerms) as PopulatedQuestionModelType;
 

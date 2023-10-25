@@ -5,21 +5,21 @@ import type { IQuizQuestionResult, QuizQuestionResultType } from '../../db/model
 /**
  * ```ts
  *  interface IQuizQuestionResultController {
- *      getAll: () => Promise<QuizQuestionResultType[]>;
+ *      getAll: (showTimestamps?: boolean) => Promise<QuizQuestionResultType[]>;
  *
- *      getById: (id: string) => Promise<QuizQuestionResultType | null>;
+ *      getById: (id: string,showTimestamps?: boolean) => Promise<QuizQuestionResultType | null>;
  *
- *      create: (quizQuestionResult: IQuizQuestionResult) => Promise<QuizQuestionResultType>;
+ *      create: (quizQuestionResult: IQuizQuestionResult, showTimestamps?: boolean) => Promise<QuizQuestionResultType>;
  *
- *      deleteById: (id: string) => Promise<QuizQuestionResultType | null>;
+ *      deleteById: (id: string, showTimestamps?: boolean) => Promise<QuizQuestionResultType | null>;
  *  }
  * ```
  */
 export interface IQuizQuestionResultController {
     getAll: (showTimestamps?: boolean) => Promise<QuizQuestionResultType[]>;
     getById: (id: string, showTimestamps?: boolean) => Promise<QuizQuestionResultType | null>;
-    create: (quizQuestionResult: IQuizQuestionResult) => Promise<QuizQuestionResultType>;
-    deleteById: (id: string) => Promise<QuizQuestionResultType | null>;
+    create: (quizQuestionResult: IQuizQuestionResult, showTimestamps?: boolean) => Promise<QuizQuestionResultType>;
+    deleteById: (id: string, showTimestamps?: boolean) => Promise<QuizQuestionResultType | null>;
 }
 
 
@@ -36,17 +36,17 @@ export const getById = async (id: string, showTimestamps = false): Promise<QuizQ
     return foundQuizQuestionResult;
 };
 
-export const create = async (quizQuestionResult: IQuizQuestionResult): Promise<QuizQuestionResultType> => {
+export const create = async (quizQuestionResult: IQuizQuestionResult, showTimestamps = false): Promise<QuizQuestionResultType> => {
     const newQuizQuestionResult = await QuizQuestionResult.create(quizQuestionResult);
-    const selectTerms = createSelectTerms(false);
+    const selectTerms = createSelectTerms(showTimestamps);
 
     const populatedQuizQuestionResult: QuizQuestionResultType = await QuizQuestionResult.findById({ _id: newQuizQuestionResult._id }).select(selectTerms) as QuizQuestionResultType;
     return populatedQuizQuestionResult;
 };
 
-export const deleteById = async (id: string): Promise<QuizQuestionResultType | null> => {
+export const deleteById = async (id: string, showTimestamps = false): Promise<QuizQuestionResultType | null> => {
     const deletedQuizQuestionResult = await QuizQuestionResult.findByIdAndDelete({ _id: id })
-        .select(createSelectTerms(false));
+        .select(createSelectTerms(showTimestamps));
     return deletedQuizQuestionResult;
 };
 

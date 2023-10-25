@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
 import { quizAttemptController } from '../../../controllers';
 import { dbConnection, dbClose } from '../../../db/connection'
-import { QuizAttempt } from '../../../db/models';
+import { Quiz, QuizAttempt, QuizQuestionResult } from '../../../db/models';
 import { Types } from 'mongoose';
 
 import type { IQuizAttempt, QuizAttemptType } from '../../../db/types';
@@ -292,6 +292,8 @@ describe('quizAttemptController', () => {
             expect(deletedQuizAttempt).toBeDefined();
             expect(deletedQuizAttempt).toBeInstanceOf(Object);
             expect(deletedQuizAttempt?._id.toString()).toBe(quizId?.toString());
+            // the quizQuestion results should also be deleted not just removed when the quizAttempt is deleted
+            expect(await QuizQuestionResult.find({ quizAttempt: quizId })).toHaveLength(0);
         });
 
         test('It should return null if quizAttempt does not exist', async () => {

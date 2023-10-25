@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
 import { questionController } from '../../../controllers/dbControllers';
 import { dbConnection, dbClose } from '../../../db/connection'
-import { Question, Topic } from '../../../db/models';
+import { Question, QuizQuestionResult, Topic } from '../../../db/models';
 import { Types } from 'mongoose';
 
 
@@ -116,16 +116,23 @@ describe('Question Controller', () => {
     describe('deleteById()', () => {
         test('It should delete a question', async () => {
             const question = await Question.findOne({ question: 'What is the meaning of life, the universe, and everything?' });
+
+            // delete the quiz question results associated with this question when the question is deleted
+            await QuizQuestionResult.deleteMany({ question: question?._id?.toString() as string });
             const deletedQuestion = await questionController.deleteById(question?._id?.toString() as string);
 
+            // ensure we deleted the correct question
             expect(deletedQuestion).toBeDefined();
             expect(deletedQuestion).toBeInstanceOf(Object);
             expect(deletedQuestion?.questionType).toBe('MultipleChoice');
             expect(deletedQuestion?.question).toBe('What is the meaning of life, the universe, and everything?');
             expect(deletedQuestion?.topics[0]?.name).toBe('test');
 
+            // ensure the question deleted
             const didQuestionDelete = await questionController.getById(question?._id?.toString() as string);
             expect(didQuestionDelete).toBeNull();
+            // ensure the quiz question results associated with this question were deleted
+            expect(await QuizQuestionResult.find({ question: question?._id?.toString() as string })).toHaveLength(0);
         });
 
         test('It should return null if no question is found', async () => {

@@ -48,7 +48,7 @@ export const handleRouteErrorMessages = (msg: string): string => {
  * @returns the appropriate HTTP status code
  */
 export const handleRouteErrorCodes = (errorMsg: string): number => {
-    if (errorMsg.includes('Already exists')) {
+    if (errorMsg.includes('Already exists') || errorMsg.includes('already been answered')) {
         return httpStatusCodes.CONFLICT;
     } else if (
         errorMsg.includes('Invalid request body') //NOSONAR

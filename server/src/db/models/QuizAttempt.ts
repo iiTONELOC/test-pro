@@ -17,7 +17,7 @@ import { QuizQuestionResultType } from './QuizQuestionResult';
 
 export interface IQuizAttempt {
     quizId: Types.ObjectId;
-    answeredQuestions: QuizQuestionResultType[]
+    answeredQuestions: Types.ObjectId[]
     earnedPoints: number;
     passingPoints: number;
     passed: boolean;

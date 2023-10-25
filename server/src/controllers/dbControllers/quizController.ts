@@ -6,10 +6,15 @@ import { IQuiz, QuizModelType, PopulatedQuizModel } from '../../db/types';
  * ```ts
  *  interface IQuizController {
  *      getAll: () => Promise<PopulatedQuizModel[]>;
+ * 
  *      create: (quiz: IQuiz) => Promise<QuizModelType>;
+ * 
  *      getById: (id: string) => Promise<PopulatedQuizModel | null>;
+ * 
  *      updateById: (id: string, quiz: Partial<IQuiz>) => Promise<PopulatedQuizModel | null>;
+ * 
  *      deleteById: (id: string) => Promise<PopulatedQuizModel | null>;
+ * 
  *      geManyByTopics: (Topics: string[]) => Promise<PopulatedQuizModel[]>;
  *  }
  * ```
@@ -27,7 +32,7 @@ export const getAll = async (showTimestamps = false): Promise<PopulatedQuizModel
     const selectTerms = createSelectTerms(showTimestamps);
     const quizzes: PopulatedQuizModel[] = await Quiz.find({}).populate([
         { path: 'topics', select: selectTerms },
-        { path: 'questions', select: selectTerms }
+        { path: 'questions', select: selectTerms, populate: { path: 'topics', select: selectTerms } }
     ]).select(selectTerms) as PopulatedQuizModel[];
 
     return quizzes;
@@ -38,7 +43,7 @@ export const create = async (quiz: IQuiz, showTimestamps = false): Promise<Popul
     const newQuiz: QuizModelType = (await Quiz.create({ ...quiz }));
     const populatedQuiz: PopulatedQuizModel = await Quiz.findById({ _id: newQuiz._id }).populate([
         { path: 'topics', select: selectTerms },
-        { path: 'questions', select: selectTerms }
+        { path: 'questions', select: selectTerms, populate: { path: 'topics', select: selectTerms } }
     ]).select(selectTerms) as PopulatedQuizModel;
 
     return populatedQuiz;
@@ -48,7 +53,7 @@ export const getById = async (id: string, showTimestamps = false): Promise<Popul
     const selectTerms = createSelectTerms(showTimestamps);
     const foundQuiz = await Quiz.findById({ _id: id }).populate([
         { path: 'topics', select: selectTerms },
-        { path: 'questions', select: selectTerms }
+        { path: 'questions', select: selectTerms, populate: { path: 'topics', select: selectTerms } }
     ]).select(selectTerms) as PopulatedQuizModel | null;
 
     return foundQuiz;
@@ -60,10 +65,25 @@ export const updateById = async (id: string, quiz: Partial<IQuiz>, showTimestamp
     if (Object.keys(quiz).length === 0) {
         throw new Error('Nothing to update');
     }
-    const updatedQuiz = await Quiz.findByIdAndUpdate({ _id: id }, { ...quiz }, { new: true, runValidators: true })
+    const { topics, questions, ...rest } = quiz;
+
+    let updateOptions: any = { ...rest };
+
+    // ensure we don't overwrite topics or questions when updating
+    if ((topics?.length ?? 0) > 0) {
+        updateOptions = { ...rest, $addToSet: { topics } }
+    }
+
+    if ((questions?.length ?? 0) > 0) {
+        updateOptions = {
+            ...updateOptions, $addToSet: { ...updateOptions.$addToSet, questions }
+        }
+    }
+
+    const updatedQuiz = await Quiz.findByIdAndUpdate({ _id: id }, updateOptions, { new: true, runValidators: true })
         .populate([
             { path: 'topics', select: selectTerms },
-            { path: 'questions', select: selectTerms }
+            { path: 'questions', select: selectTerms, populate: { path: 'topics', select: selectTerms } }
         ]).select(selectTerms) as PopulatedQuizModel | null;
 
     return updatedQuiz;
@@ -73,7 +93,7 @@ export const deleteById = async (id: string, showTimestamps = false): Promise<Po
     const selectTerms = createSelectTerms(showTimestamps);
     const deletedQuiz = await Quiz.findByIdAndDelete({ _id: id }).populate([
         { path: 'topics', select: selectTerms },
-        { path: 'questions', select: selectTerms }
+        { path: 'questions', select: selectTerms, populate: { path: 'topics', select: selectTerms } }
     ]).select(selectTerms) as PopulatedQuizModel | null;
 
     return deletedQuiz;
@@ -83,7 +103,7 @@ export const geManyByTopics = async (topics: string[], showTimestamps = false): 
     const selectTerms = createSelectTerms(showTimestamps);
     const quizzes = await Quiz.find({ topics: { $in: topics } }).populate([
         { path: 'topics', select: selectTerms },
-        { path: 'questions', select: selectTerms }
+        { path: 'questions', select: selectTerms, populate: { path: 'topics', select: selectTerms } }
     ]).select(selectTerms) as PopulatedQuizModel[];
 
     return quizzes;

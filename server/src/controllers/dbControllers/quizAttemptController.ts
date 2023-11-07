@@ -1,35 +1,40 @@
 import { QuizAttempt, QuizQuestionResult } from '../../db/models';
 import { createSelectTerms } from './controllerUtils';
 
-import type { IQuizAttempt, PopulatedQuizAttemptType } from '../../db/types';
+import type { IQuizAttempt, PopulatedQuizAttemptType, QuizAttemptType } from '../../db/types';
+import { dbQueryParams } from '../types';
+import { dbQueryParamDefaults } from '../routeControllers/routeUtils';
 
 /**
  * ```ts
  * interface IQuizAttempt {
- *  getAll(showTimestamps?: boolean): Promise<PopulatedQuizAttemptType[]>;
- *
- *  getById(id: string, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType | null>;
- *
- *  create(quizAttempt: IQuizAttempt, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType>;
- *
- *  updateById(id: string, quizAttempt: IQuizAttempt, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType | null>;
- *
- *  deleteById(id: string, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType | null>;
+ *    getAll(queryParams: dbQueryParams): Promise<QuizAttemptModelResponse[]>;
+ *    getById(id: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+ *    create(quizAttempt: IQuizAttempt, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+ *    updateById(id: string, quizAttempt: Partial<IQuizAttempt>, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+ *    deleteById(id: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+ *    getByQuizId(quizId: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse[]>;
  * }
  * ```
  */
 export interface IQuizAttemptController {
-    getAll(showTimestamps?: boolean): Promise<PopulatedQuizAttemptType[]>;
-    getById(id: string, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType | null>;
-    create(quizAttempt: IQuizAttempt, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType>;
-    updateById(id: string, quizAttempt: Partial<IQuizAttempt>, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType | null>;
-    deleteById(id: string, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType | null>;
-    getByQuizId(quizId: string, showTimestamps?: boolean): Promise<PopulatedQuizAttemptType[]>;
+    getAll(queryParams: dbQueryParams): Promise<QuizAttemptModelResponse[]>;
+    getById(id: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+    create(quizAttempt: IQuizAttempt, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+    updateById(id: string, quizAttempt: Partial<IQuizAttempt>, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+    deleteById(id: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null>;
+    getByQuizId(quizId: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse[]>;
 }
 
-export const getAll = async (showTimestamps = false): Promise<PopulatedQuizAttemptType[]> => {
+export type QuizAttemptModelResponse = (PopulatedQuizAttemptType | QuizAttemptType)
+
+export const getAll = async (queryParams: dbQueryParams): Promise<QuizAttemptModelResponse[]> => {
+    const { showTimestamps, needToPopulate } = queryParams ?? dbQueryParamDefaults;
     const selectTerms = createSelectTerms(showTimestamps);
-    const quizAttempts = await QuizAttempt.find().select(selectTerms).populate({
+
+    let quizAttempts: PopulatedQuizAttemptType[] | QuizAttemptType[] = [];
+
+    needToPopulate && (quizAttempts = await QuizAttempt.find().select(selectTerms).populate({
         path: 'answeredQuestions',
         select: selectTerms,
         populate: {
@@ -40,13 +45,20 @@ export const getAll = async (showTimestamps = false): Promise<PopulatedQuizAttem
                 select: selectTerms
             }
         }
-    }) as PopulatedQuizAttemptType[];
+    }) as PopulatedQuizAttemptType[]);
+
+    !needToPopulate && (quizAttempts = await QuizAttempt.find().select(selectTerms) as QuizAttemptType[]);
+
     return quizAttempts;
 };
 
-export const getById = async (id: string, showTimestamps = false): Promise<PopulatedQuizAttemptType | null> => {
+export const getById = async (id: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null> => {
+    const { showTimestamps, needToPopulate } = queryParams ?? dbQueryParamDefaults;
     const selectTerms = createSelectTerms(showTimestamps);
-    const quizAttempt = await QuizAttempt.findById(id).select(selectTerms).populate({
+
+    let quizAttempt: QuizAttemptModelResponse | null = null;
+
+    needToPopulate && (quizAttempt = await QuizAttempt.findById(id).select(selectTerms).populate({
         path: 'answeredQuestions',
         select: selectTerms,
         populate: {
@@ -57,18 +69,24 @@ export const getById = async (id: string, showTimestamps = false): Promise<Popul
                 select: selectTerms
             }
         }
-    }) as PopulatedQuizAttemptType | null;
+    }) as PopulatedQuizAttemptType | null);
+
+    !needToPopulate && (quizAttempt = await QuizAttempt.findById(id).select(selectTerms) as QuizAttemptType | null);
     return quizAttempt;
 };
 
-export const create = async (quizAttempt: IQuizAttempt, showTimestamps = false): Promise<PopulatedQuizAttemptType> => {
+export const create = async (quizAttempt: IQuizAttempt, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null> => {
+    const { showTimestamps, needToPopulate } = queryParams ?? dbQueryParamDefaults;
+    const selectTerms = createSelectTerms(showTimestamps);
+
     if (!quizAttempt.answeredQuestions) {
         throw new Error('An array of answered questions must be provided.');
     }
     const newQuizAttempt = await QuizAttempt.create(quizAttempt);
-    const selectTerms = createSelectTerms(showTimestamps);
 
-    const newAttempt = await QuizAttempt.findById({ _id: newQuizAttempt._id })
+    let attempt: QuizAttemptModelResponse | null = null;
+
+    needToPopulate && (attempt = await QuizAttempt.findById({ _id: newQuizAttempt._id })
         .select(selectTerms).populate({
             path: 'answeredQuestions',
             select: selectTerms,
@@ -80,24 +98,28 @@ export const create = async (quizAttempt: IQuizAttempt, showTimestamps = false):
                     select: selectTerms
                 }
             }
-        }) as PopulatedQuizAttemptType;
-    return newAttempt;
+        }) as PopulatedQuizAttemptType);
+
+    !needToPopulate && (attempt = await QuizAttempt.findById({ _id: newQuizAttempt._id }).select(selectTerms) as QuizAttemptType);
+
+    return attempt;
 };
 
-export const updateById = async (id: string, quizAttempt: Partial<IQuizAttempt>, showTimestamps = false): Promise<PopulatedQuizAttemptType | null> => {
+export const updateById = async (id: string, quizAttempt: Partial<IQuizAttempt>, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null> => {
+    const { showTimestamps, needToPopulate } = queryParams ?? dbQueryParamDefaults;
     const selectTerms = createSelectTerms(showTimestamps);
 
     const { answeredQuestions, ...rest } = quizAttempt;
     let updateOptions = {};
+    let updatedQuizAttempt: QuizAttemptModelResponse | null = null;
 
-    // ensure that answeredQuestions is not overwritten when 
     if (answeredQuestions?.length === 0) {
         updateOptions = { ...rest };
     } else {
         updateOptions = { ...rest, $addToSet: { answeredQuestions } };
     }
 
-    const updatedQuizAttempt = await QuizAttempt.findByIdAndUpdate(id, updateOptions, {
+    needToPopulate && (updatedQuizAttempt = await QuizAttempt.findByIdAndUpdate(id, updateOptions, {
         new: true,
         runValidators: true
     }).select(selectTerms).populate({
@@ -111,16 +133,25 @@ export const updateById = async (id: string, quizAttempt: Partial<IQuizAttempt>,
                 select: selectTerms
             }
         }
-    }) as PopulatedQuizAttemptType | null;
+    }) as PopulatedQuizAttemptType | null);
+
+    !needToPopulate && (updatedQuizAttempt = await QuizAttempt
+        .findByIdAndUpdate(id, updateOptions, { new: true, runValidators: true })
+        .select(selectTerms) as QuizAttemptType | null);
+
     return updatedQuizAttempt;
 };
 
-export const deleteById = async (id: string, showTimestamps = false): Promise<PopulatedQuizAttemptType | null> => {
+export const deleteById = async (id: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse | null> => {
+    const { showTimestamps, needToPopulate } = queryParams ?? dbQueryParamDefaults;
+
     const deletedQuestionResults = await QuizQuestionResult.deleteMany({ quizAttempt: id });
     if (!deletedQuestionResults) throw new Error('Unable to delete quiz question results.');
-
     const selectTerms = createSelectTerms(showTimestamps);
-    const deletedQuizAttempt = await QuizAttempt.findByIdAndDelete(id)
+
+    let deletedQuizAttempt: QuizAttemptModelResponse | null = null;
+
+    needToPopulate && (deletedQuizAttempt = await QuizAttempt.findByIdAndDelete(id)
         .select(selectTerms).populate({
             path: 'answeredQuestions',
             select: selectTerms,
@@ -132,14 +163,20 @@ export const deleteById = async (id: string, showTimestamps = false): Promise<Po
                     select: selectTerms
                 }
             }
-        }) as PopulatedQuizAttemptType | null;
+        }) as PopulatedQuizAttemptType | null);
+
+    !needToPopulate && (deletedQuizAttempt = await QuizAttempt.findByIdAndDelete(id).select(selectTerms) as QuizAttemptType | null);
+
     return deletedQuizAttempt;
 };
 
-export const getByQuizId = async (quizId: string, showTimestamps = false): Promise<PopulatedQuizAttemptType[]> => {
+export const getByQuizId = async (quizId: string, queryParams: dbQueryParams): Promise<QuizAttemptModelResponse[]> => {
+    const { showTimestamps, needToPopulate } = queryParams ?? dbQueryParamDefaults;
     const selectTerms = createSelectTerms(showTimestamps);
 
-    const quizAttempts = await QuizAttempt.find({ quizId }).select(selectTerms).populate({
+    let quizAttempts: QuizAttemptModelResponse[] | null = null;
+
+    needToPopulate && (quizAttempts = await QuizAttempt.find({ quizId }).select(selectTerms).populate({
         path: 'answeredQuestions',
         select: selectTerms,
         populate: {
@@ -150,8 +187,11 @@ export const getByQuizId = async (quizId: string, showTimestamps = false): Promi
                 select: selectTerms
             }
         }
-    }) as PopulatedQuizAttemptType[];
-    return quizAttempts;
+    }) as PopulatedQuizAttemptType[]);
+
+    !needToPopulate && (quizAttempts = await QuizAttempt.find({ quizId }, selectTerms).select(selectTerms) as QuizAttemptType[])
+
+    return quizAttempts ?? [];
 };
 
 export const quizAttemptController: IQuizAttemptController = {

@@ -7,7 +7,12 @@ import { startServer } from '../../../server';
 import { Types } from 'mongoose';
 
 
-import { IQuiz, ITopic, IQuestion, TopicModelType, PopulatedQuestionModelType, PopulatedQuizModel, QuizModelType } from '../../../db/types';
+import {
+    IQuiz, ITopic, IQuestion, TopicModelType, PopulatedQuestionModelType,
+    PopulatedQuizModel, QuizModelType, QuestionModelType
+} from '../../../db/types';
+import { QuestionModelResponse } from '../../../controllers/dbControllers/questionController';
+
 
 const PORT = 3003;
 
@@ -37,7 +42,7 @@ beforeAll(async () => {
     process.env.PORT = PORT.toString();
     await dbConnection(process.env.TEST_DB_NAME).then(async () => {
         await startServer();
-    })
+    });
 
     // create a topic
     const testTopic: TopicModelType = await topicController.create(testTopicData.name);
@@ -47,7 +52,7 @@ beforeAll(async () => {
     testQuestionData.topics.push(testTopicId);
 
     // create a question
-    const testQuestion: PopulatedQuestionModelType = await questionController.create(testQuestionData);
+    const testQuestion: QuestionModelType = await Question.create(testQuestionData);
     const testQuestionId: Types.ObjectId = testQuestion._id;
 
     // add the question id to the testQuizData
@@ -75,6 +80,27 @@ describe('Quiz Routes', () => {
             expect(response.status).toBe(200);
             expect(quizzes?.data?.length).toBe(1);
         });
+
+        test('Should return an unpopulated array of quizzes when the no-populate URL param is used', async () => {
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes?no-populate=true`);
+            const quizzes: IApiResponse<QuizModelType[]> = await response.json() as IApiResponse<QuizModelType[]>;
+
+            expect(response.status).toBe(200);
+            expect(quizzes?.data?.length).toBe(1);
+            expect(quizzes?.data?.[0].questions.length).toBe(1);
+            expect(quizzes?.data?.[0].topics.length).toBe(1);
+            expect(quizzes?.data?.[0].topics[0]).toBeString();
+            expect(quizzes?.data?.[0].questions[0]).toBeString();
+        });
+
+        test('Should return an array of quizzes with timestamps when the timestamps URL param is used', async () => {
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes?timestamps=true`);
+            const quizzes: IApiResponse<PopulatedQuizModel[]> = await response.json() as IApiResponse<PopulatedQuizModel[]>;
+            expect(response.status).toBe(200);
+            expect(quizzes?.data?.length).toBe(1);
+            expect(quizzes?.data?.[0].createdAt).toBeString();
+            expect(quizzes?.data?.[0].updatedAt).toBeString();
+        });
     });
 
     describe('GET /api/quizzes/:id', () => {
@@ -96,6 +122,33 @@ describe('Quiz Routes', () => {
             expect(response.status).toBe(404);
             expect(quizResponse?.error).toBe('Quiz not found');
         });
+
+        test('Should return an unpopulated quiz when the no-populate URL param is used', async () => {
+            const quiz: QuizModelType | null = await Quiz.findOne({ name: testQuizData.name });
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/${quiz?._id}?no-populate=true`);
+            const quizResponse: IApiResponse<QuizModelType> = await response.json() as IApiResponse<QuizModelType>;
+
+            expect(response.status).toBe(200);
+            expect(quizResponse?.data?.name).toBe(testQuizData.name);
+            expect(quizResponse?.data?.questions.length).toBe(1);
+            expect(quizResponse?.data?.topics.length).toBe(1);
+            expect(quizResponse?.data?.questions[0]).toBeString();
+            expect(quizResponse?.data?.topics[0]).toBeString();
+        });
+
+        test('Should return a quiz with timestamps when the timestamps URL param is used', async () => {
+            const quiz: QuizModelType | null = await Quiz.findOne({ name: testQuizData.name });
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/${quiz?._id}?timestamps=true`);
+            const quizResponse: IApiResponse<PopulatedQuizModel> = await response.json() as IApiResponse<PopulatedQuizModel>;
+
+            expect(response.status).toBe(200);
+            expect(quizResponse?.data?.name).toBe(testQuizData.name);
+            expect(quizResponse?.data?.questions.length).toBe(1);
+            expect(quizResponse?.data?.topics.length).toBe(1);
+            expect(quizResponse?.data?.createdAt).toBeString();
+            expect(quizResponse?.data?.updatedAt).toBeString();
+        });
+
     });
 
     describe('POST /api/quizzes', () => {
@@ -127,6 +180,42 @@ describe('Quiz Routes', () => {
 
             expect(response.status).toBe(400);
             expect(quizResponse?.error).toBe('Quiz validation failed: name: Path `name` is required.');
+        });
+
+        test('It should return an unpopulated quiz when the no-populate URL param is used', async () => {
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes?no-populate=true`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testQuizData)
+            });
+            const quizResponse: IApiResponse<QuizModelType> = await response.json() as IApiResponse<QuizModelType>;
+
+            expect(response.status).toBe(201);
+            expect(quizResponse?.data?.name).toBe(testQuizData.name);
+            expect(quizResponse?.data?.questions.length).toBe(1);
+            expect(quizResponse?.data?.topics.length).toBe(1);
+            expect(quizResponse?.data?.questions[0]).toBeString();
+            expect(quizResponse?.data?.topics[0]).toBeString();
+        });
+
+        test('It should return a quiz with timestamps when the timestamps URL param is used', async () => {
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes?timestamps=true`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testQuizData)
+            });
+            const quizResponse: IApiResponse<PopulatedQuizModel> = await response.json() as IApiResponse<PopulatedQuizModel>;
+
+            expect(response.status).toBe(201);
+            expect(quizResponse?.data?.name).toBe(testQuizData.name);
+            expect(quizResponse?.data?.questions.length).toBe(1);
+            expect(quizResponse?.data?.topics.length).toBe(1);
+            expect(quizResponse?.data?.createdAt).toBeString();
+            expect(quizResponse?.data?.updatedAt).toBeString();
         });
     });
 
@@ -176,6 +265,44 @@ describe('Quiz Routes', () => {
             expect(response.status).toBe(400);
             expect(quizResponse?.error).toBe('Nothing to update');
         });
+
+        test('Should return an unpopulated quiz when the no-populate URL param is used', async () => {
+            const quiz: QuizModelType | null = await Quiz.findOne({ name: testQuizData.name });
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/${quiz?._id}?no-populate=true`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: 'updatedQuiz' })
+            });
+            const quizResponse: IApiResponse<QuizModelType> = await response.json() as IApiResponse<QuizModelType>;
+
+            expect(response.status).toBe(200);
+            expect(quizResponse?.data?.name).toBe('updatedQuiz');
+            expect(quizResponse?.data?.questions.length).toBe(1);
+            expect(quizResponse?.data?.topics.length).toBe(1);
+            expect(quizResponse?.data?.questions[0]).toBeString();
+            expect(quizResponse?.data?.topics[0]).toBeString();
+        });
+
+        test('Should return a quiz with timestamps when the timestamps URL param is used', async () => {
+            const quiz: QuizModelType | null = await Quiz.findOne({ name: testQuizData.name });
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/${quiz?._id}?timestamps=true`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: 'updatedQuiz' })
+            });
+            const quizResponse: IApiResponse<PopulatedQuizModel> = await response.json() as IApiResponse<PopulatedQuizModel>;
+
+            expect(response.status).toBe(200);
+            expect(quizResponse?.data?.name).toBe('updatedQuiz');
+            expect(quizResponse?.data?.questions.length).toBe(1);
+            expect(quizResponse?.data?.topics.length).toBe(1);
+            expect(quizResponse?.data?.createdAt).toBeString();
+            expect(quizResponse?.data?.updatedAt).toBeString();
+        });
     });
 
     describe('DELETE /api/quizzes/:id', () => {
@@ -201,8 +328,25 @@ describe('Quiz Routes', () => {
             expect(response.status).toBe(404);
             expect(quizResponse?.error).toBe('Quiz not found');
         });
+
+        test('Should return an unpopulated quiz when the no-populate URL param is used', async () => {
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/123456789012?no-populate=true`, {
+                method: 'DELETE'
+            });
+            const quizResponse: IApiResponse<QuizModelType> = await response.json() as IApiResponse<QuizModelType>;
+
+            expect(response.status).toBe(404);
+            expect(quizResponse?.error).toBe('Quiz not found');
+        });
+
+        test('Should return a quiz with timestamps when the timestamps URL param is used', async () => {
+            const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/123456789012?timestamps=true`, {
+                method: 'DELETE'
+            });
+            const quizResponse: IApiResponse<PopulatedQuizModel> = await response.json() as IApiResponse<PopulatedQuizModel>;
+
+            expect(response.status).toBe(404);
+            expect(quizResponse?.error).toBe('Quiz not found');
+        });
     });
 });
-
-
-

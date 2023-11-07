@@ -1,4 +1,5 @@
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
+import { dbQueryParams } from '../types';
 
 export const httpStatusCodes = {
     OK: 200,
@@ -8,6 +9,20 @@ export const httpStatusCodes = {
     CONFLICT: 409,
     INTERNAL_SERVER_ERROR: 500
 };
+
+/**
+ * ```ts
+ * const dbQueryParams: dbQueryParams = {
+ *    showTimestamps: false,
+ *    needToPopulate: true
+ * };
+ * ```
+ */
+export const dbQueryParamDefaults: dbQueryParams = {
+    showTimestamps: false,
+    needToPopulate: true
+};
+
 
 /**
  * Determines whether timestamps should be shown in the response. This information is
@@ -24,6 +39,22 @@ export const shouldShowTimestamps = (req: Request): boolean => {
         return false;
     }
 };
+
+/**
+ * Determines whether the response should be populated. This information is
+ * extracted from the request query parameters. ie. `/api/quizzes?no-populate=true`
+ * @param req
+ * @returns true or false
+ */
+export const shouldPopulate = (req: Request): boolean => {
+    try {
+        const noPopulate = req.query['no-populate'];
+        return noPopulate !== 'true';
+    } catch (error) {
+        console.error(error);
+        return true;
+    }
+}
 
 /**
  * Ensure that the error messages do not leak sensitive information to the client.
@@ -48,7 +79,11 @@ export const handleRouteErrorMessages = (msg: string): string => {
  * @returns the appropriate HTTP status code
  */
 export const handleRouteErrorCodes = (errorMsg: string): number => {
-    if (errorMsg.includes('Already exists') || errorMsg.includes('already been answered')) {
+    if (
+        errorMsg.includes('Already exists')
+        || errorMsg.includes('already been answered')
+        || errorMsg.includes('has no answered questions.')
+    ) {
         return httpStatusCodes.CONFLICT;
     } else if (
         errorMsg.includes('Invalid request body') //NOSONAR
@@ -75,4 +110,20 @@ export const handleRouteError = (res: Response, errorMsg: string): Response => {
     const message = handleRouteErrorMessages(errorMsg);
     const statusCode = handleRouteErrorCodes(message);
     return res.status(statusCode).json({ error: message });
+}
+
+/**
+ * Extracts the query parameters from the request object.
+ * @param req an Express Request object
+ * @returns the query parameters, if an error occurs, the default values are returned over the user's input
+ */
+export const extractDbQueryParams = (req: Request): dbQueryParams => {
+    try {
+        return {
+            showTimestamps: shouldShowTimestamps(req),
+            needToPopulate: shouldPopulate(req)
+        }
+    } catch (error) {
+        return dbQueryParamDefaults;
+    }
 }

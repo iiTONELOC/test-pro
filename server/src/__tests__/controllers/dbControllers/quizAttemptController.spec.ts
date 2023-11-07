@@ -1,10 +1,12 @@
 import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
+import { dbQueryParamDefaults } from '../../../controllers/routeControllers/routeUtils';
 import { quizAttemptController } from '../../../controllers';
 import { dbConnection, dbClose } from '../../../db/connection'
-import { Quiz, QuizAttempt, QuizQuestionResult } from '../../../db/models';
+import { QuizAttempt, QuizQuestionResult } from '../../../db/models';
 import { Types } from 'mongoose';
 
 import type { IQuizAttempt, QuizAttemptType } from '../../../db/types';
+
 
 beforeAll(async () => {
     await dbConnection(process.env.TEST_DB_NAME);
@@ -37,16 +39,16 @@ describe('quizAttemptController', () => {
                 elapsedTimeInMs: 0
             };
 
-            const quizAttempt: QuizAttemptType = await quizAttemptController.create(quizAttemptData);
+            const quizAttempt: QuizAttemptType | null = await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
 
             expect(quizAttempt).toBeDefined();
             expect(quizAttempt).toHaveProperty('_id');
-            expect(quizAttempt.answeredQuestions).toHaveLength(0);
-            expect(quizAttempt.earnedPoints).toBe(0);
-            expect(quizAttempt.passingPoints).toBe(0);
-            expect(quizAttempt.passed).toBe(false);
-            expect(quizAttempt.dateTaken).toBeInstanceOf(Date);
-            expect(quizAttempt.elapsedTimeInMs).toBe(0);
+            expect(quizAttempt?.answeredQuestions).toHaveLength(0);
+            expect(quizAttempt?.earnedPoints).toBe(0);
+            expect(quizAttempt?.passingPoints).toBe(0);
+            expect(quizAttempt?.passed).toBe(false);
+            expect(quizAttempt?.dateTaken).toBeInstanceOf(Date);
+            expect(quizAttempt?.elapsedTimeInMs).toBe(0);
         });
 
         test('It should throw and error if quizId is not provided', async () => {
@@ -62,7 +64,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -83,7 +85,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -104,7 +106,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -125,7 +127,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -146,7 +148,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -167,7 +169,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -188,7 +190,7 @@ describe('quizAttemptController', () => {
             };
 
             try {
-                await quizAttemptController.create(quizAttemptData);
+                await quizAttemptController.create(quizAttemptData, dbQueryParamDefaults);
             } catch (error: any) {
                 expect(error).toBeDefined();
                 expect(error).toBeInstanceOf(Error);
@@ -199,7 +201,7 @@ describe('quizAttemptController', () => {
 
     describe('getAll', () => {
         test('It should return an array of quizAttempts', async () => {
-            const quizAttempts: QuizAttemptType[] = await quizAttemptController.getAll();
+            const quizAttempts: QuizAttemptType[] = await quizAttemptController.getAll(dbQueryParamDefaults);
             expect(quizAttempts).toBeDefined();
             expect(quizAttempts).toBeInstanceOf(Array);
             expect(quizAttempts).toHaveLength(1);
@@ -208,7 +210,7 @@ describe('quizAttemptController', () => {
 
     describe('getById', () => {
         test('It should return a quizAttempt by ID if it exists', async () => {
-            const quizId = await quizAttemptController.getAll().then((quizAttempts: QuizAttemptType[]) => {
+            const quizId = await quizAttemptController.getAll(dbQueryParamDefaults).then((quizAttempts: QuizAttemptType[]) => {
                 if (quizAttempts.length) {
                     return quizAttempts[0]._id;
                 }
@@ -216,7 +218,7 @@ describe('quizAttemptController', () => {
                 return null;
             });
 
-            const quizAttempt: QuizAttemptType | null = await quizAttemptController.getById(quizId as unknown as string);
+            const quizAttempt: QuizAttemptType | null = await quizAttemptController.getById(quizId as unknown as string, dbQueryParamDefaults);
 
             expect(quizAttempt).toBeDefined();
             expect(quizAttempt).toBeInstanceOf(Object);
@@ -232,7 +234,7 @@ describe('quizAttemptController', () => {
         });
 
         test('It should return null if quizAttempt does not exist', async () => {
-            const quizAttempt: QuizAttemptType | null = await quizAttemptController.getById(new Types.ObjectId().toString());
+            const quizAttempt: QuizAttemptType | null = await quizAttemptController.getById(new Types.ObjectId().toString(), dbQueryParamDefaults);
 
             expect(quizAttempt).toBeNull();
         });
@@ -241,7 +243,7 @@ describe('quizAttemptController', () => {
 
     describe('updateById', () => {
         test('It should update a quizAttempt by ID if it exists', async () => {
-            const quizId = await quizAttemptController.getAll().then((quizAttempts: QuizAttemptType[]) => {
+            const quizId = await quizAttemptController.getAll(dbQueryParamDefaults).then((quizAttempts: QuizAttemptType[]) => {
                 if (quizAttempts.length) {
                     return quizAttempts[0]._id;
                 }
@@ -255,7 +257,8 @@ describe('quizAttemptController', () => {
                 passed: true
             };
 
-            const updatedQuizAttempt: QuizAttemptType | null = await quizAttemptController.updateById(quizId as unknown as string, quizAttemptData);
+            const updatedQuizAttempt: QuizAttemptType | null = await quizAttemptController.updateById(
+                quizId as unknown as string, quizAttemptData, dbQueryParamDefaults);
 
             expect(updatedQuizAttempt).toBeDefined();
             expect(updatedQuizAttempt).toBeInstanceOf(Object);
@@ -271,7 +274,8 @@ describe('quizAttemptController', () => {
                 passed: true
             };
 
-            const updatedQuizAttempt: QuizAttemptType | null = await quizAttemptController.updateById(new Types.ObjectId().toString(), quizAttemptData);
+            const updatedQuizAttempt: QuizAttemptType | null = await quizAttemptController.updateById(
+                new Types.ObjectId().toString(), quizAttemptData, dbQueryParamDefaults);
 
             expect(updatedQuizAttempt).toBeNull();
         });
@@ -279,7 +283,7 @@ describe('quizAttemptController', () => {
 
     describe('deleteById', () => {
         test('It should delete a quizAttempt by ID if it exists', async () => {
-            const quizId = await quizAttemptController.getAll().then((quizAttempts: QuizAttemptType[]) => {
+            const quizId = await quizAttemptController.getAll(dbQueryParamDefaults).then((quizAttempts: QuizAttemptType[]) => {
                 if (quizAttempts.length) {
                     return quizAttempts[0]._id;
                 }

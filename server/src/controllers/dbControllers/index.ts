@@ -41,5 +41,3 @@ export {
     create as createQuizQuestionResult,
     deleteById as deleteQuizQuestionResultById
 } from './quizQuestionResultController';
-
-

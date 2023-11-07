@@ -57,7 +57,6 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
         }
     },
     deleteById: async (req: Request, res: Response): Promise<IApiResponse<QuizAttemptModelResponse>> => {
-
         try {
             const quizAttempt = await quizAttemptController.deleteById(req.params.id, extractDbQueryParams(req));
             if (!quizAttempt) throw new Error('Quiz attempt not found.');

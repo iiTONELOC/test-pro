@@ -41,3 +41,12 @@ export {
     create as createQuizQuestionResult,
     deleteById as deleteQuizQuestionResultById
 } from './quizQuestionResultController';
+
+export {
+    default as quizHistoryController,
+    create as createQuizHistory,
+    getAll as getAllQuizHistories,
+    getById as getQuizHistoryById,
+    deleteById as deleteQuizHistoryById
+} from './quizHistoryController';
+

@@ -1,9 +1,10 @@
 import { QuizAttempt, QuizQuestionResult } from '../../db/models';
+import { dbQueryParamDefaults } from '../routeControllers/routeUtils';
 import { createSelectTerms } from './controllerUtils';
 
 import type { IQuizAttempt, PopulatedQuizAttemptType, QuizAttemptType } from '../../db/types';
-import { dbQueryParams } from '../types';
-import { dbQueryParamDefaults } from '../routeControllers/routeUtils';
+import type { dbQueryParams } from '../types';
+
 
 /**
  * ```ts

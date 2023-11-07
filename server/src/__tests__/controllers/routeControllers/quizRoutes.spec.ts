@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test, describe } from 'bun:test';
 import { Question, Topic, Quiz, QuestionTypeEnums } from '../../../db/models';
-import { topicController, questionController } from '../../../controllers';
+import { topicController } from '../../../controllers';
 import { dbConnection, dbClose } from '../../../db/connection';
 import { IApiResponse } from '../../../controllers/types';
 import { startServer } from '../../../server';
@@ -8,10 +8,8 @@ import { Types } from 'mongoose';
 
 
 import {
-    IQuiz, ITopic, IQuestion, TopicModelType, PopulatedQuestionModelType,
-    PopulatedQuizModel, QuizModelType, QuestionModelType
+    IQuiz, ITopic, IQuestion, TopicModelType, PopulatedQuizModel, QuizModelType, QuestionModelType
 } from '../../../db/types';
-import { QuestionModelResponse } from '../../../controllers/dbControllers/questionController';
 
 
 const PORT = 3003;

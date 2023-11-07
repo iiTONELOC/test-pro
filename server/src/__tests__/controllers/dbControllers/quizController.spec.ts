@@ -4,7 +4,7 @@ import { Question, Topic, Quiz, QuestionTypeEnums } from '../../../db/models';
 import { dbConnection, dbClose } from '../../../db/connection'
 import { Types } from 'mongoose';
 
-import { IQuiz, IQuestion, ITopic, PopulatedQuizModel, TopicModelType, PopulatedQuestionModelType, } from '../../../db/types';
+import { IQuiz, IQuestion, ITopic, PopulatedQuizModel, TopicModelType, PopulatedQuestionModelType, QuizModelType, } from '../../../db/types';
 import { IQuizController } from '../../../controllers/types';
 
 const testTopicData: ITopic = {
@@ -40,7 +40,10 @@ beforeAll(async () => {
     testQuestionData.topics.push(testTopicId);
 
     // create a question
-    const testQuestion: PopulatedQuestionModelType = await questionController.create(testQuestionData);
+    const testQuestion: PopulatedQuestionModelType = await questionController.create(testQuestionData, {
+        showTimestamps: false,
+        needToPopulate: true
+    }) as PopulatedQuestionModelType;
     const testQuestionId: Types.ObjectId = testQuestion._id;
 
     // add the question id to the testQuizData
@@ -70,7 +73,11 @@ describe('Quiz Controller', () => {
 
     describe('create', () => {
         test('It should create a quiz', async () => {
-            const newQuiz: PopulatedQuizModel = await quizController.create({ ...testQuizData });
+            const newQuiz: PopulatedQuizModel = await quizController.create({ ...testQuizData }, {
+                showTimestamps: false,
+                needToPopulate: true
+            }) as PopulatedQuizModel;
+
             expect(newQuiz).toBeDefined();
             expect(newQuiz.name).toEqual(testQuizData.name);
             expect(newQuiz.questions.length).toEqual(1);
@@ -89,7 +96,11 @@ describe('Quiz Controller', () => {
 
     describe('getAll', () => {
         test('It should get all quizzes', async () => {
-            const quizzes: PopulatedQuizModel[] = await quizController.getAll();
+            const quizzes: QuizModelType[] = await quizController.getAll({
+                showTimestamps: false,
+                needToPopulate: false
+            }) as QuizModelType[];
+
             expect(quizzes).toBeDefined();
             expect(quizzes.length).toEqual(1);
         });
@@ -97,9 +108,16 @@ describe('Quiz Controller', () => {
 
     describe('getById', () => {
         test('It should get a quiz by id', async () => {
-            const quizzes: PopulatedQuizModel[] = await quizController.getAll();
+            const quizzes: QuizModelType[] = await quizController.getAll({
+                showTimestamps: false,
+                needToPopulate: false
+            }) as QuizModelType[];
+
             const quizId: Types.ObjectId = quizzes[0]._id;
-            const quiz: PopulatedQuizModel | null = await quizController.getById(quizId.toString());
+            const quiz: QuizModelType | null = await quizController.getById(quizId.toString(), {
+                showTimestamps: false,
+                needToPopulate: false
+            });
             expect(quiz).toBeDefined();
             expect(quiz?.name).toEqual(testQuizData.name);
             expect(quiz?.questions.length).toEqual(1);
@@ -107,16 +125,27 @@ describe('Quiz Controller', () => {
         });
 
         test('It should return null if quiz is not found', async () => {
-            const quiz: PopulatedQuizModel | null = await quizController.getById('123456789012');
+            const quiz: QuizModelType | null = await quizController.getById('123456789012', {
+                showTimestamps: false,
+                needToPopulate: false
+            });
+
             expect(quiz).toBeNull();
         });
     });
 
     describe('updateById', () => {
         test('It should update a quiz by id', async () => {
-            const quizzes: PopulatedQuizModel[] = await quizController.getAll();
+            const quizzes: QuizModelType[] = await quizController.getAll({
+                showTimestamps: false,
+                needToPopulate: false
+            });
             const quizId: Types.ObjectId = quizzes[0]._id;
-            const updatedQuiz: PopulatedQuizModel | null = await quizController.updateById(quizId.toString(), { name: 'updatedQuiz' });
+            const updatedQuiz: QuizModelType | null = await quizController
+                .updateById(quizId.toString(), { name: 'updatedQuiz' }, {
+                    showTimestamps: false,
+                    needToPopulate: false
+                });
             expect(updatedQuiz).toBeDefined();
             expect(updatedQuiz?.name).toEqual('updatedQuiz');
             expect(updatedQuiz?.questions.length).toEqual(1);
@@ -124,13 +153,21 @@ describe('Quiz Controller', () => {
         });
 
         test('It should return null if quiz is not found', async () => {
-            const updatedQuiz: PopulatedQuizModel | null = await quizController.updateById('123456789012', { name: 'updatedQuiz' });
+            const updatedQuiz: QuizModelType | null = await quizController
+                .updateById('123456789012', { name: 'updatedQuiz' }, {
+                    showTimestamps: false,
+                    needToPopulate: false
+                });
             expect(updatedQuiz).toBeNull();
         });
 
         test('It should throw an error if data is missing', async () => {
             try {
-                const quizzes: PopulatedQuizModel[] = await quizController.getAll();
+                const quizzes: PopulatedQuizModel[] = await quizController.getAll({
+                    showTimestamps: false,
+                    needToPopulate: true
+                }) as PopulatedQuizModel[];
+
                 const quizId: Types.ObjectId = quizzes[0]._id;
                 // @ts-expect-error
                 await quizController.updateById(quizId.toString());

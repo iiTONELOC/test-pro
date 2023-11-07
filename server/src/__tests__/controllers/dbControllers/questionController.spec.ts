@@ -34,7 +34,10 @@ describe('Question Controller', () => {
 
     describe('getAll()', () => {
         test('It should return an array of questions', async () => {
-            const questions = await questionController.getAll();
+            const questions = await questionController.getAll({
+                showTimestamps: false,
+                needToPopulate: false
+            });
             expect(questions).toBeDefined();
             expect(questions).toBeInstanceOf(Array);
         });
@@ -52,7 +55,10 @@ describe('Question Controller', () => {
                 areaToReview: ['42']
             };
             const testQuestion = await Question.create(testQuestionData);
-            const question = await questionController.getById(testQuestion._id.toString());
+            const question = await questionController.getById(testQuestion._id.toString(), {
+                showTimestamps: false,
+                needToPopulate: true
+            }) as PopulatedQuestionModelType;
 
             expect(question).toBeDefined();
             expect(question).toBeInstanceOf(Object);
@@ -62,7 +68,10 @@ describe('Question Controller', () => {
         });
 
         test('It should return null if no question is found', async () => {
-            const question = await questionController.getById(new Types.ObjectId().toString());
+            const question = await questionController.getById(new Types.ObjectId().toString(), {
+                showTimestamps: false,
+                needToPopulate: false
+            });
             expect(question).toBeNull();
         });
     });
@@ -79,7 +88,10 @@ describe('Question Controller', () => {
                 areaToReview: ['42']
             };
 
-            const question: PopulatedQuestionModelType = await questionController.create(testQuestionData);
+            const question: PopulatedQuestionModelType = await questionController.create(testQuestionData, {
+                showTimestamps: false,
+                needToPopulate: true
+            }) as PopulatedQuestionModelType;
 
             expect(question).toBeDefined();
             expect(question).toBeInstanceOf(Object);
@@ -94,8 +106,12 @@ describe('Question Controller', () => {
             const question = await Question.findOne({ question: 'What is the meaning of life?' });
             const updatedQuestion = await questionController.updateById(
                 question?._id?.toString() as string,
-                { question: 'What is the meaning of life, the universe, and everything?' }
-            );
+                { question: 'What is the meaning of life, the universe, and everything?' },
+                {
+                    showTimestamps: false,
+                    needToPopulate: true
+                }
+            ) as PopulatedQuestionModelType;
 
             expect(updatedQuestion).toBeDefined();
             expect(updatedQuestion).toBeInstanceOf(Object);
@@ -107,7 +123,11 @@ describe('Question Controller', () => {
         test('It should return null if no question is found', async () => {
             const updatedQuestion = await questionController.updateById(
                 new Types.ObjectId().toString(),
-                { question: 'What is the meaning of life, the universe, and everything?' }
+                { question: 'What is the meaning of life, the universe, and everything?' },
+                {
+                    showTimestamps: false,
+                    needToPopulate: false
+                }
             );
             expect(updatedQuestion).toBeNull();
         });
@@ -119,7 +139,11 @@ describe('Question Controller', () => {
 
             // delete the quiz question results associated with this question when the question is deleted
             await QuizQuestionResult.deleteMany({ question: question?._id?.toString() as string });
-            const deletedQuestion = await questionController.deleteById(question?._id?.toString() as string);
+            const deletedQuestion = await questionController.deleteById(question?._id?.toString() as string,
+                {
+                    showTimestamps: false,
+                    needToPopulate: true
+                }) as PopulatedQuestionModelType;
 
             // ensure we deleted the correct question
             expect(deletedQuestion).toBeDefined();
@@ -129,14 +153,20 @@ describe('Question Controller', () => {
             expect(deletedQuestion?.topics[0]?.name).toBe('test');
 
             // ensure the question deleted
-            const didQuestionDelete = await questionController.getById(question?._id?.toString() as string);
+            const didQuestionDelete = await questionController.getById(question?._id?.toString() as string, {
+                showTimestamps: false,
+                needToPopulate: false
+            });
             expect(didQuestionDelete).toBeNull();
             // ensure the quiz question results associated with this question were deleted
             expect(await QuizQuestionResult.find({ question: question?._id?.toString() as string })).toHaveLength(0);
         });
 
         test('It should return null if no question is found', async () => {
-            const deletedQuestion = await questionController.deleteById(new Types.ObjectId().toString());
+            const deletedQuestion = await questionController.deleteById(new Types.ObjectId().toString(), {
+                showTimestamps: false,
+                needToPopulate: false
+            });
             expect(deletedQuestion).toBeNull();
         });
     });

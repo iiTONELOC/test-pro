@@ -1,4 +1,3 @@
-
 import { Quiz } from '../../db/models';
 import { createSelectTerms } from './controllerUtils';
 import { dbQueryParamDefaults } from '../routeControllers/routeUtils';

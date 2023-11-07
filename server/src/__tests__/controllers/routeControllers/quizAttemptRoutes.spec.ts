@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test, describe, it } from 'bun:test';
+import { afterAll, beforeAll, expect, test, describe } from 'bun:test';
 import { quizAttemptController, quizQuestionResultController } from '../../../controllers';
 import { Question, QuestionTypeEnums, Quiz, QuizAttempt, QuizQuestionResult } from '../../../db/models';
 import { dbConnection, dbClose } from '../../../db/connection';

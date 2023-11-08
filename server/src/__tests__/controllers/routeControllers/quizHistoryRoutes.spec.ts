@@ -302,7 +302,7 @@ describe('Quiz History Routes', () => {
 
         test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
             const id = await QuizHistory.find({}).then((history) => history[0]?._id);
-            console.log({ id });
+
             const response = await fetch(`http://localhost:${PORT}/api/history/${id}?no-populate=true`, {
                 method: 'DELETE'
             });

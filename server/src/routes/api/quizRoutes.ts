@@ -10,6 +10,11 @@ router.route('/')
     // CREATE a quiz
     .post(quizRouteController.create);
 
+// api/quizzes/json-upload
+router.route('/json-upload')
+    // CREATE a quiz by JSON
+    .post(quizRouteController.createQuizByJSON);
+
 // api/quizzes/:id
 router.route('/:id')
     // GET a quiz by id

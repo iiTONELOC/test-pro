@@ -66,7 +66,7 @@ export const handleRouteErrorMessages = (msg: string): string => {
         return 'Already exists';
     }
 
-    if (msg.includes('Error: request size did not match content length')) {
+    if (msg.includes('Error: request size did not match content length') || msg.includes('Right side of assignment cannot be destructure')) {
         return 'Invalid request body';
     }
 
@@ -91,6 +91,7 @@ export const handleRouteErrorCodes = (errorMsg: string): number => {
         || errorMsg.includes('required')
         || errorMsg.includes('validation failed')
         || errorMsg.includes('Nothing to update')
+        || errorMsg.includes('Right side of assignment cannot be destructured')
     ) {
         return httpStatusCodes.BAD_REQUEST;
     } else if (errorMsg.includes('not found')) {

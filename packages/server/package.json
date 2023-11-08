@@ -17,6 +17,7 @@
     "mongoose": "^7.6.2"
   },
   "scripts": {
-    "start": "bun index.ts"
+    "start": "bun index.ts",
+    "dev": "bun run --watch index.ts"
   }
 }

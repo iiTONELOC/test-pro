@@ -1,9 +1,9 @@
 import type { IconProps } from './SvgBase';
 import { SvgBase, defaultIconProps } from './SvgBase';
 
-const d = "M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+const d = "M3 8.25V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18V8.25m-18 0V6a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 6v2.25m-18 0h18M5.25 6h.008v.008H5.25V6zM7.5 6h.008v.008H7.5V6zm2.25 0h.008v.008H9.75V6z"
 
-export function Search({
+export function Window({
     className = defaultIconProps.IconClassName,
     color = defaultIconProps.IconColor }: IconProps): JSX.Element {
     return (

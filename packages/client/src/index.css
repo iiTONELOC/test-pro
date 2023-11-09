@@ -5,4 +5,10 @@
 * {
   box-sizing: border-box;
   margin: 0;
+  font-family: Arial, sans-serif;
+  font-weight: lighter;
+}
+
+.tooltip {
+  z-index: 9999 !important;
 }

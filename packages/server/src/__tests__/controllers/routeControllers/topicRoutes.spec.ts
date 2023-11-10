@@ -28,6 +28,7 @@ describe('Topic Routes', () => {
             const response: Response = await fetch(`http://localhost:${PORT}/api/topics`);
             const topics: IApiResponse<TopicModelType[]> = await response.json() as IApiResponse<TopicModelType[]>;
             expect(response.status).toBe(200);
+            // @ts-ignore
             expect(topics).toEqual({ data: [] });
         });
 

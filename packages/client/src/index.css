@@ -7,8 +7,27 @@
   margin: 0;
   font-family: Arial, sans-serif;
   font-weight: lighter;
+
+
+  --scrollbar-gutter: rgb(37, 37, 37);
+  --scrollbar-arm: rgb(79, 79, 92);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-gutter) var(--scrollbar-arm);
 }
 
-.tooltip {
-  z-index: 9999 !important;
+/* Scroll Bars - Cont*/
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-gutter);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-arm);
+  border-radius: 12px;
 }

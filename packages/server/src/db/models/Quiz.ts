@@ -60,7 +60,7 @@ export type QuizModelType = HydratedDocument<IQuiz> & { createdAt?: Date; update
  * }
  * ```
  */
-export type PopulatedQuizModel = QuizModelType & { topics: [TopicModelType], questions: [PopulatedQuestionModelType] };
+export type PopulatedQuizModel = QuizModelType & { topics: TopicModelType[], questions: PopulatedQuestionModelType[] };
 
 
 const QuizSchema = new Schema({

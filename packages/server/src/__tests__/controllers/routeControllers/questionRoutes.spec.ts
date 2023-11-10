@@ -104,6 +104,7 @@ describe('Question Routes', () => {
 
             expect(response.status).toBe(201);
             expect(questionResponse.data?.question).toBe('What is the capital of California?');
+            // @ts-ignore
             expect(questionResponse.data?.topics[0]).toBe(testTopic?._id.toString());
         });
 

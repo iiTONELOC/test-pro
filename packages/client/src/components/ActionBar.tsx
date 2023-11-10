@@ -25,7 +25,8 @@ function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element
     return (
         <ToolTip
             toolTipText={title}
-            tipPosition='right'
+            tipPosition='bottom'
+            offset={10}
         >
             <button className={trimClasses(buttonClasses)} onClick={action}>
                 <Icon className={iconClasses} />

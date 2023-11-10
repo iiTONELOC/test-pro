@@ -62,6 +62,7 @@ describe('Question Controller', () => {
 
             expect(question).toBeDefined();
             expect(question).toBeInstanceOf(Object);
+            // @ts-ignore
             expect(question?.questionType).toBe('MultipleChoice');
             expect(question?.question).toBe('What is the meaning of life?');
             expect(question?.topics[0]?.name).toBe('test');
@@ -95,6 +96,7 @@ describe('Question Controller', () => {
 
             expect(question).toBeDefined();
             expect(question).toBeInstanceOf(Object);
+            // @ts-ignore
             expect(question.questionType).toBe('MultipleChoice');
             expect(question.question).toBe('What is the meaning of life?');
             expect(question.topics[0].name).toBe('test');
@@ -115,6 +117,7 @@ describe('Question Controller', () => {
 
             expect(updatedQuestion).toBeDefined();
             expect(updatedQuestion).toBeInstanceOf(Object);
+            // @ts-ignore
             expect(updatedQuestion?.questionType).toBe('MultipleChoice');
             expect(updatedQuestion?.question).toBe('What is the meaning of life, the universe, and everything?');
             expect(updatedQuestion?.topics[0]?.name).toBe('test');
@@ -148,6 +151,7 @@ describe('Question Controller', () => {
             // ensure we deleted the correct question
             expect(deletedQuestion).toBeDefined();
             expect(deletedQuestion).toBeInstanceOf(Object);
+            // @ts-ignore
             expect(deletedQuestion?.questionType).toBe('MultipleChoice');
             expect(deletedQuestion?.question).toBe('What is the meaning of life, the universe, and everything?');
             expect(deletedQuestion?.topics[0]?.name).toBe('test');

@@ -66,6 +66,7 @@ describe('Quiz Attempt Routes', () => {
 
             expect(response.status).toBe(201);
             expect(quizAttemptResponse?.data).toBeDefined();
+            // @ts-ignore
             expect(quizAttemptResponse?.data?.quizId).toBe(quiz._id.toString());
             expect(quizAttemptResponse?.data?.answeredQuestions).toBeDefined();
             expect(quizAttemptResponse?.data?.earnedPoints).toBe(0);
@@ -142,7 +143,9 @@ describe('Quiz Attempt Routes', () => {
 
             expect(response.status).toBe(201);
             expect(quizAttemptResponse?.data).toBeDefined();
+            // @ts-ignore
             expect(quizAttemptResponse?.data?.quizId).toBe(quiz._id.toString());
+            // @ts-ignore
             expect(quizAttemptResponse?.data?.answeredQuestions[0]).toBe(answeredQuestion._id.toString());
         });
 
@@ -191,6 +194,7 @@ describe('Quiz Attempt Routes', () => {
 
             expect(response.status).toBe(201);
             expect(quizAttemptResponse?.data).toBeDefined();
+            // @ts-ignore
             expect(quizAttemptResponse?.data?.quizId).toBe(quiz._id.toString());
             expect(quizAttemptResponse?.data?.createdAt).toBeDefined();
             expect(quizAttemptResponse?.data?.updatedAt).toBeDefined();
@@ -414,6 +418,7 @@ describe('Quiz Attempt Routes', () => {
             expect(quizAttemptResponse?.data).toBeDefined();
             expect(Array.isArray(quizAttemptResponse?.data)).toBe(true);
             expect(quizAttemptResponse?.data?.length).toBeGreaterThan(0);
+            // @ts-ignore
             expect(quizAttemptResponse?.data?.[0].quizId).toBe(quizId.toString());
         });
 

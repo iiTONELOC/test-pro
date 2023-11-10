@@ -110,6 +110,7 @@ describe('quizHistoryController', () => {
             quizHistoryId = quizHistory._id;
 
             expect(quizHistory).toBeDefined();
+            // @ts-ignore
             expect(quizHistory?.attempt?._id).toEqual(quizAttemptId as Types.ObjectId);
             expect(quizHistory?.attempt?.quizId).toEqual(attemptedQuizData.quizId);
             expect(quizHistory?.attempt?.answeredQuestions).toEqual(attemptedQuizData.answeredQuestions);

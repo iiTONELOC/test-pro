@@ -251,6 +251,7 @@ describe('Quiz History Routes', () => {
             expect(response.status).toBe(201);
             // @ts-ignore
             expect(history?.data?.attempt).toBeDefined();
+            // @ts-ignore
             expect(history?.data?.attempt).toEqual(quizHistoryData.attempt.toString());
         });
 
@@ -287,6 +288,7 @@ describe('Quiz History Routes', () => {
             const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
             expect(response.status).toBe(200);
             expect(history.data).toBeDefined();
+            // @ts-ignore
             expect(history.data?._id).toEqual(id?.toString());
         });
 
@@ -310,6 +312,7 @@ describe('Quiz History Routes', () => {
             const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
             expect(response.status).toBe(200);
             expect(history.data).toBeDefined();
+            // @ts-ignore
             expect(history.data?._id).toEqual(id?.toString());
             expect(history.data?.attempt?._id).toBeUndefined();
         });
@@ -323,6 +326,7 @@ describe('Quiz History Routes', () => {
             const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
             expect(response.status).toBe(200);
             expect(history.data).toBeDefined();
+            // @ts-ignore
             expect(history.data?._id).toEqual(id?.toString());
             // @ts-ignore
             expect(history?.data?.createdAt).toBeDefined();

@@ -230,6 +230,7 @@ describe('quizAttemptController', () => {
             expect(quizAttempt).toHaveProperty('passed');
             expect(quizAttempt).toHaveProperty('dateTaken');
             expect(quizAttempt).toHaveProperty('elapsedTimeInMs');
+            // @ts-ignore
             expect(quizAttempt?._id.toString()).toBe(quizId?.toString());
         });
 
@@ -291,17 +292,18 @@ describe('quizAttemptController', () => {
                 return null;
             });
 
-            const deletedQuizAttempt: QuizAttemptType | null = await quizAttemptController.deleteById(quizId as unknown as string);
+            const deletedQuizAttempt: QuizAttemptType | null = await quizAttemptController.deleteById(quizId as unknown as string, dbQueryParamDefaults);
 
             expect(deletedQuizAttempt).toBeDefined();
             expect(deletedQuizAttempt).toBeInstanceOf(Object);
+            // @ts-ignore
             expect(deletedQuizAttempt?._id.toString()).toBe(quizId?.toString());
             // the quizQuestion results should also be deleted not just removed when the quizAttempt is deleted
             expect(await QuizQuestionResult.find({ quizAttempt: quizId })).toHaveLength(0);
         });
 
         test('It should return null if quizAttempt does not exist', async () => {
-            const deletedQuizAttempt: QuizAttemptType | null = await quizAttemptController.deleteById(new Types.ObjectId().toString());
+            const deletedQuizAttempt: QuizAttemptType | null = await quizAttemptController.deleteById(new Types.ObjectId().toString(), dbQueryParamDefaults);
 
             expect(deletedQuizAttempt).toBeNull();
         });

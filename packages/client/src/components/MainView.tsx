@@ -1,12 +1,49 @@
-export function MainView(props: { isOpen: boolean }): JSX.Element {
+import { useSelectedFileState, SelectedFileState, useQuizzesDbState, QuizzesDbState } from '../signals';
+import { useEffect, useState } from 'preact/hooks';
+import { QuizModelResponse } from '../utils/api';
+import { useMountedState } from '../hooks';
+
+export function MainView(props: Readonly<{ isOpen: boolean }>): JSX.Element {
+    const [currentFileDetails, setCurrentFileDetails] = useState<QuizModelResponse | null>(null);
+    const { selectedFile }: SelectedFileState = useSelectedFileState();
+    const { quizzesDb }: QuizzesDbState = useQuizzesDbState();
+    const isMounted: boolean = useMountedState();
+    const currentFile = selectedFile.value;
     const isClosed = !props.isOpen;
 
-    const width = isClosed ? 'w-full' : 'w-2/3 lg:w-3/4 xl:w-5/6';
-    const mainClasses = `bg-slate-950 h-full ${width} p-1`
+    const width = isClosed ? 'w-[calc(100vw-50px)]' : 'w-[calc(66%-45px)] lg:w-[calc(75%-50px)] xl:w-[calc(83%-45px)]';
+    const mainClasses = `bg-slate-950 h-[calc(100vh-44px)] ${width} p-1 overflow-y-scroll p-1`
+
+    // handles the view of the current file
+    useEffect(() => {
+        // if the currentFile isn't empty, find the file in the db
+        if (isMounted && currentFile !== '') {
+            const details = [...quizzesDb.value]
+                .filter((quiz: QuizModelResponse) => quiz._id.toString() === currentFile)[0];
+            if (details) {
+                setCurrentFileDetails(details);
+            } else {
+                // Todo: try to fetch from server
+                console.error(`Could not find quiz with id ${currentFile}`);
+            }
+        }
+        // if the currentFile is empty, set the currentFileDetails to null
+        if (isMounted && currentFile === '') {
+            setCurrentFileDetails(null);
+        }
+    }, [isMounted, currentFile]);
 
     return (
         <main className={mainClasses}>
-            Hello
+            <div className={'w-full min-h-[calc(100vh-44px)] bg-gray-900 rounded-sm p-3'}>
+                {currentFileDetails && <pre className={'text-sm'}>
+                    {JSON.stringify(currentFileDetails, null, 2)}
+                </pre>}
+                {!currentFileDetails && <p className={'text-gray-300 text-center text-base'}>
+                    Select a quiz to view its details
+                </p>}
+
+            </div>
         </main>
     )
 }

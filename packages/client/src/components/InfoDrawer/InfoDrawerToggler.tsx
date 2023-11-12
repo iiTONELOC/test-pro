@@ -1,6 +1,6 @@
-import { useInfoDrawerState } from '../signals';
-import { clickHandler, keyHandler } from '../utils';
-import { Columns, WindowIcon } from '../assets/icons';
+import { useInfoDrawerState } from '../../signals';
+import { clickHandler, keyHandler } from '../../utils';
+import { Columns, WindowIcon } from '../../assets/icons';
 
 export function InfoDrawerToggler(): JSX.Element {
     const { isDrawerOpen, toggleDrawer } = useInfoDrawerState();

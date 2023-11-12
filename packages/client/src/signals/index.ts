@@ -4,4 +4,5 @@ export { useInfoDrawerState } from './InfoDrawerState';
 export type { InfoDrawerState } from './InfoDrawerState';
 export { useSelectedFileState } from './SelectedFileState';
 export type { SelectedFileState } from './SelectedFileState';
-
+export type { QuizViewState } from './QuizViewState';
+export { useQuizViewState, QuizViews } from './QuizViewState';

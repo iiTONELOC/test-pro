@@ -2,6 +2,7 @@ import { signal, Signal } from '@preact/signals';
 
 const isDrawerOpen = signal(true);
 
+
 export type InfoDrawerState = {
     isDrawerOpen: Signal<boolean>;
     toggleDrawer: () => void;

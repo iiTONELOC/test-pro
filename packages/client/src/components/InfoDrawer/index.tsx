@@ -14,7 +14,6 @@ export type InfoDrawerProps = {
 const drawerClasses = `bg-gray-950/[.75] h-[calc(100vh-44px)] w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
 sm:text-sm lg:text-md xl:text-base flex`;
 
-
 export function InfoDrawer({ quizData }: Readonly<InfoDrawerProps>): JSX.Element {
     const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystem[]>([]);
     const [loadedVFS, setLoadedVFS] = useState<boolean>(false);
@@ -64,3 +63,7 @@ export function InfoDrawer({ quizData }: Readonly<InfoDrawerProps>): JSX.Element
         </div>
     ) : <></>
 }
+
+export default InfoDrawer;
+
+export { InfoDrawerToggler } from './InfoDrawerToggler';

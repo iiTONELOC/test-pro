@@ -1,5 +1,5 @@
 import { clickHandler, trimClasses, uuid } from '../utils';
-import { InfoDrawerToggler } from './InfoDrawerToggler';
+import { InfoDrawerToggler } from './InfoDrawer';
 import { useInfoDrawerState } from '../signals';
 import { Folder, Search } from '../assets/icons';
 import { ActionBarIconProps } from './ActionBar';

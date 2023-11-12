@@ -2,6 +2,7 @@ import { signal, Signal } from '@preact/signals';
 
 const selectedFile = signal<string>('');
 
+
 export type SelectedFileState = {
     selectedFile: Signal<string>;
     setSelectedFile: (id: string) => void;

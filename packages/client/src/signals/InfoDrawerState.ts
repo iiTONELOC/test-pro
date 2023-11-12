@@ -9,7 +9,6 @@ export type InfoDrawerState = {
 
 export const useInfoDrawerState = (): InfoDrawerState => {
     const toggleDrawer = () => {
-        console.log('toggleDrawer');
         isDrawerOpen.value = !isDrawerOpen.value
     };
     return { isDrawerOpen, toggleDrawer };

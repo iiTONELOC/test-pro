@@ -14,7 +14,15 @@ export type {
     TopicModelType
 };
 
-const defaultAPIQueryParams: dbQueryParams = {
+/**
+ * ```ts
+ * const defaultAPIQueryParams: dbQueryParams = {
+ *    showTimestamps: false,
+ *    needToPopulate: true
+ * };
+ * ```
+ */
+export const defaultAPIQueryParams: dbQueryParams = {
     showTimestamps: false,
     needToPopulate: true
 };

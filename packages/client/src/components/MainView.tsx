@@ -1,15 +1,18 @@
-import { useSelectedFileState, SelectedFileState, useQuizzesDbState, QuizzesDbState } from '../signals';
+import { useSelectedFileState, SelectedFileState, useQuizzesDbState, QuizzesDbState, useInfoDrawerState } from '../signals';
 import { useEffect, useState } from 'preact/hooks';
 import { QuizModelResponse } from '../utils/api';
 import { useMountedState } from '../hooks';
 
-export function MainView(props: Readonly<{ isOpen: boolean }>): JSX.Element {
+
+export function MainView(): JSX.Element {
     const [currentFileDetails, setCurrentFileDetails] = useState<QuizModelResponse | null>(null);
     const { selectedFile }: SelectedFileState = useSelectedFileState();
     const { quizzesDb }: QuizzesDbState = useQuizzesDbState();
     const isMounted: boolean = useMountedState();
+    const { isDrawerOpen } = useInfoDrawerState();
+
     const currentFile = selectedFile.value;
-    const isClosed = !props.isOpen;
+    const isClosed = !isDrawerOpen.value;
 
     const width = isClosed ? 'w-[calc(100vw-50px)]' : 'w-[calc(66%-45px)] lg:w-[calc(75%-50px)] xl:w-[calc(83%-45px)]';
     const mainClasses = `bg-slate-950 h-[calc(100vh-44px)] ${width} p-1 overflow-y-scroll p-1`
@@ -42,7 +45,6 @@ export function MainView(props: Readonly<{ isOpen: boolean }>): JSX.Element {
                 {!currentFileDetails && <p className={'text-gray-300 text-center text-base'}>
                     Select a quiz to view its details
                 </p>}
-
             </div>
         </main>
     )

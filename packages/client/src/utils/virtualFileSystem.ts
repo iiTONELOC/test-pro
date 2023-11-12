@@ -1,12 +1,29 @@
-
 import type { PopulatedQuizModel, QuizModelResponse, TopicModelType } from './api';
 
+/**
+ * ```ts
+ * export interface IVirtualDirectory {
+ *   name: string;
+ *   children: VirtualFileSystem[];
+ *   topics?: string[];
+ * }
+ * ```
+ */
 export interface IVirtualDirectory {
     name: string;
     children: VirtualFileSystem[];
     topics?: string[];
 }
 
+/**
+ * ```ts
+ * export interface IVirtualFile {
+ *   name: string;
+ *   entryId: string;
+ *   topics: string[];
+ * }
+ * ```
+ */
 export interface IVirtualFile {
     name: string;
     entryId: string;
@@ -16,68 +33,100 @@ export interface IVirtualFile {
 export type VirtualFileSystem = (IVirtualDirectory | IVirtualFile);
 
 
-// create or retrieve virtual file system
-export const getVirtualFileSystem: () => VirtualFileSystem[] = (): VirtualFileSystem[] => JSON
-    .parse(localStorage.getItem('virtualFileSystem') || '[]') ?? [];
+/**
+ * Creates a virtual directory with the given name and children
+ * @param name the name of the virtual directory
+ * @param children an array of virtual file system objects to add to the virtual directory
+ * @returns The created virtual directory object
+ */
+const createVirtualDirectory = (name: string, children: VirtualFileSystem[] = []): IVirtualDirectory => ({ name, children });
 
-const createVirtualDirectory = (name: string, children: IVirtualDirectory[] = []): IVirtualDirectory => ({ name, children });
-
+/**
+ * Creates a virtual file with the given name, entryId and topics
+ * @param name name of the virtual file
+ * @param entryId the id of the quiz that the virtual file represents
+ * @param topics an array of topic names that the quiz is associated with
+ * @returns The created virtual file object
+ */
 const createVirtualFile = (name: string, entryId: string, topics: string[]): IVirtualFile => ({ name, entryId, topics });
 
-// takes in quiz data, and existing virtual file system and returns a new virtual file system
-export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileSystem: VirtualFileSystem[]):
-    VirtualFileSystem[] => {
+/**
+ *  Checks the virtual file system for the quiz ids
+ * @param existingFolder a virtual file system to check
+ * @param quizIds an array of quiz ids to check for
+ * @returns an array of quiz ids that were not found in the virtual file system
+ */
+const checkFolder = (existingFolder: VirtualFileSystem[], quizIds: string[]): string[] => {
+    for (const child of existingFolder) {
+        // if virtual file
+        if (child && 'entryId' in child && quizIds.includes(child.entryId)) {
+            // if the quizIds array contains the child entryId then remove it from the quizIds array
+            quizIds.splice(quizIds.indexOf(child.entryId), 1);
+        }
 
+        // virtual directory found - recurse through the children
+        if (child && 'children' in child) {
+            quizIds = checkFolder(child.children, quizIds);
+        }
+    }
+    return quizIds;
+}
+
+/**
+ * Creates a virtual file for each quiz id and adds it to the existingFileSystem
+ * @param quizIds an array of quiz ids to create virtual files for
+ * @param existingFileSystem an existing virtual file system to add the virtual files to
+ * @param quizData an array of populated quiz data from the db to get the quiz names and topics from
+ * @returns the updated virtual file system
+ */
+const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFileSystem: VirtualFileSystem[], quizData: PopulatedQuizModel[]): VirtualFileSystem[] => {
+    for (const id of quizIds) {
+        // get the quiz from the quizData
+        const quiz = quizData.find((quiz: QuizModelResponse): boolean => quiz?._id.toString() === id);
+
+        // if the quiz exists then create a file for it
+        if (quiz as PopulatedQuizModel) {
+            const quizTopics = quiz?.topics as TopicModelType[];
+            const topics: string[] = quizTopics.map(topic => topic?.name) ?? [];
+
+            const quizFile: IVirtualFile = createVirtualFile(quiz?.name as string,
+                quiz?._id.toString() as string,
+                topics);
+            // add the quizFile to the existingFileSystem
+            existingFileSystem.push(quizFile);
+        }
+    }
+
+    return existingFileSystem;
+}
+
+
+/**
+ * Generates a virtual file system from the given quiz data and merges it with the existing virtual file system if it exists
+ * @param quizData the quiz data to generate the virtual file system from
+ * @param existingFileSystem an existing virtual file system to merge with the generated virtual file system
+ * @returns the updated virtual file system
+ */
+export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileSystem: VirtualFileSystem[]): VirtualFileSystem[] => {
     // get the quiz ids from the quizData
     const quizIds: string[] = quizData.map((quiz: QuizModelResponse): string => quiz?._id.toString());
 
-    // recursive function to check the virtual file system for the quiz ids
-    function checkFolder(existingFolder: VirtualFileSystem[]): void {
-        for (const child of existingFolder) {
-            // if virtual file
-            if (child && 'entryId' in child) {
-                // if the quizIds array contains the child entryId then remove 
-                // it from the quizIds array
-                if (quizIds.includes(child.entryId)) {
-                    quizIds.splice(quizIds.indexOf(child.entryId), 1);
-                }
-                // virtual directory - recurse through the children
-            } else if (child && 'children' in child) {
-                checkFolder(child.children);
-            }
-        }
-    }
+    // update the quizIds array to remove any quizzes that are already in the virtual file system
+    const remainingQuizIds = checkFolder(existingFileSystem, quizIds);
 
-    // create a file for the given quiz ids and add them to the existingFileSystem
-    function createVirtualQuizFileAndAddToFileSystem(quizIds: string[]): void {
-        for (const id of quizIds) {
-            // get the quiz from the quizData
-            const quiz = quizData
-                .find((quiz: QuizModelResponse): boolean => quiz?._id.toString() === id);
-
-            // if the quiz exists then create a file for it
-            if (quiz as PopulatedQuizModel) {
-                const quizTopics = quiz?.topics as TopicModelType[];
-                const topics: string[] = quizTopics.map(topic => topic?.name) ?? [];
-
-                const quizFile: IVirtualFile = createVirtualFile(quiz?.name as string,
-                    quiz?._id.toString() as string,
-                    topics);
-                // add the quizFile to the existingFileSystem
-                existingFileSystem.push(quizFile);
-            }
-        }
-    }
-
-    // check the virtual file System for the quiz ids  this will
-    // remove any quiz ids that are already in the virtual file system
-    // from the quizIds array
-    checkFolder(existingFileSystem);
-
-    // if there are any missing quiz ids then create a file for them
-    if (quizIds.length > 0) {
-        createVirtualQuizFileAndAddToFileSystem(quizIds);
+    // for any quiz ids that are left over, we need to create a file for them and update the virtual file system
+    if (remainingQuizIds.length > 0) {
+        existingFileSystem = createVirtualQuizFileAndAddToFileSystem(remainingQuizIds, existingFileSystem, quizData);
     }
 
     return existingFileSystem;
 };
+
+
+/**
+ * Looks for the virtual file system in local storage and returns it, If it doesn't exist it returns an empty array
+ * @returns an array of virtual file system objects
+ */
+export const getVirtualFileSystem: () => VirtualFileSystem[] = (): VirtualFileSystem[] => JSON
+    .parse(localStorage.getItem('virtualFileSystem') ?? '[]') ?? [];
+

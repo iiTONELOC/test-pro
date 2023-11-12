@@ -1,48 +1,39 @@
-import { getVirtualFileSystem, generateFileSystem } from '../../utils/virtualFileSystem';
-import { useSelectedFileState } from '../../signals';
+import { trimClasses, getVirtualFileSystem, generateFileSystem, clickHandler, keyHandler } from '../../utils';
+import { useSelectedFileState, useInfoDrawerState } from '../../signals';
 import { useEffect, useState } from 'preact/hooks';
 import { useMountedState } from '../../hooks';
-import { trimClasses } from '../../utils/';
+
 import { VirtualFile } from './VirtualFile';
 
+import type { PopulatedQuizModel, QuizModelResponse, VirtualFileSystem, IVirtualDirectory, IVirtualFile } from '../../utils';
+
 export type InfoDrawerProps = {
-    isOpen: boolean;
     quizData: QuizModelResponse[];
 }
-
-import type { PopulatedQuizModel, QuizModelResponse } from '../../utils/api';
-import type { VirtualFileSystem, IVirtualDirectory, IVirtualFile } from '../../utils/virtualFileSystem';
-
 
 const drawerClasses = `bg-gray-950/[.75] h-[calc(100vh-44px)] w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
 sm:text-sm lg:text-md xl:text-base flex`;
 
 
-export function InfoDrawer({ isOpen, quizData }: Readonly<InfoDrawerProps>): JSX.Element {
+export function InfoDrawer({ quizData }: Readonly<InfoDrawerProps>): JSX.Element {
     const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystem[]>([]);
-    const { setSelectedFile } = useSelectedFileState();
     const [loadedVFS, setLoadedVFS] = useState<boolean>(false);
+    const { setSelectedFile } = useSelectedFileState();
+    const { isDrawerOpen } = useInfoDrawerState();
     const isMounted: boolean = useMountedState();
+    const hideDrawer = !isDrawerOpen.value;
 
-    const hideDrawer = !isOpen;
-
-
-    const handleClick = (e: Event) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setSelectedFile('');
+    const resetSelectedFile = () => setSelectedFile('');
+    const handleClick = (event: MouseEvent) => {
+        clickHandler({ event, callback: resetSelectedFile, stopPropagation: true });
     };
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.stopPropagation();
-            e.preventDefault();
-            setSelectedFile('');
-        }
-    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+        keyHandler({ event, keyToWatch: 'Enter', direction: 'down', callback: resetSelectedFile, stopPropagation: true });
+    };
 
     useEffect(() => {
-        if (isMounted && isOpen && !loadedVFS) {
+        if (isMounted && isDrawerOpen.value && !loadedVFS) {
             const virtualFileSystem: VirtualFileSystem[] = getVirtualFileSystem();
             const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]], virtualFileSystem);
 
@@ -51,7 +42,7 @@ export function InfoDrawer({ isOpen, quizData }: Readonly<InfoDrawerProps>): JSX
             setVirtualFileSystem(tempFileSystem);
             setLoadedVFS(true);
         }
-    }, [isMounted, isOpen]);
+    }, [isMounted, isDrawerOpen.value]);
 
     if (hideDrawer) return <></>
 

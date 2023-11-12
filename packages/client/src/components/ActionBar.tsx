@@ -13,7 +13,8 @@ const icons = [
 export type ActionBarIconProps = {
     Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
     title: string
-    action: () => void
+    action: () => void,
+    id?: string  // NOSONAR
 }
 
 function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element { //NOSONAR
@@ -28,7 +29,8 @@ function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element
             tipPosition='bottom'
             offset={10}
         >
-            <button className={trimClasses(buttonClasses)} onClick={action}>
+            <button
+                className={trimClasses(buttonClasses)} onClick={action}>
                 <Icon className={iconClasses} />
             </button>
         </ToolTip>
@@ -38,7 +40,7 @@ function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element
 export function ActionBar(): JSX.Element {
     return (
         <aside className={'bg-gray-900 h-full w-12 fixed left-0 top-8 bottom-16 px-2 z-10'}>
-            <div className={'h-full w-full mb-2'}>
+            <div className={'h-full w-full my-2'}>
                 {icons.map(({ Icon, title, action }) => (
                     <ActionBarIcon
                         Icon={Icon}

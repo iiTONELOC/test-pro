@@ -1,29 +1,26 @@
 import { TopBar, Footer, ActionBar, InfoDrawer, MainView } from './';
+import { API, defaultAPIQueryParams } from '../utils';
 import { useEffect, useState } from 'preact/hooks';
 import { useInfoDrawerState } from '../signals';
 import { useMountedState } from '../hooks'
-import API from '../utils/api';
 
-import type { QuizModelResponse, dbQueryParams } from '../utils/api';
+import type { QuizModelResponse, dbQueryParams } from '../utils';
 
-const containerClasses = 'w-full h-full fixed left-12 top-8 flex flex-row';
 
-function MainViewContainer() {
+
+function MainViewContainer() { //NOSONAR
+    const containerClasses = 'w-full h-full fixed left-12 top-8 flex flex-row';
     const [quizzes, setQuizzes] = useState<QuizModelResponse[] | null>(null);
     const [didFetch, setDidFetch] = useState<boolean>(false);
     const { isDrawerOpen } = useInfoDrawerState();
-    const isMounted: boolean = useMountedState();
+
     const isOpen = isDrawerOpen.value;
+    const isMounted: boolean = useMountedState();
 
     useEffect(() => {
         if (isMounted && isOpen && !didFetch) {
-            const quizProps: dbQueryParams = {
-                showTimestamps: false,
-                needToPopulate: true
-            };
-
             (async () => {
-                const _quizzes = await API.getAllQuizzes(quizProps);
+                const _quizzes = await API.getAllQuizzes(defaultAPIQueryParams);
                 setQuizzes(_quizzes);
                 setDidFetch(true);
             })();
@@ -43,20 +40,19 @@ function MainViewContainer() {
 
                 // if the number of quizzes has changed, update the state
                 if (currentNumQuizzes !== previousNumQuizzes) {
-                    quizProps.needToPopulate = true;
-                    const _quizzes = await API.getAllQuizzes(quizProps);
+                    const _quizzes = await API.getAllQuizzes(defaultAPIQueryParams);
                     setQuizzes(_quizzes);
                 }
             })();
         }
-    }, [isMounted, isOpen]);
+    }, [isMounted, isDrawerOpen.value]);
 
 
 
     return isMounted && quizzes ? (
         <div className={containerClasses}>
-            <InfoDrawer isOpen={isOpen} quizData={quizzes} />
-            <MainView isOpen={isOpen} />
+            <InfoDrawer quizData={quizzes} />
+            <MainView />
         </div>
     ) : <></>
 }
@@ -71,4 +67,3 @@ export function Layout() {
         </>
     );
 }
-

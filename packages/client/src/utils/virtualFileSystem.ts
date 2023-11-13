@@ -28,6 +28,8 @@ export interface IVirtualFile {
     name: string;
     entryId: string;
     topics: string[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export type VirtualFileSystem = (IVirtualDirectory | IVirtualFile);
@@ -48,7 +50,8 @@ const createVirtualDirectory = (name: string, children: VirtualFileSystem[] = []
  * @param topics an array of topic names that the quiz is associated with
  * @returns The created virtual file object
  */
-const createVirtualFile = (name: string, entryId: string, topics: string[]): IVirtualFile => ({ name, entryId, topics });
+const createVirtualFile = (name: string, entryId: string, topics: string[], createdAt: Date, updatedAt: Date): IVirtualFile => (
+    { name, entryId, topics, createdAt, updatedAt });
 
 /**
  *  Checks the virtual file system for the quiz ids
@@ -85,13 +88,17 @@ const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFile
         const quiz = quizData.find((quiz: QuizModelResponse): boolean => quiz?._id.toString() === id);
 
         // if the quiz exists then create a file for it
-        if (quiz as PopulatedQuizModel) {
+        if (quiz) {
             const quizTopics = quiz?.topics as TopicModelType[];
             const topics: string[] = quizTopics.map(topic => topic?.name) ?? [];
 
-            const quizFile: IVirtualFile = createVirtualFile(quiz?.name as string,
+            const quizFile: IVirtualFile = createVirtualFile(
+                quiz?.name as string,
                 quiz?._id.toString() as string,
-                topics);
+                topics,
+                quiz?.createdAt as Date,
+                quiz?.updatedAt as Date
+            );
             // add the quizFile to the existingFileSystem
             existingFileSystem.push(quizFile);
         }

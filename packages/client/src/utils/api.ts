@@ -33,8 +33,8 @@ function buildURL(baseUrl: string, params: dbQueryParams): string {
     const { showTimestamps, needToPopulate } = params ?? defaultAPIQueryParams;
     let url = baseUrl;
 
-    showTimestamps && (url += '?showTimestamps=true');
-    !needToPopulate && (url.includes('?') ? (url += '&no-populate=false') : (url += '?no-populate=false'));
+    showTimestamps && (url += '?timestamps=true');
+    !needToPopulate && (url.includes('?') ? (url += '&no-populate=true') : (url += '?no-populate=true'));
 
     return url;
 }
@@ -52,6 +52,7 @@ export const API = {
             const data: IApiResponse<QuizModelResponse[]> = await response.json() as IApiResponse<QuizModelResponse[]>;
 
             const quizzes = data?.data ?? [];
+            // update the quizzesDb signal
             setQuizzes(quizzes);
             return quizzes;
         } catch (error) {

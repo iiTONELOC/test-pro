@@ -1,5 +1,5 @@
 import { useSelectedFileState, SelectedFileState, useInfoDrawerState, useQuizViewState, InfoDrawerState } from '../../signals';
-import { QuizViewRouter, QuizViews } from '../QuizView';
+import { QuizViewRouter, QuizViews } from '../QuizView/ViewRouter';
 import { useMountedState } from '../../hooks';
 import { useEffect } from 'preact/hooks';
 
@@ -23,8 +23,8 @@ export function MainView(): JSX.Element {
 
     return (
         <main className={mainClasses}>
-            <div className={'w-full min-h-[calc(100vh-44px)] bg-gray-900 rounded-sm p-3'}>
-                {isDrawerOpen.value && <QuizViewRouter view={currentQuizView.value} />}
+            <div className={'w-full min-h-[calc(100vh-54px)] bg-gray-900 rounded-sm p-3'}>
+                {<QuizViewRouter view={currentQuizView.value} />}
             </div>
         </main>
     )

@@ -2,47 +2,8 @@ import { useSelectedFileState, SelectedFileState, useQuizzesDbState, QuizzesDbSt
 import { useEffect, useState } from 'preact/hooks';
 import { QuizModelResponse } from '../../utils/api';
 import { useMountedState } from '../../hooks';
+import { titleCase } from '../../utils';
 
-/**
- * The different views that can be displayed in the main view
- * ```ts
- *  enum QuizViews {
- *     QuizDetails = 'QuizDetails',
- *     Quiz = 'Quiz',
- *     QuizEdit = 'QuizEdit',
- *     QuizCreate = 'QuizCreate',
- *     QuizDelete = 'QuizDelete',
- *     QuizHistory = 'QuizHistory'
- * }
- * ```
- */
-export enum QuizViews {
-    QuizDetails = 'QuizDetails',
-    Quiz = 'Quiz',
-    QuizEdit = 'QuizEdit',
-    QuizCreate = 'QuizCreate',
-    QuizDelete = 'QuizDelete',
-    QuizHistory = 'QuizHistory'
-}
-
-export function QuizViewRouter({ view }: Readonly<{ view: QuizViews }>): JSX.Element {
-    switch (view) {
-        case QuizViews.QuizDetails:
-            return <QuizView />;
-        case QuizViews.Quiz:
-            return <>QuizExam </>;
-        case QuizViews.QuizEdit:
-            return <>QuizEdit </>;
-        case QuizViews.QuizCreate:
-            return <>QuizCreate </>;
-        case QuizViews.QuizDelete:
-            return <>QuizDelete </>;
-        case QuizViews.QuizHistory:
-            return <>QuizHistory </>;
-        default:
-            return <QuizView />;
-    }
-}
 
 export function QuizView(): JSX.Element {
     const [currentFileDetails, setCurrentFileDetails] = useState<QuizModelResponse | null>(null);
@@ -71,16 +32,22 @@ export function QuizView(): JSX.Element {
         }
     }, [isMounted, currentFile]);
 
-    return (
-        <div>
-            {currentFileDetails && <pre className={'text-sm'}>
-                <h1>Quiz</h1>
+    return currentFileDetails ? (
+        <section>
+            <header>
+                <h1 className={'text-4xl font-bold'}>
+                    {titleCase(currentFileDetails.name)}
+                </h1>
+            </header>
+            <pre className={'text-sm'}>
                 {JSON.stringify(currentFileDetails, null, 2)}
-            </pre>}
-            {!currentFileDetails && <p className={'text-gray-300 text-center text-base'}>
-                Select a quiz to view its details
-            </p>}
-        </div>
+            </pre>
+
+        </section>
+    ) : (
+        <p className={'text-gray-300 text-center text-base'}>
+            Select a quiz to view its details
+        </p>
     )
 }
 

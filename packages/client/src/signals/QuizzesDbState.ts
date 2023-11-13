@@ -12,7 +12,7 @@ export type QuizzesDbState = {
 
 export const useQuizzesDbState = (): QuizzesDbState => {
     const setQuizzes = (quizzes: QuizModelResponse[]) => {
-        Quizzes.value = [...Quizzes.value, ...quizzes];
+        Quizzes.value = quizzes;
     };
 
     const setQuiz = (quiz: QuizModelResponse) => {

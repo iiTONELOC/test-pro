@@ -1,5 +1,5 @@
 import { Document as DocumentIcon } from '../../assets/icons';
-import { clickHandler, keyHandler, trimClasses } from '../../utils';
+import { clickHandler, getFormattedDate, getTime, keyHandler, trimClasses } from '../../utils';
 import { useSelectedFileState } from '../../signals';
 import { ToolTip } from '../ToolTip';
 
@@ -14,6 +14,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     const listItemRef = useRef<HTMLLIElement>(null);
 
     const tip = 'Topics:\n' + file.topics?.map((topic: string) => `# ${topic}`).join('\n');
+    const createdAndModified = `Created:  ${getFormattedDate(file.createdAt)} - ${getTime(file.createdAt)}\nModified: ${getFormattedDate(file.updatedAt)} - ${getTime(file.updatedAt)}`;
 
     const handleSetSelectedFile = () => {
         if (selectedFile.value !== file.entryId) {
@@ -58,7 +59,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
             className={trimClasses(listItemClasses)}
         >
             <ToolTip
-                toolTipText={tip}
+                toolTipText={tip + '\n' + createdAndModified}
                 tipPosition='bottom'
                 offset={8}
             >

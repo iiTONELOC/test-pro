@@ -2,6 +2,16 @@ import { createRef } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { trimClasses, uuid } from '../utils';
 
+/**
+ * ```ts
+ * export type ToolTipProps = {
+ *    children: JSX.Element | JSX.Element[];
+ *    toolTipText: string;
+ *    tipPosition: 'top' | 'bottom' | 'left' | 'right'; //NOSONAR
+ *    offset?: number;
+ * }
+ * ```
+ */
 export type ToolTipProps = {
     children: JSX.Element | JSX.Element[];
     toolTipText: string;
@@ -9,7 +19,7 @@ export type ToolTipProps = {
     offset?: number;
 }
 
-const groupContainerClasses = 'relative group z-50';
+const groupContainerClasses = 'relative group';
 
 const tooltipClasses = `absolute hidden group-hover:block group-focus:block bg-black/[.85] rounded-md
 text-xs px-2 py-1 min-w-max max-w-xs border border-gray-700 z-50`;
@@ -37,6 +47,7 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
     const tipClasses = (positionClasses[tipPosition] ?? rightPositionClasses)
 
     useEffect(() => {
+        let timeout: NodeJS.Timeout | null = null;
         // check to see if the div contains an element that is focused
         // if it does then show the tooltip by removing the hidden class
         const handleFocus = () => {
@@ -56,11 +67,23 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
                 hiddenElementRef.current = element;
                 hiddenElementRef.current.classList.remove('hidden');
                 hiddenElementRef.current.classList.add('block');
+
+                // set a timeout to remove a tooltip triggered by focused element and not a hover after 5.5 seconds
+                timeout = setTimeout(() => {
+                    if (hiddenElementRef.current) {
+                        hiddenElementRef.current.classList.remove('block');
+                        hiddenElementRef.current.classList.add('hidden');
+                    }
+                }, 5500);
             }
         }
 
         const handleFocusOut = () => {
-            if (hiddenElementRef.current) {
+            if (hiddenElementRef.current && hiddenElementRef?.current.classList.contains('block')) {
+                timeout !== null && (() => {
+                    clearTimeout(timeout);
+                    timeout = null;
+                })();
                 hiddenElementRef.current.classList.remove('block');
                 hiddenElementRef.current.classList.add('hidden');
             }
@@ -69,6 +92,7 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
         //  for focus events on the group container and handle them
         groupContainerRef.current?.addEventListener('focusin', handleFocus);
         groupContainerRef.current?.addEventListener('focusout', handleFocusOut);
+
         return () => {
             groupContainerRef.current?.removeEventListener('focusin', handleFocus);
             groupContainerRef.current?.removeEventListener('focusout', handleFocusOut);
@@ -83,11 +107,13 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
             <div
                 className={trimClasses(tooltipClasses) + ' ' + tipClasses}>
                 <ul>
-                    {title.split('\n').map((line: string, index: number) => (
-                        <li key={uuid()}>
-                            <p className={index > 0 ? 'ml-2' : ''}>{line}</p>
-                        </li>
-                    ))}
+                    <pre>
+                        {title.split('\n').map((line: string) => (
+                            <li key={uuid()}>
+                                <p className={''}>{line}</p>
+                            </li>
+                        ))}
+                    </pre>
                 </ul>
             </div>
         </div>

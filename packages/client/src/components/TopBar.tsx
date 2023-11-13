@@ -30,11 +30,7 @@ function TopBarIcon({ Icon, title, action, id }: Readonly<ActionBarIconProps>) {
     };
 
     return (
-        <ToolTip
-            toolTipText={title}
-            tipPosition='bottom'
-            offset={8}
-        >
+        <ToolTip toolTipText={title}>
             <button
                 className={trimClasses(buttonClasses)}
                 onClick={handleClick}

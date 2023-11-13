@@ -24,11 +24,7 @@ function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element
     const iconClasses = 'w-5 h-5 hover:w-6 hover:h-6 transition-all duration-200';
 
     return (
-        <ToolTip
-            toolTipText={title}
-            tipPosition='bottom'
-            offset={10}
-        >
+        <ToolTip toolTipText={title}>
             <button
                 className={trimClasses(buttonClasses)} onClick={action}>
                 <Icon className={iconClasses} />

@@ -1,4 +1,4 @@
-import { QuizView } from './index';
+import { QuizDetails } from './index';
 
 /**
  * The different views that can be displayed in the main view
@@ -25,7 +25,7 @@ export enum QuizViews {
 export function QuizViewRouter({ view }: Readonly<{ view: QuizViews }>): JSX.Element {
     switch (view) {
         case QuizViews.QuizDetails:
-            return <QuizView />;
+            return <QuizDetails />;
         case QuizViews.Quiz:
             return <>QuizExam </>;
         case QuizViews.QuizEdit:
@@ -37,6 +37,6 @@ export function QuizViewRouter({ view }: Readonly<{ view: QuizViews }>): JSX.Ele
         case QuizViews.QuizHistory:
             return <>QuizHistory </>;
         default:
-            return <QuizView />;
+            return <QuizDetails />;
     }
 }

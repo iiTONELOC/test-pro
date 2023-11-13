@@ -1,5 +1,5 @@
-import { trimClasses, getVirtualFileSystem, generateFileSystem, clickHandler, keyHandler } from '../../utils';
-import { useSelectedFileState, useInfoDrawerState, useQuizzesDbState } from '../../signals';
+import { trimClasses, getVirtualFileSystem, generateFileSystem } from '../../utils';
+import { useInfoDrawerState, useQuizzesDbState } from '../../signals';
 import { useEffect, useState } from 'preact/hooks';
 import { useMountedState } from '../../hooks';
 
@@ -13,22 +13,12 @@ sm:text-sm lg:text-md xl:text-base flex`;
 
 export function InfoDrawer(): JSX.Element {
     const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystem[]>([]);
-    const { setSelectedFile } = useSelectedFileState();
     const { isDrawerOpen } = useInfoDrawerState();
     const isMounted: boolean = useMountedState();
     const { quizzesDb } = useQuizzesDbState();
 
     const quizData: QuizModelResponse[] = quizzesDb.value;
     const hideDrawer = !isDrawerOpen.value;
-
-    const resetSelectedFile = () => setSelectedFile('');
-    const handleClick = (event: MouseEvent) => {
-        clickHandler({ event, callback: resetSelectedFile, stopPropagation: true });
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-        keyHandler({ event, keyToWatch: 'Enter', direction: 'down', callback: resetSelectedFile, stopPropagation: true });
-    };
 
     useEffect(() => {
         if (isMounted && isDrawerOpen.value) {
@@ -48,8 +38,7 @@ export function InfoDrawer(): JSX.Element {
         <div className={trimClasses(drawerClasses)}>
             <ul
                 tabIndex={0}
-                onClick={handleClick}
-                onKeyDown={handleKeyDown}
+
                 className={'bg-gray-900 w-full h-full overflow-y-auto p-3 rounded-sm'}>
                 {virtualFileSystem.length > 0 && virtualFileSystem.map((entry: VirtualFileSystem, index: number) => (
                     <VirtualFile key={`${entry.name}-${index}`} file={entry as IVirtualFile} />// NOSONAR

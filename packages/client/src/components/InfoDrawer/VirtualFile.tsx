@@ -1,10 +1,10 @@
 import { Document as DocumentIcon } from '../../assets/icons';
 import { clickHandler, getFormattedDate, getTime, keyHandler, trimClasses } from '../../utils';
 import { useSelectedFileState } from '../../signals';
+import { useEffect, useRef } from 'preact/hooks';
 import { ToolTip } from '../ToolTip';
 
 import type { IVirtualFile } from '../../utils/virtualFileSystem';
-import { useEffect, useRef } from 'preact/hooks';
 
 const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:bg-slate-800
 rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;
@@ -13,8 +13,9 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     const { setSelectedFile, selectedFile } = useSelectedFileState();
     const listItemRef = useRef<HTMLLIElement>(null);
 
+    const dateTime = (date: Date) => `${getFormattedDate(date)} - ${getTime(date)}`;
     const tip = 'Topics:\n' + file.topics?.map((topic: string) => `# ${topic}`).join('\n');
-    const createdAndModified = `Created:  ${getFormattedDate(file.createdAt)} - ${getTime(file.createdAt)}\nModified: ${getFormattedDate(file.updatedAt)} - ${getTime(file.updatedAt)}`;
+    const createdAndModified = `Created:  ${dateTime(file.createdAt)}\nModified: ${dateTime(file.updatedAt)}`;
 
     const handleSetSelectedFile = () => {
         if (selectedFile.value !== file.entryId) {
@@ -58,11 +59,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
             onKeyDown={handleKeyDown}
             className={trimClasses(listItemClasses)}
         >
-            <ToolTip
-                toolTipText={tip + '\n' + createdAndModified}
-                tipPosition='bottom'
-                offset={8}
-            >
+            <ToolTip toolTipText={tip + '\n' + createdAndModified}>
                 <span
                     tabIndex={0}
                     className={'w-full flex flex-row gap-1 items-center'}>

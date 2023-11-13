@@ -9,8 +9,8 @@
   font-weight: lighter;
 
 
-  --scrollbar-gutter: rgb(37, 37, 37);
-  --scrollbar-arm: rgb(79, 79, 92);
+  --scrollbar-gutter: #252525;
+  --scrollbar-arm: #4f4f5c;
 
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-gutter) var(--scrollbar-arm);

@@ -1,5 +1,5 @@
+import { clickHandler, dateTime, keyHandler, trimClasses } from '../../utils';
 import { Document as DocumentIcon } from '../../assets/icons';
-import { clickHandler, getFormattedDate, getTime, keyHandler, trimClasses } from '../../utils';
 import { useSelectedFileState } from '../../signals';
 import { useEffect, useRef } from 'preact/hooks';
 import { ToolTip } from '../ToolTip';
@@ -13,7 +13,6 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     const { setSelectedFile, selectedFile } = useSelectedFileState();
     const listItemRef = useRef<HTMLLIElement>(null);
 
-    const dateTime = (date: Date) => `${getFormattedDate(date)} - ${getTime(date)}`;
     const tip = 'Topics:\n' + file.topics?.map((topic: string) => `# ${topic}`).join('\n');
     const createdAndModified = `Created:  ${dateTime(file.createdAt)}\nModified: ${dateTime(file.updatedAt)}`;
 

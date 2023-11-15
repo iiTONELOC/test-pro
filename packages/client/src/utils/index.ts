@@ -38,6 +38,9 @@ export const getFormattedDate = (date: Date) => {
     return `${formattedMonth}/${formattedDay}/${year}`;
 };
 
+
+export const dateTime = (date: Date) => `${getFormattedDate(date)} - ${getTime(date)}`;
+
 // Export the API
 
 export type { IApiResponse, QuizModelResponse, QuestionModelResponse, dbQueryParams, PopulatedQuizModel, TopicModelType } from './api';

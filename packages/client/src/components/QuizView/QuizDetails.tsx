@@ -2,8 +2,40 @@ import { useSelectedFileState, SelectedFileState, useQuizzesDbState, QuizzesDbSt
 import { useEffect, useState } from 'preact/hooks';
 import { QuizModelResponse } from '../../utils/api';
 import { useMountedState } from '../../hooks';
-import { titleCase } from '../../utils';
+import { titleCase, dateTime } from '../../utils';
 
+
+
+function MetaDetail({ title, value }: Readonly<{ title: string, value: any }>): JSX.Element {
+    return (
+        <div className={'flex flex-col gap-2 text-gray-300'}>
+            <p>
+                <span className={'font-bold'}>{title}</span>{' '}
+                <span>{value}</span>
+            </p>
+        </div>
+    )
+}
+
+
+// need a 70 to pass the quiz
+// each question is worth 1 point so the passing score is number of questions * 70% rounded up
+const calculatePassingScore = (questions: any[]): number => {
+    const passingScore = Math.ceil(questions.length * 0.7);
+    return passingScore;
+}
+
+function FileMetaDetails({ currentFileDetails }: Readonly<{ currentFileDetails: QuizModelResponse }>): JSX.Element {
+    return (
+        <>
+            <MetaDetail title={'Created:'} value={dateTime(currentFileDetails.createdAt as Date)} />
+            <MetaDetail title={'Last Modified:'} value={dateTime(currentFileDetails.updatedAt as Date)} />
+            <MetaDetail title={'Number of Questions:'} value={currentFileDetails.questions.length} />
+            <MetaDetail title={'Passing Score:'} value={`70%`} />
+            <MetaDetail title={'Number of Correct Answers To Pass:'} value={`${calculatePassingScore(currentFileDetails.questions)}`} />
+        </>
+    )
+}
 
 export function QuizDetails(): JSX.Element {// NOSONAR
     const [currentFileDetails, setCurrentFileDetails] = useState<QuizModelResponse | null>(null);
@@ -32,17 +64,23 @@ export function QuizDetails(): JSX.Element {// NOSONAR
         }
     }, [isMounted, currentFile]);
 
-    return currentFileDetails ? (
-        <section className={'p-2'}>
+
+
+    return currentFileDetails && isMounted ? (
+        <section className={'w-full min-w-max p-2 flex flex-col justify-center gap-8 bg-red-900 h-full over'}>
             <header>
-                <h1 className={'text-3xl sm:text-4xl font-bold flex w-full'}>
+                <h1 className={'text-3xl sm:text-4xl font-bold text-left bg-black'}>
                     {titleCase(currentFileDetails.name)}
                 </h1>
             </header>
-            <pre className={'text-xs sm:text-sm'}>
+            <div className={'w-full min-w-max h-full text-xs sm:text-sm flex'}>
+                <div className={'w-5/6 flex flex-col gap-4'}>
+                    <FileMetaDetails currentFileDetails={currentFileDetails} />
+                </div>
+            </div>
+            <pre className={''}>
                 {JSON.stringify(currentFileDetails, null, 2)}
             </pre>
-
         </section>
     ) : (
         <p className={'text-gray-300 text-center text-base'}>

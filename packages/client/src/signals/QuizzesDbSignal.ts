@@ -3,14 +3,14 @@ import { QuizModelResponse } from '../utils/api';
 
 const Quizzes = signal<QuizModelResponse[]>([]);
 
-export type QuizzesDbState = {
+export type QuizzesDbSignal = {
     quizzesDb: Signal<QuizModelResponse[]>;
     setQuizzes: (quizzes: QuizModelResponse[]) => void;
     setQuiz: (quiz: QuizModelResponse) => void;
     addQuiz: (quiz: QuizModelResponse) => void;
 };
 
-export const useQuizzesDbState = (): QuizzesDbState => {
+export const useQuizzesDbSignal = (): QuizzesDbSignal => {
     const setQuizzes = (quizzes: QuizModelResponse[]) => {
         Quizzes.value = quizzes;
     };

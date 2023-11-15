@@ -1,6 +1,6 @@
+import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
 import { clickHandler, dateTime, keyHandler, trimClasses } from '../../utils';
 import { Document as DocumentIcon } from '../../assets/icons';
-import { useSelectedFileState } from '../../signals';
 import { useEffect, useRef } from 'preact/hooks';
 import { ToolTip } from '../ToolTip';
 
@@ -10,7 +10,8 @@ const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:b
 rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;
 
 export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Element {
-    const { setSelectedFile, selectedFile } = useSelectedFileState();
+    const { setSelectedFile, selectedFile } = useSelectedFileSignal();
+    const { setCurrentQuizView } = useQuizViewSignal();
     const listItemRef = useRef<HTMLLIElement>(null);
 
     const tip = 'Topics:\n' + file.topics?.map((topic: string) => `# ${topic}`).join('\n');
@@ -23,7 +24,9 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     };
 
     const handleClick = (event: MouseEvent) => {
+        // sets the selected file and sets the quiz view to the quiz details
         clickHandler({ event, callback: handleSetSelectedFile, stopPropagation: true });
+        setCurrentQuizView(QuizViews.QuizDetails);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {

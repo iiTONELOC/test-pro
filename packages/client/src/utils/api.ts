@@ -7,7 +7,7 @@ import type {
     QuestionModelResponse
 } from '../../../server/types';
 
-import { useQuizzesDbState, QuizzesDbState } from '../signals';
+import { useQuizzesDbSignal, QuizzesDbSignal } from '../signals';
 
 export type {
     IApiResponse, QuizModelResponse, QuestionModelResponse, dbQueryParams, PopulatedQuizModel,
@@ -41,7 +41,7 @@ function buildURL(baseUrl: string, params: dbQueryParams): string {
 
 export const API = {
     async getAllQuizzes(props: dbQueryParams): Promise<QuizModelResponse[]> {
-        const { setQuizzes }: QuizzesDbState = useQuizzesDbState();
+        const { setQuizzes }: QuizzesDbSignal = useQuizzesDbSignal();
 
         try {
             const { showTimestamps, needToPopulate } = props ?? defaultAPIQueryParams;

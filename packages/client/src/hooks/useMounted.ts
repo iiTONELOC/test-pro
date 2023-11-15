@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 
-export function useMountedState() {
+export function useMountedState(): boolean {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

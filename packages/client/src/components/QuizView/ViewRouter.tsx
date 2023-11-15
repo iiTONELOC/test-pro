@@ -1,4 +1,4 @@
-import { QuizDetails } from './index';
+import { QuizDetails, QuizHistory, QuizOptions, Quiz } from './index';
 
 /**
  * The different views that can be displayed in the main view
@@ -27,15 +27,15 @@ export function QuizViewRouter({ view }: Readonly<{ view: QuizViews }>): JSX.Ele
         case QuizViews.QuizDetails:
             return <QuizDetails />;
         case QuizViews.Quiz:
-            return <>QuizExam </>;
+            return <Quiz />
         case QuizViews.QuizEdit:
-            return <>QuizEdit </>;
+            return <QuizOptions />;
         case QuizViews.QuizCreate:
             return <>QuizCreate </>;
         case QuizViews.QuizDelete:
-            return <>QuizDelete </>;
+            return <QuizOptions />;
         case QuizViews.QuizHistory:
-            return <>QuizHistory </>;
+            return <QuizHistory />;
         default:
             return <QuizDetails />;
     }

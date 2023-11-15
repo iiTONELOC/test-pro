@@ -5,7 +5,7 @@ const d = 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 01
 
 export function DocumentPlus({
     className = defaultIconProps.IconClassName,
-    color = defaultIconProps.IconColor }: IconProps): JSX.Element {
+    color = defaultIconProps.IconColor }: Readonly<IconProps>): JSX.Element {
     return (
         <SvgBase
             className={className}

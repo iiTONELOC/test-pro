@@ -1,4 +1,4 @@
-import { useInfoDrawerState } from '../../signals';
+import { useInfoDrawerSignal } from '../../signals';
 import { useMountedState } from '../../hooks'
 import { InfoDrawer, MainView } from '../';
 import { useEffect } from 'preact/hooks';
@@ -7,7 +7,7 @@ import { API } from '../../utils';
 const containerClasses = 'w-full h-full fixed left-12 top-8 flex flex-row';
 
 export function MainViewContainer() { //NOSONAR
-    const { isDrawerOpen } = useInfoDrawerState();
+    const { isDrawerOpen } = useInfoDrawerSignal();
     const isMounted: boolean = useMountedState();
     const isOpen = isDrawerOpen.value;
 

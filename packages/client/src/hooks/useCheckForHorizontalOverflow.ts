@@ -1,19 +1,19 @@
-import { useSelectedFileState, SelectedFileState, useInfoDrawerState, InfoDrawerState } from '../signals';
+import { useSelectedFileSignal, SelectedFileSignal, useInfoDrawerSignal, InfoDrawerSignal } from '../signals';
 import { useEffect, useState } from 'preact/hooks';
 import { RefObject } from 'preact';
 
-export type UseCheckForOverflowProps = {
-    containerRef: RefObject<HTMLElement | undefined>
+export type useCheckForHorizontalOverflowProps = {
+    containerRef: RefObject<HTMLElement | undefined>;
 }
 
-export interface IUserCheckForOverflow {
+export interface IUseCheckForHorizontalOverflow {
     hasOverflow: boolean
 }
 
-export function useCheckForOverflow({ containerRef }: UseCheckForOverflowProps): IUserCheckForOverflow {
+export function useCheckForHorizontalOverflow({ containerRef }: useCheckForHorizontalOverflowProps): IUseCheckForHorizontalOverflow {
     const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
-    const { selectedFile }: SelectedFileState = useSelectedFileState();
-
+    const { selectedFile }: SelectedFileSignal = useSelectedFileSignal();
+    const { isDrawerOpen }: InfoDrawerSignal = useInfoDrawerSignal();
     const currentFile = selectedFile.value;
     const container = containerRef.current;
 
@@ -42,7 +42,7 @@ export function useCheckForOverflow({ containerRef }: UseCheckForOverflowProps):
     useEffect(() => {
         handleEffect();
         return cleanUpListener;
-    }, [currentFile]);
+    }, [isDrawerOpen.value, currentFile, container]);
 
     return { hasOverflow: isOverflowing };
 }

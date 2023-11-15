@@ -1,5 +1,5 @@
 import { trimClasses, getVirtualFileSystem, generateFileSystem } from '../../utils';
-import { useInfoDrawerState, useQuizzesDbState } from '../../signals';
+import { useInfoDrawerSignal, useQuizzesDbSignal } from '../../signals';
 import { useEffect, useState } from 'preact/hooks';
 import { useMountedState } from '../../hooks';
 
@@ -13,9 +13,9 @@ sm:text-sm lg:text-md xl:text-base flex`;
 
 export function InfoDrawer(): JSX.Element {
     const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystem[]>([]);
-    const { isDrawerOpen } = useInfoDrawerState();
+    const { isDrawerOpen } = useInfoDrawerSignal();
     const isMounted: boolean = useMountedState();
-    const { quizzesDb } = useQuizzesDbState();
+    const { quizzesDb } = useQuizzesDbSignal();
 
     const quizData: QuizModelResponse[] = quizzesDb.value;
     const hideDrawer = !isDrawerOpen.value;

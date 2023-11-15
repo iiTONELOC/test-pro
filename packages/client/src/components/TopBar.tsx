@@ -1,6 +1,6 @@
 import { clickHandler, trimClasses, uuid } from '../utils';
 import { InfoDrawerToggler } from './InfoDrawer';
-import { useInfoDrawerState } from '../signals';
+import { useInfoDrawerSignal } from '../signals';
 import { Folder, Search } from '../assets/icons';
 import { ActionBarIconProps } from './ActionBar';
 
@@ -43,7 +43,7 @@ function TopBarIcon({ Icon, title, action, id }: Readonly<ActionBarIconProps>) {
 }
 
 export function TopBar(): JSX.Element {
-    const { isDrawerOpen, toggleDrawer } = useInfoDrawerState();
+    const { isDrawerOpen, toggleDrawer } = useInfoDrawerSignal();
 
     const setOpen = () => {
         if (!isDrawerOpen.value) {

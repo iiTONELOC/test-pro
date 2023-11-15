@@ -1,8 +1,8 @@
-export { useQuizzesDbState } from './QuizzesDbState';
-export type { QuizzesDbState } from './QuizzesDbState';
-export { useInfoDrawerState } from './InfoDrawerState';
-export type { InfoDrawerState } from './InfoDrawerState';
-export { useSelectedFileState } from './SelectedFileState';
-export type { SelectedFileState } from './SelectedFileState';
-export type { QuizViewState } from './QuizViewState';
-export { useQuizViewState, QuizViews } from './QuizViewState';
+export { useQuizzesDbSignal } from './QuizzesDbSignal';
+export type { QuizzesDbSignal } from './QuizzesDbSignal';
+export { useInfoDrawerSignal } from './InfoDrawerSignal';
+export type { InfoDrawerSignal } from './InfoDrawerSignal';
+export { useSelectedFileSignal } from './SelectedFileSignal';
+export type { SelectedFileSignal } from './SelectedFileSignal';
+export type { QuizViewSignal } from './QuizViewSignal';
+export { useQuizViewSignal, QuizViews } from './QuizViewSignal';

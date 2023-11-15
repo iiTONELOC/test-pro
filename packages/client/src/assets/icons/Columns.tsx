@@ -5,7 +5,7 @@ const d = 'M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625
 
 export function Columns({
     className = defaultIconProps.IconClassName,
-    color = defaultIconProps.IconColor }: IconProps): JSX.Element {
+    color = defaultIconProps.IconColor }: Readonly<IconProps>): JSX.Element {
     return (
         <SvgBase
             className={className}

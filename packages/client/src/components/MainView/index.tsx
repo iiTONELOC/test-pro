@@ -1,13 +1,14 @@
-import { useInfoDrawerSignal, useQuizViewSignal, InfoDrawerSignal } from '../../signals';
 import { useMountedState, useCheckForHorizontalOverflow } from '../../hooks';
+import { useInfoDrawerSignal, InfoDrawerSignal } from '../../signals';
 import { useVirtualScrollBar } from '../VirtualScrollBar';
 import { QuizViewRouter } from '../QuizView';
 import { useRef } from 'preact/hooks';
 import { GoBack } from './GoBack';
 
+const routerContainingDivClasses = 'w-full w-min-max min-h-[calc(100vh-54px)] bg-gray-900 rounded-sm p-3 overflow-auto';
 
 export const MainView = (): JSX.Element => {// NOSONAR
-    const { currentQuizView } = useQuizViewSignal();
+
     const { isDrawerOpen }: InfoDrawerSignal = useInfoDrawerSignal();
     const containerRef = useRef<HTMLDivElement>(null);
     const isMounted: boolean = useMountedState();
@@ -19,18 +20,10 @@ export const MainView = (): JSX.Element => {// NOSONAR
     const mainClasses = `static bg-slate-950 h-[calc(100vh-40px)] ${width} p-1 overflow-auto bg-pink-900 p-1 scroll-smooth`;
 
     return isMounted ? (
-        <main
-            className={mainClasses}
-            onMouseMove={handleMouseMove}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-        >
-            <div
-                ref={containerRef}
-                className={'w-full w-min-max min-h-[calc(100vh-54px)] bg-gray-900 rounded-sm p-3 overflow-auto'}
-            >
+        <main className={mainClasses} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+            <div ref={containerRef} className={routerContainingDivClasses}>
                 <GoBack />
-                {<QuizViewRouter view={currentQuizView.value} />}
+                {<QuizViewRouter />}
             </div>
             {hasOverflow && containerRef.current && isDrawerOpen.value && <VirtualScrollBar />}
         </main>

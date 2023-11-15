@@ -17,12 +17,14 @@ export type ActionBarIconProps = {
     id?: string  // NOSONAR
 }
 
-function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element { //NOSONAR
-    const buttonClasses = `w-full h-10 flex items-center justify-center hover:bg-gray-800
+const buttonClasses = `w-full h-10 flex items-center justify-center hover:bg-gray-800
     rounded-md text-gray-400 hover:text-gray-200`;
+const iconClasses = 'w-5 h-5 hover:w-6 hover:h-6 transition-all duration-200';
 
-    const iconClasses = 'w-5 h-5 hover:w-6 hover:h-6 transition-all duration-200';
+const actionBarAsideClasses = 'bg-gray-900 h-full w-12 fixed left-0 top-8 bottom-16 px-2 z-10';
+const actionBarDivClasses = 'h-full w-full my-2';
 
+function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element { //NOSONAR
     return (
         <ToolTip toolTipText={title}>
             <button
@@ -35,8 +37,8 @@ function ActionBarIcon({ Icon, title, action }: ActionBarIconProps): JSX.Element
 
 export function ActionBar(): JSX.Element {
     return (
-        <aside className={'bg-gray-900 h-full w-12 fixed left-0 top-8 bottom-16 px-2 z-10'}>
-            <div className={'h-full w-full my-2'}>
+        <aside className={actionBarAsideClasses}>
+            <div className={actionBarDivClasses}>
                 {icons.map(({ Icon, title, action }) => (
                     <ActionBarIcon
                         Icon={Icon}

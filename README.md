@@ -4,7 +4,7 @@
 
 ## Screenshot
 
-![Screenshot](./assets/screenshots/testpro-inprogress.png)
+![Screenshot](./assets/screenshots/screenshot.png)
 
 ## Description
 

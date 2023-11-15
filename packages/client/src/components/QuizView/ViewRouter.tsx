@@ -1,3 +1,4 @@
+import { useQuizViewSignal } from '../../signals';
 import { QuizDetails, QuizHistory, QuizOptions, Quiz } from './index';
 
 /**
@@ -22,7 +23,10 @@ export enum QuizViews {
     QuizHistory = 'QuizHistory'
 }
 
-export function QuizViewRouter({ view }: Readonly<{ view: QuizViews }>): JSX.Element {
+export function QuizViewRouter(): JSX.Element {
+    const { currentQuizView } = useQuizViewSignal();
+    const view = currentQuizView.value ?? QuizViews.QuizDetails;
+
     switch (view) {
         case QuizViews.QuizDetails:
             return <QuizDetails />;

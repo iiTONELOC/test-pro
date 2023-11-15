@@ -10,6 +10,8 @@ import type { PopulatedQuizModel, QuizModelResponse, VirtualFileSystem, IVirtual
 
 const drawerClasses = `bg-gray-950/[.75] h-[calc(100vh-44px)] w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
 sm:text-sm lg:text-md xl:text-base flex`;
+const ulClasses = 'bg-gray-900 w-full h-full overflow-y-auto p-3 rounded-sm';
+const liClasses = 'text-center text-gray-500';
 
 export function InfoDrawer(): JSX.Element {
     const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystem[]>([]);
@@ -38,14 +40,13 @@ export function InfoDrawer(): JSX.Element {
         <div className={trimClasses(drawerClasses)}>
             <ul
                 tabIndex={0}
-
-                className={'bg-gray-900 w-full h-full overflow-y-auto p-3 rounded-sm'}>
+                className={ulClasses}>
                 {virtualFileSystem.length > 0 && virtualFileSystem.map((entry: VirtualFileSystem, index: number) => (
                     <VirtualFile key={`${entry.name}-${index}`} file={entry as IVirtualFile} />// NOSONAR
                 ))}
 
                 {virtualFileSystem.length === 0 &&
-                    <li className={'text-center text-gray-500'}>No Quizzes Found!</li>
+                    <li className={liClasses}>No Quizzes Found!</li>
                 }
             </ul>
         </div>

@@ -1,5 +1,7 @@
-export function TopicTag({ topic }: { topic: string }): JSX.Element {
+const pClasses = 'bg-slate-700 flex px-2 py-1 rounded-md min-w-max';
+
+export function TopicTag({ topic }: Readonly<{ topic: string }>): JSX.Element {
     return (
-        <p className={'bg-slate-700 flex px-2 py-1 rounded-md min-w-max'}># {topic}</p>
+        <p className={pClasses}># {topic}</p>
     )
 }

@@ -1,12 +1,14 @@
-import { QuizViews, useQuizViewSignal, useInfoDrawerSignal } from '../../../signals';
+import { useShowQuizDetails } from '../../../hooks';
 import { trimClasses, uuid } from '../../../utils';
+import { QuizViews, useQuizViewSignal, useInfoDrawerSignal } from '../../../signals';
 
 const divClasses = ' min-w-max flex flex-row p-3 gap-4 place-content-center';
 const buttonClasses = `w-full bg-slate-950 text-gray-400/[.9] text-sm font-semibold p-3 rounded-md hover:cursor-pointer
 hover:bg-emerald-900 hover:text-gray-300 hover:scale-110 hover:shadow-xl transition-all min-w-max max-w-[200px]
 hover:border-1 hover:border-black text-base`;
 
-export function ActionButtons(): JSX.Element {
+export function ActionButtons(): JSX.Element { // NOSONAR
+    const hasDetails = useShowQuizDetails();
     const { setCurrentQuizView } = useQuizViewSignal();
     const { isDrawerOpen, toggleDrawer } = useInfoDrawerSignal();
 
@@ -14,28 +16,25 @@ export function ActionButtons(): JSX.Element {
         {
             name: 'Take Quiz',
             action: () => {
-                console.log('Take Quiz');
                 setCurrentQuizView(QuizViews.Quiz);
-                isDrawerOpen && toggleDrawer();
+                isDrawerOpen.value && toggleDrawer();
             }
         },
         {
             name: 'View Quiz History',
             action: () => {
-                console.log('View Quiz History');
                 setCurrentQuizView(QuizViews.QuizHistory);
             }
         },
         {
             name: 'View Quiz Options',
             action: () => {
-                console.log('View Quiz Options');
                 setCurrentQuizView(QuizViews.QuizEdit);
             }
         }
     ];
 
-    return (
+    return hasDetails ? (
         <div className={divClasses}>
             {quizActions.map(action => (
                 <button
@@ -46,5 +45,5 @@ export function ActionButtons(): JSX.Element {
                 </button>
             ))}
         </div>
-    );
+    ) : <></>
 }

@@ -8,7 +8,6 @@ import { GoBack } from './GoBack';
 const routerContainingDivClasses = 'w-full w-min-max min-h-[calc(100vh-54px)] bg-gray-900 rounded-sm p-3 overflow-auto';
 
 export const MainView = (): JSX.Element => {// NOSONAR
-
     const { isDrawerOpen }: InfoDrawerSignal = useInfoDrawerSignal();
     const containerRef = useRef<HTMLDivElement>(null);
     const isMounted: boolean = useMountedState();

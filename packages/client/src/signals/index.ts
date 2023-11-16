@@ -4,5 +4,7 @@ export { useInfoDrawerSignal } from './InfoDrawerSignal';
 export type { InfoDrawerSignal } from './InfoDrawerSignal';
 export { useSelectedFileSignal } from './SelectedFileSignal';
 export type { SelectedFileSignal } from './SelectedFileSignal';
+export { useCurrentFileSignal } from './CurrentFileSignal';
+export type { CurrentFileSignal } from './CurrentFileSignal';
 export type { QuizViewSignal } from './QuizViewSignal';
 export { useQuizViewSignal, QuizViews } from './QuizViewSignal';

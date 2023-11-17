@@ -1,15 +1,9 @@
+import { dateTime, calculatePassingScore } from '../../../utils';
 import { QuizModelResponse } from '../../../utils/api';
 import { useCurrentFileSignal } from '../../../signals';
-import { dateTime } from '../../../utils';
+
 
 const metaContainerDivClasses = 'flex flex-col gap-2 w-full items-start lg:items-center';
-
-// need a 70 to pass the quiz
-const calculatePassingScore = (questions: any[]): number => {
-    questions = questions ?? [];
-    const passingScore = Math.ceil(questions.length * 0.7);
-    return passingScore;
-}
 
 function MetaDetail({ title, value }: Readonly<{ title: string, value: any }>): JSX.Element {
     return (

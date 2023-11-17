@@ -2,16 +2,31 @@ import type {
     IApiResponse,
     dbQueryParams,
     TopicModelType,
+    QuizAttemptType,
+    QuestionTypeEnums,
     QuizModelResponse,
     PopulatedQuizModel,
-    QuestionModelResponse
+    QuestionModelResponse,
+    PopulatedQuizAttemptType,
+    QuizAttemptModelResponse,
+    PopulatedQuestionModelType
 } from '../../../server/types';
 
+import { IQuizAttemptData } from '.';
 import { useQuizzesDbSignal, QuizzesDbSignal } from '../signals';
 
 export type {
-    IApiResponse, QuizModelResponse, QuestionModelResponse, dbQueryParams, PopulatedQuizModel,
-    TopicModelType
+    IApiResponse,
+    dbQueryParams,
+    TopicModelType,
+    QuizAttemptType,
+    QuestionTypeEnums,
+    QuizModelResponse,
+    PopulatedQuizModel,
+    QuestionModelResponse,
+    PopulatedQuizAttemptType,
+    QuizAttemptModelResponse,
+    PopulatedQuestionModelType
 };
 
 /**
@@ -75,6 +90,9 @@ export const API = {
             return null;
         }
     },
+    // async createQuizAttemptWithAnswers(attemptData: IQuizAttemptData, props: dbQueryParams): Promise<PopulatedQuizModel | null> {
+
+    // }
 
 };
 

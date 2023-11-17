@@ -1,17 +1,18 @@
-import { useEffect } from 'preact/hooks';
-import { useCurrentFileSignal } from '../../../signals';
+
+import { QuizQuestion } from './QuizQuestion';
+import { quizRunnerState } from '../../../utils';
+import { useMountedState } from '../../../hooks';
 import DetailHeader from '../QuizDetails/DetailHeader';
 
-export function Quiz() {
-    const { fileDetails } = useCurrentFileSignal()
-    const currentFileDetails = fileDetails.value;
+export function Quiz() { // NOSONAR
+    const quizState = quizRunnerState();
+    const isMounted = useMountedState();
 
-    useEffect(() => {
-        console.log('Quiz: ', currentFileDetails)
-    }, [currentFileDetails])
-    return (
-        <section className={'flex justify-start lg:justify-center p-2'}>
-            <DetailHeader />
+    return isMounted ? quizState.quizData && (
+        <section className={'flex flex-col w-full h-[calc(100vh-83px)] place-content-center items-center p-2 overflow--auto'}>
+            {!quizState.currentQuestion && <DetailHeader />}
+            {quizState.currentQuestion &&
+                <QuizQuestion quizState={quizState} question={quizState.currentQuestion} />}
         </section>
-    )
+    ) : <></>
 }

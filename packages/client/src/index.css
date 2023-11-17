@@ -31,3 +31,11 @@
   background-color: var(--scrollbar-arm);
   border-radius: 12px;
 }
+
+.text-shadow {
+  /* text-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.9); */
+  text-shadow: 1px 1px 0 rgb(0, 0, 0),
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black;
+}

@@ -148,6 +148,13 @@ export const deleteById = async (id: string, queryParams: dbQueryParams): Promis
 
     !needToPopulate && (deletedQuizHistory = await QuizHistory.findByIdAndDelete({ _id: id }).select(selectTerms) as QuizHistoryType);
 
+    // delete the associated quizAttempt
+    if (deletedQuizHistory) {
+        const quizAttemptId = deletedQuizHistory.attempt?._id;
+        if (quizAttemptId) {
+            await QuizAttempt.findByIdAndDelete({ _id: quizAttemptId });
+        }
+    }
     return deletedQuizHistory;
 };
 

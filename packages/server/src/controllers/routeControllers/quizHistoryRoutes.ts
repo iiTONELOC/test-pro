@@ -5,6 +5,7 @@ import { handleRouteError, httpStatusCodes, extractDbQueryParams } from './route
 import type { IApiResponse } from '../types';
 import type { QuizHistoryModelResponse } from '../dbControllers/quizHistoryController';
 
+
 export interface IQuizHistoryRouteController {
     getAll(req: Request, res: Response): Promise<IApiResponse<QuizHistoryModelResponse[]>>;
     create(req: Request, res: Response): Promise<IApiResponse<QuizHistoryModelResponse>>;

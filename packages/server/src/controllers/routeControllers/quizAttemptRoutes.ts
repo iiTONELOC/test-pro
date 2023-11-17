@@ -5,6 +5,7 @@ import { quizAttemptController, quizQuestionResultController, quizController, qu
 import type { IApiResponse, QuizModelResponse } from '../types';
 import type { QuizAttemptModelResponse } from '../dbControllers/quizAttemptController';
 import type { PopulatedQuizAttemptType, IQuizQuestionResult, QuizQuestionResultType } from '../../db/types';
+import QuizQuestionResult, { PopulatedQuizQuestionResultType } from '../../db/models/QuizQuestionResult';
 
 
 export interface IQuizAttemptRouteController {
@@ -99,8 +100,8 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
             const originalQuestion = await questionController.getById(questionId, queryParams);
             if (!originalQuestion) throw new Error('Question not found.');
 
-            const correctAnswer = originalQuestion.answer;
-            const isCorrect = correctAnswer === answeredQuestion.selectedAnswer;
+            const correctAnswer = originalQuestion.answer.trim().toLowerCase();
+            const isCorrect = correctAnswer === answeredQuestion.selectedAnswer.trim().toLowerCase();
 
             // create the question result using the quizAttemptId from the request params
             const questionResult = await quizQuestionResultController.create({
@@ -124,7 +125,6 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
             return handleRouteError(res, error.message);
         }
     },
-    // TODO: this should return a QuizHistory
     gradeQuizAttempt: async (req: Request, res: Response): Promise<IApiResponse<PopulatedQuizAttemptType>> => {
         const { id } = req.params;
         const queryParams = extractDbQueryParams(req);
@@ -132,7 +132,7 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
         try {
             // get the quizAttempt
             const ungradedAttempt: QuizAttemptModelResponse | null = await quizAttemptController
-                .getById(id, queryParams);
+                .getById(id, { ...queryParams, needToPopulate: true });
             if (!ungradedAttempt) throw new Error('Quiz attempt not found.');
             // get the quiz
             const originalQuizData: QuizModelResponse | null = await quizController
@@ -144,6 +144,24 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
 
             // get the number of questions
             const totalNumberOfQuestions = originalQuizData.questions.length;
+
+            // loop over the answered questions and check if they are correct
+            const answeredQuestions = ungradedAttempt.answeredQuestions as unknown as PopulatedQuizQuestionResultType[];
+
+            for (const answeredQuestion of answeredQuestions) {
+                // check if the answer is correct if  if it is ensure the isCorrect flag is set to true
+                const question = answeredQuestion.question;
+                const correctAnswer = question.answer.trim().toLowerCase();
+                const isCorrect = correctAnswer === answeredQuestion.selectedAnswer.trim().toLowerCase();
+
+                // check the isCorrect variable against the isCorrect flag on the question
+                const isCorrectFlag = answeredQuestion.isCorrect;
+
+                // if they don't match, update the question result
+                if (isCorrect !== isCorrectFlag) {
+                    await QuizQuestionResult.updateOne({ _id: answeredQuestion._id }, { isCorrect });
+                }
+            }
 
             // find the number of correct answers
             const numberOfCorrectAnswers = ungradedAttempt.answeredQuestions

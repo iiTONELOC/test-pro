@@ -1,9 +1,9 @@
 import { useMountedState } from '../../hooks';
 import { useEffect, useState } from 'preact/hooks';
-import { useCurrentFileSignal } from '../../signals';
+import { useCurrentFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
 import {
     PopulatedQuizModel, QuizModelResponse,
-    calculatePassingScore, PopulatedQuestionModelType, shuffle
+    calculatePassingScore, PopulatedQuestionModelType, shuffle, API
 } from '..';
 
 export interface IAnsweredQuestionData {
@@ -42,6 +42,7 @@ export function quizRunnerState() {
 
     // user's currently selected file is stored in the fileDetails signal
     const { fileDetails } = useCurrentFileSignal()
+    const { setCurrentQuizView } = useQuizViewSignal();
     const currentFileDetails: QuizModelResponse | null = fileDetails.value;
 
     // use local-state to manage all the quizData
@@ -86,9 +87,15 @@ export function quizRunnerState() {
     const randomizeQuestions = () => currentFileDetails?.questions &&
         (currentFileDetails.questions = shuffle(currentFileDetails?.questions));
 
+    // @ts-ignore
+    const randomizeAnswerOptions = () => currentFileDetails?.questions.forEach((question: PopulatedQuestionModelType) => {
+        question.options = shuffle(question.options);
+    });
+
     const resetState = () => {
         setQuizIsComplete(false);
         randomizeQuestions();
+        randomizeAnswerOptions();
         setQuizData(currentFileDetails as PopulatedQuizModel);
         setCurrentQuestionIndex(0);
         setCurrentQuestionAnswered(null);
@@ -98,12 +105,21 @@ export function quizRunnerState() {
         setAttemptedQuizData(null);
     };
 
-    const handleQuizComplete = () => {
-        console.log('Quiz is complete');
+    const handleQuizComplete = async () => {
         const elapsed = Date.now() - (elapsedQuizTime ?? 0);
-        console.log({ attemptedQuizData, elapsed });
         setQuizIsComplete(true);
         setElapsedQuizTime(elapsed);
+
+        if (attemptedQuizData) {
+            attemptedQuizData.elapsedTimeInMs = elapsed;
+            attemptedQuizData.passed = attemptedQuizData.earnedPoints >= attemptedQuizData.passingPoints;
+            setAttemptedQuizData(attemptedQuizData);
+            await API.createQuizAttemptWithAnswers(
+                attemptedQuizData, { needToPopulate: true, showTimestamps: false });
+
+            resetState();
+            setCurrentQuizView(QuizViews.QuizHistory);
+        }
     };
 
     // update the quizData on component mount and when the currentFileDetails change

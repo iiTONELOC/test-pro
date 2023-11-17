@@ -42,9 +42,23 @@ export function MultipleChoice({ options, quizState }: Readonly<MultipleChoicePr
     };
 
     const hightLightSelectedAnswer = () => {
-        const selectedAnswer = document.querySelector(`[data-option="${currentQuestionAnswered}"]`);
-        selectedAnswer?.classList?.add('bg-indigo-700');
-        selectedAnswer?.classList?.add('hover:bg-indigo-600');
+        const indigo = `#4F46E5`;
+        const darkIndigo = `#4338CA`;
+        const selectedAnswer: HTMLElement | null = document.querySelector(`[data-option="${currentQuestionAnswered}"]`);
+        // tailwinds is not registering the color change here so we will do it manually - not sure if the classes are
+        // not being added or if the color is being over ridden by something else. I can see the class names in the DOM
+        // but the styles are not being applied.
+        if (selectedAnswer) {
+            // over ride the background color  of the selected answer
+            selectedAnswer.style.backgroundColor = indigo;
+            selectedAnswer.addEventListener('mouseover', () => {
+                selectedAnswer.style.backgroundColor = darkIndigo;
+            });
+
+            selectedAnswer.addEventListener('mouseout', () => {
+                selectedAnswer.style.backgroundColor = indigo;
+            });
+        }
     };
 
     useEffect(() => {

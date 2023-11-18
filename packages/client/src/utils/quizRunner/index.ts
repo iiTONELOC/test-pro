@@ -24,18 +24,6 @@ export interface IQuizAttemptData {
     elapsedTimeInMs: number;
 }
 
-/*
- * NOTES:
- *
- * The API is configured to create an Attempt then add an answeredQuestion to it via
- * the quiz-attempt/:attemptID route. An answered Question uses the QuizQuestionResult model
- * and NEEDS a valid quizAttempt ID before the model can be created.
- *
- * Completed Quizzes will be automatically graded via the quiz-attempt/:attemptID/grade-quiz route
- * And will not be graded by the front end.
- *
- */
-
 
 export function quizRunnerState() {
     const isMounted = useMountedState();
@@ -153,24 +141,17 @@ export function quizRunnerState() {
     }, [currentQuestionIndex]);
 
     return {
-        quizIsComplete,
-        setQuizIsComplete,
         quizData,
-        setQuizData,
-        elapsedQuizTime,
-        setElapsedQuizTime,
-        elapsedQuestionTime,
-        setElapsedQuestionTime,
-        currentQuestionAnswered,
-        setCurrentQuestionAnswered,
-        currentQuestionIndex,
-        setCurrentQuestionIndex,
-        attemptedQuizData,
-        setAttemptedQuizData,
+        quizIsComplete,
         currentQuestion,
-        setCurrentQuestion,
-        addAnsweredQuestionToAttempt,
-        createQuizAttempt,
-        resetState
+        attemptedQuizData,
+        elapsedQuestionTime,
+        currentQuestionIndex,
+        currentQuestionAnswered,
+        setQuizData,
+        setQuizIsComplete,
+        setElapsedQuestionTime,
+        setCurrentQuestionAnswered,
+        addAnsweredQuestionToAttempt
     }
 }

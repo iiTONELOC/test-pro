@@ -1,8 +1,10 @@
+import { uuid } from '../../utils';
+import { JSX } from 'preact/jsx-runtime';
+import { TopBarIcon } from './TopBarIcon';
 import { InfoDrawerToggler } from '../InfoDrawer';
 import { useInfoDrawerSignal } from '../../signals';
 import { Folder, Search } from '../../assets/icons';
-import { TopBarIcon } from './TopBarIcon';
-import { uuid } from '../../utils';
+
 
 const headerClasses = 'bg-gray-900 h-8 w-screen fixed top-0 z-20';
 const headerDivClasses = 'ml-12 w-60 h-8 grid grid-cols-4 gap-2';

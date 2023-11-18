@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test, describe } from 'bun:test';
+import { afterAll, beforeAll, expect, test, describe } from '@jest/globals';
 import { Topic, Question, Quiz, QuizAttempt, QuizQuestionResult, QuizHistory, QuestionTypeEnums } from '../../../db/models';
 import { dbConnection, dbClose } from '../../../db/connection';
 import { IApiResponse } from '../../../controllers/types';
@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 import type { IQuestion, IQuiz, ITopic, IQuizAttempt, IQuizQuestionResult, PopulatedQuizHistoryType, IQuizHistory } from '../../../db/types';
 
 
-const PORT = 3005;
+const PORT = 3006;
 
 // we need to create a topic, question, quiz, quizAttempt, quizQuestionResult so we can test the quizHistoryController
 
@@ -105,233 +105,233 @@ afterAll(async () => {
     ]).then(async () => await dbClose());
 });
 
-describe('Quiz History Routes', () => {
-    describe('GET /api/history', () => {
-        test('should return an array of quiz histories', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history`);
 
-            const histories = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
-            expect(response.status).toBe(200);
-            expect(histories.data).toBeInstanceOf(Array);
-            expect(histories.data).toHaveLength(1);
-            // @ts-ignore
-            expect(histories?.data[0]?.attempt?._id).toEqual(quizHistoryData.attempt.toString());
-        });
+describe('GET /api/history', () => {
+    test('should return an array of quiz histories', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history`);
 
-        test('It should return unpopulated quiz histories if the no-populate query param is used', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history?no-populate=true`);
-
-            const histories = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
-            expect(response.status).toBe(200);
-            expect(histories.data).toBeInstanceOf(Array);
-            expect(histories.data).toHaveLength(1);
-            // @ts-ignore
-            expect(histories?.data[0]?.attempt?._id).toBeUndefined();
-        });
-
-        test('It should include timestamps if the timestamps query parameter is used', async () => {
-
-            const response = await fetch(`http://localhost:${PORT}/api/history?timestamps=true`);
-
-            const histories = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
-            expect(response.status).toBe(200);
-            expect(histories.data).toBeInstanceOf(Array);
-            expect(histories.data).toHaveLength(1);
-            // @ts-ignore
-            expect(histories?.data[0]?.createdAt).toBeDefined();
-            // @ts-ignore
-            expect(histories?.data[0]?.updatedAt).toBeDefined();
-        });
+        const histories = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
+        expect(response.status).toBe(200);
+        expect(Array.isArray(histories.data)).toBeTruthy();
+        expect(histories.data).toHaveLength(1);
+        // @ts-ignore
+        expect(histories?.data[0]?.attempt?._id).toEqual(quizHistoryData.attempt.toString());
     });
 
-    describe('GET /api/history/:id', () => {
-        test('It should return a quiz history by id', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history/${createdQuizHistoryId}`);
+    test('It should return unpopulated quiz histories if the no-populate query param is used', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history?no-populate=true`);
 
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            // @ts-ignore
-            expect(history?.data?._id).toEqual(createdQuizHistoryId.toString());
-            // @ts-ignore
-            expect(history?.data?.attempt?._id).toEqual(quizHistoryData.attempt.toString());
-        });
-
-        test('It should return null if the id does not exist', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history/${new Types.ObjectId()}`);
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            expect(history.data).toBeNull();
-        });
-
-        test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history/${createdQuizHistoryId}?no-populate=true`);
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            // @ts-ignore
-            expect(history?.data?._id).toEqual(createdQuizHistoryId.toString());
-            // @ts-ignore
-            expect(history?.data?.attempt?._id).toBeUndefined();
-        });
-
-        test('It should include timestamps if the timestamps query parameter is used', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history/${createdQuizHistoryId}?timestamps=true`);
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            // @ts-ignore
-            expect(history?.data?.createdAt).toBeDefined();
-            // @ts-ignore
-            expect(history?.data?.updatedAt).toBeDefined();
-        });
+        const histories = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
+        expect(response.status).toBe(200);
+        expect(Array.isArray(histories.data)).toBeTruthy();
+        expect(histories.data).toHaveLength(1);
+        // @ts-ignore
+        expect(histories?.data[0]?.attempt?._id).toBeUndefined();
     });
 
-    describe('POST /api/history', () => {
-        test('It should create a quiz history', async () => {
-            // create a new quizAttempt and update the quizHistoryData with the new attempt id
-            const newQuizAttempt = await QuizAttempt.create(attemptedQuizData);
-            quizHistoryData.attempt = newQuizAttempt._id;
+    test('It should include timestamps if the timestamps query parameter is used', async () => {
 
-            // create a new quizHistory with the updated quizHistoryData
-            const response = await fetch(`http://localhost:${PORT}/api/history`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(quizHistoryData)
-            });
+        const response = await fetch(`http://localhost:${PORT}/api/history?timestamps=true`);
 
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(201);
-            // @ts-ignore
-            expect(history?.data?._id).toBeDefined();
-            // @ts-ignore
-            expect(history?.data?.attempt?._id).toEqual(quizHistoryData.attempt.toString());
-        });
-
-        test('It should return an error if the quiz history data is invalid', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...quizHistoryData, attempt: 'invalid id' })
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(400);
-            expect(history.data).toBeUndefined();
-            expect(history.error).toBeDefined();
-        });
-
-        test('It should return an error if the quiz history data is missing', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(400);
-            expect(history.data).toBeUndefined();
-            expect(history.error).toBeDefined();
-        });
-
-        test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
-            // create a new quizAttempt and update the quizHistoryData with the new attempt id
-            const newQuizAttempt = await QuizAttempt.create(attemptedQuizData);
-            quizHistoryData.attempt = newQuizAttempt._id;
-
-            // create a new quizHistory with the updated quizHistoryData
-            const response = await fetch(`http://localhost:${PORT}/api/history?no-populate=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(quizHistoryData)
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-
-            expect(response.status).toBe(201);
-            // @ts-ignore
-            expect(history?.data?.attempt).toBeDefined();
-            // @ts-ignore
-            expect(history?.data?.attempt).toEqual(quizHistoryData.attempt.toString());
-        });
-
-        test('It should include timestamps if the timestamps query parameter is used', async () => {
-            // create a new quizAttempt and update the quizHistoryData with the new attempt id
-            const newQuizAttempt = await QuizAttempt.create(attemptedQuizData);
-            quizHistoryData.attempt = newQuizAttempt._id;
-
-            // create a new quizHistory with the updated quizHistoryData
-            const response = await fetch(`http://localhost:${PORT}/api/history?timestamps=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(quizHistoryData)
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-
-            expect(response.status).toBe(201);
-            // @ts-ignore
-            expect(history?.data?.createdAt).toBeDefined();
-            // @ts-ignore
-            expect(history?.data?.updatedAt).toBeDefined();
-        });
-    });
-
-    describe('DELETE /api/history/:id', () => {
-        // mock the tests as above
-        test('It should delete a quiz history by id', async () => {
-            const id = createdQuizHistoryId;
-            const response = await fetch(`http://localhost:${PORT}/api/history/${id}`, {
-                method: 'DELETE'
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            expect(history.data).toBeDefined();
-            // @ts-ignore
-            expect(history.data?._id).toEqual(id?.toString());
-        });
-
-        test('It should return null if the id does not exist', async () => {
-            const response = await fetch(`http://localhost:${PORT}/api/history/${new Types.ObjectId()}`, {
-                method: 'DELETE'
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            expect(history.data).toBeNull();
-        });
-
-        test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
-            const id = await QuizHistory.find({}).then((history) => history[0]?._id);
-
-            const response = await fetch(`http://localhost:${PORT}/api/history/${id}?no-populate=true`, {
-                method: 'DELETE'
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            expect(history.data).toBeDefined();
-            // @ts-ignore
-            expect(history.data?._id).toEqual(id?.toString());
-            expect(history.data?.attempt?._id).toBeUndefined();
-        });
-
-        test('It should include timestamps if the timestamps query parameter is used', async () => {
-            const id = await QuizHistory.find({}).then((history) => history[0]?._id);
-            const response = await fetch(`http://localhost:${PORT}/api/history/${id}?timestamps=true`, {
-                method: 'DELETE'
-            });
-
-            const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            expect(response.status).toBe(200);
-            expect(history.data).toBeDefined();
-            // @ts-ignore
-            expect(history.data?._id).toEqual(id?.toString());
-            // @ts-ignore
-            expect(history?.data?.createdAt).toBeDefined();
-            // @ts-ignore
-            expect(history?.data?.updatedAt).toBeDefined();
-        });
+        const histories = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
+        expect(response.status).toBe(200);
+        expect(Array.isArray(histories.data)).toBeTruthy();
+        expect(histories.data).toHaveLength(1);
+        // @ts-ignore
+        expect(histories?.data[0]?.createdAt).toBeDefined();
+        // @ts-ignore
+        expect(histories?.data[0]?.updatedAt).toBeDefined();
     });
 });
+
+describe('GET /api/history/:id', () => {
+    test('It should return a quiz history by id', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history/${createdQuizHistoryId}`);
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        // @ts-ignore
+        expect(history?.data?._id).toEqual(createdQuizHistoryId.toString());
+        // @ts-ignore
+        expect(history?.data?.attempt?._id).toEqual(quizHistoryData.attempt.toString());
+    });
+
+    test('It should return null if the id does not exist', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history/${new Types.ObjectId()}`);
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        expect(history.data).toBeNull();
+    });
+
+    test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history/${createdQuizHistoryId}?no-populate=true`);
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        // @ts-ignore
+        expect(history?.data?._id).toEqual(createdQuizHistoryId.toString());
+        // @ts-ignore
+        expect(history?.data?.attempt?._id).toBeUndefined();
+    });
+
+    test('It should include timestamps if the timestamps query parameter is used', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history/${createdQuizHistoryId}?timestamps=true`);
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        // @ts-ignore
+        expect(history?.data?.createdAt).toBeDefined();
+        // @ts-ignore
+        expect(history?.data?.updatedAt).toBeDefined();
+    });
+});
+
+describe('POST /api/history', () => {
+    test('It should create a quiz history', async () => {
+        // create a new quizAttempt and update the quizHistoryData with the new attempt id
+        const newQuizAttempt = await QuizAttempt.create(attemptedQuizData);
+        quizHistoryData.attempt = newQuizAttempt._id;
+
+        // create a new quizHistory with the updated quizHistoryData
+        const response = await fetch(`http://localhost:${PORT}/api/history`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizHistoryData)
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(201);
+        // @ts-ignore
+        expect(history?.data?._id).toBeDefined();
+        // @ts-ignore
+        expect(history?.data?.attempt?._id).toEqual(quizHistoryData.attempt.toString());
+    });
+
+    test('It should return an error if the quiz history data is invalid', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...quizHistoryData, attempt: 'invalid id' })
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(400);
+        expect(history.data).toBeUndefined();
+        expect(history.error).toBeDefined();
+    });
+
+    test('It should return an error if the quiz history data is missing', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(400);
+        expect(history.data).toBeUndefined();
+        expect(history.error).toBeDefined();
+    });
+
+    test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
+        // create a new quizAttempt and update the quizHistoryData with the new attempt id
+        const newQuizAttempt = await QuizAttempt.create(attemptedQuizData);
+        quizHistoryData.attempt = newQuizAttempt._id;
+
+        // create a new quizHistory with the updated quizHistoryData
+        const response = await fetch(`http://localhost:${PORT}/api/history?no-populate=true`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizHistoryData)
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+
+        expect(response.status).toBe(201);
+        // @ts-ignore
+        expect(history?.data?.attempt).toBeDefined();
+        // @ts-ignore
+        expect(history?.data?.attempt).toEqual(quizHistoryData.attempt.toString());
+    });
+
+    test('It should include timestamps if the timestamps query parameter is used', async () => {
+        // create a new quizAttempt and update the quizHistoryData with the new attempt id
+        const newQuizAttempt = await QuizAttempt.create(attemptedQuizData);
+        quizHistoryData.attempt = newQuizAttempt._id;
+
+        // create a new quizHistory with the updated quizHistoryData
+        const response = await fetch(`http://localhost:${PORT}/api/history?timestamps=true`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizHistoryData)
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+
+        expect(response.status).toBe(201);
+        // @ts-ignore
+        expect(history?.data?.createdAt).toBeDefined();
+        // @ts-ignore
+        expect(history?.data?.updatedAt).toBeDefined();
+    });
+});
+
+describe('DELETE /api/history/:id', () => {
+    // mock the tests as above
+    test('It should delete a quiz history by id', async () => {
+        const id = createdQuizHistoryId;
+        const response = await fetch(`http://localhost:${PORT}/api/history/${id}`, {
+            method: 'DELETE'
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        expect(history.data).toBeDefined();
+        // @ts-ignore
+        expect(history.data?._id).toEqual(id?.toString());
+    });
+
+    test('It should return null if the id does not exist', async () => {
+        const response = await fetch(`http://localhost:${PORT}/api/history/${new Types.ObjectId()}`, {
+            method: 'DELETE'
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        expect(history.data).toBeNull();
+    });
+
+    test('It should return unpopulated quiz history if the no-populate query param is used', async () => {
+        const id = await QuizHistory.find({}).then((history) => history[0]?._id);
+
+        const response = await fetch(`http://localhost:${PORT}/api/history/${id}?no-populate=true`, {
+            method: 'DELETE'
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        expect(history.data).toBeDefined();
+        // @ts-ignore
+        expect(history.data?._id).toEqual(id?.toString());
+        expect(history.data?.attempt?._id).toBeUndefined();
+    });
+
+    test('It should include timestamps if the timestamps query parameter is used', async () => {
+        const id = await QuizHistory.find({}).then((history) => history[0]?._id);
+        const response = await fetch(`http://localhost:${PORT}/api/history/${id}?timestamps=true`, {
+            method: 'DELETE'
+        });
+
+        const history = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        expect(response.status).toBe(200);
+        expect(history.data).toBeDefined();
+        // @ts-ignore
+        expect(history.data?._id).toEqual(id?.toString());
+        // @ts-ignore
+        expect(history?.data?.createdAt).toBeDefined();
+        // @ts-ignore
+        expect(history?.data?.updatedAt).toBeDefined();
+    });
+});
+

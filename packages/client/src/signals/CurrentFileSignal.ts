@@ -1,8 +1,7 @@
 import { useSelectedFileSignal, useQuizzesDbSignal } from '.';
-import { signal, Signal } from '@preact/signals';
+import { effect, signal, Signal } from '@preact/signals';
 import { QuizModelResponse } from '../utils';
 import { useMountedState } from '../hooks';
-import { useEffect } from 'preact/hooks';
 
 const currentFileDetailsSignal = signal<QuizModelResponse | null>(null);
 
@@ -35,11 +34,7 @@ export const useCurrentFileSignal = (): CurrentFileSignal => {
         }
     };
 
-    useEffect(() => {
-        if (isMounted) {
-            setFileDetails();
-        }
-    }, [currentFile, isMounted]);
+    effect(() => isMounted && setFileDetails());
 
     return { fileDetails: currentFileDetailsSignal };
 }

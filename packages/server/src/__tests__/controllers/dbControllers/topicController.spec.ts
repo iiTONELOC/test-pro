@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
+import { expect, test, describe, beforeAll, afterAll } from '@jest/globals';
 import { topicController } from '../../../controllers/dbControllers';
 import type { ITopicController } from '../../../controllers/types';
 import { dbConnection, dbClose } from '../../../db/connection'

@@ -1,6 +1,8 @@
-import { DocumentPlus } from '../assets/icons';
-import { trimClasses } from '../utils';
 import { ToolTip } from './ToolTip';
+import { trimClasses } from '../utils';
+import { JSX } from 'preact/jsx-runtime';
+import { DocumentPlus } from '../assets/icons';
+
 
 const icons = [
     {
@@ -11,7 +13,7 @@ const icons = [
 ];
 
 export type ActionBarIconProps = {
-    Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
+    Icon: (props: any) => JSX.Element
     title: string
     action: () => void,
     id?: string  // NOSONAR

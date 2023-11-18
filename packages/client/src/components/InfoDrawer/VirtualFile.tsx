@@ -1,8 +1,9 @@
-import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
-import { clickHandler, dateTime, keyHandler, trimClasses } from '../../utils';
-import { Document as DocumentIcon } from '../../assets/icons';
-import { useEffect, useRef } from 'preact/hooks';
 import { ToolTip } from '../ToolTip';
+import { JSX } from 'preact/jsx-runtime';
+import { useEffect, useRef } from 'preact/hooks';
+import { Document as DocumentIcon } from '../../assets/icons';
+import { clickHandler, dateTime, keyHandler, trimClasses } from '../../utils';
+import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
 
 import type { IVirtualFile } from '../../utils/virtualFileSystem';
 
@@ -14,11 +15,13 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     const { setCurrentQuizView } = useQuizViewSignal();
     const listItemRef = useRef<HTMLLIElement>(null);
 
+    const currentFile = selectedFile.value;
+
     const tip = 'Topics:\n' + file.topics?.map((topic: string) => `# ${topic}`).join('\n');
     const createdAndModified = `Created:  ${dateTime(file.createdAt)}\nModified: ${dateTime(file.updatedAt)}`;
 
     const handleSetSelectedFile = () => {
-        if (selectedFile.value !== file.entryId) {
+        if (currentFile !== file.entryId) {
             setSelectedFile(file.entryId);
         }
     };

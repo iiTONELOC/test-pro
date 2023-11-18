@@ -163,6 +163,7 @@ export const quizRouteController: IQuizRouteController = {
 
             return res.status(httpStatusCodes.CREATED).json({ data: created });
         } catch (error: any) {
+            console.log('CREATE QUIZ BY JSON ERROR', error.message)
             return handleRouteError(res, error.message);
         }
     }

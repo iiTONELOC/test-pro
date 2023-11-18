@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
+import { expect, test, describe, beforeAll, afterAll } from '@jest/globals';
 import { Topic, Question, Quiz, QuizAttempt, QuizQuestionResult, QuizHistory, QuestionTypeEnums } from '../../../db/models';
 import { quizHistoryController } from '../../../controllers/dbControllers';
 import { dbConnection, dbClose } from '../../../db/connection';
@@ -142,7 +142,7 @@ describe('quizHistoryController', () => {
                 });
             } catch (error: any) {
                 expect(error).toBeDefined();
-                expect(error.message).toInclude('Cast to ObjectId failed');
+                expect(error.message.includes('Cast to ObjectId failed')).toBeTruthy();
             }
         });
 
@@ -173,7 +173,7 @@ describe('quizHistoryController', () => {
         });
     });
 
-    describe('getById', async () => {
+    describe('getById', () => {
         test('It should get a quizHistory by id', async () => {
             const id = quizHistoryId as Types.ObjectId;
 
@@ -196,7 +196,7 @@ describe('quizHistoryController', () => {
                 });
             } catch (error: any) {
                 expect(error).toBeDefined();
-                expect(error.message).toInclude('Cast to ObjectId failed');
+                expect(error.message.includes('Cast to ObjectId failed')).toBeTruthy();
                 didError = true;
             }
             expect(didError).toBeTruthy();
@@ -242,7 +242,7 @@ describe('quizHistoryController', () => {
                 });
             } catch (error: any) {
                 expect(error).toBeDefined();
-                expect(error.message).toInclude('Cast to ObjectId failed');
+                expect(error.message.includes('Cast to ObjectId failed')).toBeTruthy();
                 didError = true;
             }
             expect(didError).toBeTruthy();

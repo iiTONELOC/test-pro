@@ -1,7 +1,7 @@
-import { dateTime, calculatePassingScore } from '../../../utils';
+import { JSX } from 'preact/jsx-runtime';
 import { QuizModelResponse } from '../../../utils/api';
 import { useCurrentFileSignal } from '../../../signals';
-
+import { dateTime, calculatePassingScore } from '../../../utils';
 
 const metaContainerDivClasses = 'flex flex-col gap-2 w-full items-start lg:items-center';
 

@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
+import { expect, test, describe, beforeAll, afterAll } from '@jest/globals';
 import { questionController } from '../../../controllers/dbControllers';
 import { dbConnection, dbClose } from '../../../db/connection'
 import { Question, QuizQuestionResult, Topic } from '../../../db/models';

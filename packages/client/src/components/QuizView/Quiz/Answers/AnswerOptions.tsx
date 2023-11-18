@@ -21,15 +21,21 @@ function AnswerOptionSwitch({ quizState, question }: Readonly<QuizQuestionProps>
         case AnswerTypes.MultipleChoice:
             return <MultipleChoice options={question?.options ?? []} quizState={quizState} />
         case AnswerTypes.TrueFalse:
+            // TODO: implement TrueFalse
             return <>True False</>;
         case AnswerTypes.FillInTheBlank:
+            // TODO: implement FillInTheBlank
             return <>Fill in The Blank</>;
         case AnswerTypes.ShortAnswer:
+            // TODO: implement ShortAnswer
             return <>Short Answer</>;
         case AnswerTypes.Matching:
+            // TODO: implement Matching
             return <>Matching</>;
         case AnswerTypes.Ordering:
+            // TODO: implement Ordering
             return <>Ordering</>;
+        // TODO: implement Image
         case AnswerTypes.Image:
             return <>Image</>;
         default:

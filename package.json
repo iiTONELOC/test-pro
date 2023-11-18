@@ -1,23 +1,16 @@
 {
   "name": "test-pro",
-  "module": "server/index.ts",
   "type": "module",
   "workspaces": [
     "packages/*"
   ],
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
   "scripts": {
-    "tests": "cd packages/server && bun test",
-    "start": "bun packages/server/index.ts",
-    "dev": "concurrently \"bun run --watch packages/server/index.ts\" \"cd packages/client && bun dev\"",
-    "dev-client": "cd packages/client && bun dev",
-    "dev-server": "bun run --watch packages/server/index.ts",
-    "createEnv": "bun scripts/createEnv.ts"
+    "test": "cd packages/server && npm run test",
+    "start": "cd  packages/server && npm run start",
+    "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
+    "dev-client": "cd packages/client && npm run dev",
+    "dev-server": "cd packages/server && npm run dev",
+    "createEnv": "node scripts/createEnv.mjs"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

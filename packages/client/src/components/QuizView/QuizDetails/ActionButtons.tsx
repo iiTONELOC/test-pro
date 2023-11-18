@@ -1,3 +1,4 @@
+import { JSX } from 'preact/jsx-runtime';
 import { useShowQuizDetails } from '../../../hooks';
 import { trimClasses, uuid } from '../../../utils';
 import { QuizViews, useQuizViewSignal, useInfoDrawerSignal } from '../../../signals';

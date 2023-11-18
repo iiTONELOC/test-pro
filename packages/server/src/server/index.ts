@@ -1,15 +1,16 @@
-import express from 'express';
-import helmet from 'helmet';
 import cors from 'cors';
-
+import helmet from 'helmet';
+import express from 'express';
 import routes from '../routes';
+import { loadEnv } from '../loadEnv';
 import { handleBodyParser } from './middleware';
 
-
+loadEnv();
 
 export const startServer = async (callback?: Function) => {
     // Create Express server
     const server = express();
+
     const port = process.env.PORT ?? '3000';
     server.use(helmet());
     server.use(handleBodyParser);

@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
+import { expect, test, describe, beforeAll, afterAll } from '@jest/globals';
 import { dbQueryParamDefaults } from '../../../controllers/routeControllers/routeUtils';
 import { quizAttemptController } from '../../../controllers';
 import { dbConnection, dbClose } from '../../../db/connection'

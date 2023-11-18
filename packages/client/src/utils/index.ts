@@ -26,6 +26,8 @@ export type { IAnsweredQuestionData, IQuizAttemptData } from './quizRunner';
 export { quizRunnerState } from './quizRunner';
 
 // Export Date and Time
-export { getFormattedDate, getFormattedTime, dateTime } from './dateAndTime';
+export * from './dateAndTime';
 
 export { shuffle } from './shuffle';
+
+export * from './math';

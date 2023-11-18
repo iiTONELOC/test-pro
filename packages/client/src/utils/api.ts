@@ -50,7 +50,7 @@ export const defaultAPIQueryParams: dbQueryParams = {
     needToPopulate: true
 };
 
-const API_URL = `http://localhost:3000`
+const API_URL = `http://localhost:3000/api`;
 
 function buildURL(baseUrl: string, params: dbQueryParams): string {
     const { showTimestamps, needToPopulate } = params ?? defaultAPIQueryParams;
@@ -62,13 +62,92 @@ function buildURL(baseUrl: string, params: dbQueryParams): string {
     return url;
 }
 
+
+async function _createQuizAttempt(attemptData: IQuizAttempt, props: dbQueryParams): Promise<QuizAttemptModelResponse | null> {
+    try {
+        const quizAttemptURL = `${API_URL}/quiz-attempts`;
+        const baseUrl = buildURL(quizAttemptURL, props);
+
+        const createQuizAttemptResponse: Response = await fetch(baseUrl,
+            {
+                body: JSON.stringify(attemptData),
+                method: 'POST', headers: { 'Content-Type': 'application/json' }
+            });
+
+        const createQuizAttemptData: IApiResponse<QuizAttemptModelResponse> = await createQuizAttemptResponse.json() as IApiResponse<QuizAttemptModelResponse>;
+
+        return createQuizAttemptData.data ?? null
+    } catch (error) {
+        console.error('An error occurred while creating a quiz attempt', error);
+        return null;
+    }
+}
+// TODO: FIX THE BACKEND API TO USE AN ARRAY
+async function _addAnswersToQuizAttempt(answeredQuestions: IAnsweredQuestionData[], attemptId: string, props: dbQueryParams): Promise<QuizAttemptModelResponse | null> {
+    try {
+
+        let returnData: QuizAttemptModelResponse | null = null;
+        const url = `${API_URL}/quiz-attempts/${attemptId}/answered-questions`;
+        const baseUrl = buildURL(url, props);
+
+        for (const answeredQuestion of answeredQuestions) {
+            const response: Response = await fetch(baseUrl,
+                {
+                    body: JSON.stringify({ ...answeredQuestion }),
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }
+                });
+            const data: IApiResponse<QuizAttemptModelResponse> = await response.json() as IApiResponse<QuizAttemptModelResponse>;
+            returnData = data.data ?? null;
+        }
+        return returnData;
+    } catch (error) {
+        console.error('An error occurred while adding an answer to a quiz attempt', error);
+        return null;
+    }
+}
+
+async function _createQuizHistory(attemptId: string, props: dbQueryParams): Promise<PopulatedQuizHistoryType | null> {
+    try {
+        const url = `${API_URL}/history`;
+        const baseUrl = buildURL(url, props);
+
+        const data = { attempt: attemptId } as unknown as IQuizHistory;
+        const response: Response = await fetch(baseUrl, {
+            body: JSON.stringify(data),
+            method: 'POST', headers: { 'Content-Type': 'application/json' }
+        });
+
+        const responseData: IApiResponse<PopulatedQuizHistoryType> = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+        return responseData.data ?? null;
+
+    } catch (error) {
+        console.error('An error occurred while creating a quiz history', error);
+        return null;
+    }
+}
+async function _gradeQuizAttempt(attemptId: string, props: dbQueryParams): Promise<PopulatedQuizAttemptType | null> {
+    try {
+        const url = `${API_URL}/quiz-attempts/${attemptId}/grade-quiz`;
+        const baseUrl = buildURL(url, props);
+
+        const response: Response = await fetch(baseUrl, { method: 'GET' });
+        const responseData: IApiResponse<PopulatedQuizAttemptType> = await response.json() as IApiResponse<PopulatedQuizAttemptType>;
+
+        return responseData.data ?? null;
+    } catch (error) {
+        console.error('An error occurred while grading a quiz attempt', error);
+        return null
+    }
+}
+
+// API
 export const API = {
     async getAllQuizzes(props: dbQueryParams): Promise<QuizModelResponse[]> {
         const { setQuizzes }: QuizzesDbSignal = useQuizzesDbSignal();
 
         try {
             const { showTimestamps, needToPopulate } = props ?? defaultAPIQueryParams;
-            let baseUrl = `${API_URL}/api/quizzes`;
+            let baseUrl = `${API_URL}/quizzes`;
             baseUrl = buildURL(baseUrl, { showTimestamps, needToPopulate });
 
             const response: Response = await fetch(baseUrl);
@@ -86,7 +165,7 @@ export const API = {
     async getQuizById(id: string, props: dbQueryParams): Promise<QuizModelResponse | null> {
         try {
             const { showTimestamps, needToPopulate } = props ?? defaultAPIQueryParams;
-            let baseUrl = `${API_URL}/api/quizzes/${id}`;
+            let baseUrl = `${API_URL}/quizzes/${id}`;
             baseUrl = buildURL(baseUrl, { showTimestamps, needToPopulate });
 
             const response: Response = await fetch(baseUrl);
@@ -98,81 +177,7 @@ export const API = {
             return null;
         }
     },
-    async _createQuizAttempt(attemptData: IQuizAttempt, props: dbQueryParams): Promise<QuizAttemptModelResponse | null> {
-        try {
-            const quizAttemptURL = `${API_URL}/api/quiz-attempts`;
-            const baseUrl = buildURL(quizAttemptURL, props);
 
-            const createQuizAttemptResponse: Response = await fetch(baseUrl,
-                {
-                    body: JSON.stringify(attemptData),
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }
-                });
-
-            const createQuizAttemptData: IApiResponse<QuizAttemptModelResponse> = await createQuizAttemptResponse.json() as IApiResponse<QuizAttemptModelResponse>;
-
-            return createQuizAttemptData.data ?? null
-        } catch (error) {
-            console.error('An error occurred while creating a quiz attempt', error);
-            return null;
-        }
-    },
-    // TODO: FIX THE BACKEND API TO USE AN ARRAY
-    async _addAnswersToQuizAttempt(answeredQuestions: IAnsweredQuestionData[], attemptId: string, props: dbQueryParams): Promise<QuizAttemptModelResponse | null> {
-        try {
-
-            let returnData: QuizAttemptModelResponse | null = null;
-            const url = `${API_URL}/api/quiz-attempts/${attemptId}/answered-questions`;
-            const baseUrl = buildURL(url, props);
-
-            for (const answeredQuestion of answeredQuestions) {
-                const response: Response = await fetch(baseUrl,
-                    {
-                        body: JSON.stringify({ ...answeredQuestion }),
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }
-                    });
-                const data: IApiResponse<QuizAttemptModelResponse> = await response.json() as IApiResponse<QuizAttemptModelResponse>;
-                returnData = data.data ?? null;
-            }
-            return returnData;
-        } catch (error) {
-            console.error('An error occurred while adding an answer to a quiz attempt', error);
-            return null;
-        }
-    },
-    async _createQuizHistory(attemptId: string, props: dbQueryParams): Promise<PopulatedQuizHistoryType | null> {
-        try {
-            const url = `${API_URL}/api/history`;
-            const baseUrl = buildURL(url, props);
-
-            const data = { attempt: attemptId } as unknown as IQuizHistory;
-            const response: Response = await fetch(baseUrl, {
-                body: JSON.stringify(data),
-                method: 'POST', headers: { 'Content-Type': 'application/json' }
-            });
-
-            const responseData: IApiResponse<PopulatedQuizHistoryType> = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
-            return responseData.data ?? null;
-
-        } catch (error) {
-            console.error('An error occurred while creating a quiz history', error);
-            return null;
-        }
-    },
-    async _gradeQuizAttempt(attemptId: string, props: dbQueryParams): Promise<PopulatedQuizAttemptType | null> {
-        try {
-            const url = `${API_URL}/api/quiz-attempts/${attemptId}/grade-quiz`;
-            const baseUrl = buildURL(url, props);
-
-            const response: Response = await fetch(baseUrl, { method: 'GET' });
-            const responseData: IApiResponse<PopulatedQuizAttemptType> = await response.json() as IApiResponse<PopulatedQuizAttemptType>;
-
-            return responseData.data ?? null;
-        } catch (error) {
-            console.error('An error occurred while grading a quiz attempt', error);
-            return null
-        }
-    },
     async createQuizAttemptWithAnswers(attemptData: IQuizAttemptData, props: dbQueryParams): Promise<PopulatedQuizHistoryType | null> {
         try {
             const { answeredQuestions, ...quizAttemptData } = attemptData;
@@ -184,25 +189,122 @@ export const API = {
             };
 
             // create the attempt
-            const createdAttempt: QuizAttemptModelResponse | null = await API._createQuizAttempt(data, defaultProps);
+            const createdAttempt: QuizAttemptModelResponse | null = await _createQuizAttempt(data, defaultProps);
             if (!createdAttempt) throw new Error('An error occurred while creating a quiz attempt');
 
             // add the answers to the attempt
             const addedAnswers: QuizAttemptModelResponse | null = await
-                API._addAnswersToQuizAttempt(answeredQuestions, createdAttempt._id.toString(), defaultProps);
+                _addAnswersToQuizAttempt(answeredQuestions, createdAttempt._id.toString(), defaultProps);
             if (!addedAnswers) throw new Error('An error occurred while adding answers to a quiz attempt');
 
             // grade the attempt
-            await API._gradeQuizAttempt(createdAttempt._id.toString(),
+            await _gradeQuizAttempt(createdAttempt._id.toString(),
                 { showTimestamps: false, needToPopulate: false });
 
             // create the history object and return it
-            const createdHistory: PopulatedQuizHistoryType | null = await API._createQuizHistory(
+            const createdHistory: PopulatedQuizHistoryType | null = await _createQuizHistory(
                 createdAttempt._id.toString(), props);
 
             return createdHistory ?? null;
         } catch (error) {
             console.error('An error occurred while creating a quiz attempt', error);
+            return null;
+        }
+    },
+    async getQuizHistoryById(id: string, props: dbQueryParams): Promise<PopulatedQuizHistoryType | null> {
+        try {
+            const { showTimestamps, needToPopulate } = props ?? defaultAPIQueryParams;
+            let baseUrl = `${API_URL}/history/${id}`;
+            baseUrl = buildURL(baseUrl, { showTimestamps, needToPopulate });
+
+            const response: Response = await fetch(baseUrl);
+            const data: IApiResponse<PopulatedQuizHistoryType> = await response.json() as IApiResponse<PopulatedQuizHistoryType>;
+
+            return data.data ?? null;
+        } catch (error) {
+            console.error('An error occurred while fetching quiz history by id', error);
+            return null;
+        }
+    },
+    async getQuizHistoriesForQuiz(quizId: string, props: dbQueryParams): Promise<PopulatedQuizHistoryType[] | null> {
+        try {
+            const { showTimestamps, needToPopulate } = props ?? defaultAPIQueryParams;
+            let baseUrl = `${API_URL}/history`;
+            baseUrl = buildURL(baseUrl, { showTimestamps, needToPopulate });
+
+            const response: Response = await fetch(baseUrl);
+            const data: IApiResponse<PopulatedQuizHistoryType[]> = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
+
+            console.log('data', data);
+            // // filter the histories by quizId
+            // const filtered = data.data?.filter(history => history?.attempt?.quizId?.toString() === quizId) ?? [];
+            // console.log('filtered', filtered);
+            // // filtered has a WAYYYY incorrect array length, if we have 2 actual items the length comes back as 100
+            // return filtered;
+
+            // const filtered = (data.data || []).filter((history, index) => {
+            //     const quizIdCondition = history?.attempt?.quizId?.toString() === quizId.toString();
+
+            //     // Log for debugging
+            //     console.log(`Index ${index}:`, history, quizIdCondition);
+
+            //     return quizIdCondition;
+            // }) || [];
+
+            // console.log('filtered', filtered);
+
+            // const filtered = [];
+
+            // for (let i = 0; i < (data.data || []).length; i++) {
+            //     const obj = data?.data ?? [];
+            //     const history = obj[i];
+            //     const quizIdCondition = history?.attempt?.quizId?.toString() === quizId.toString();
+
+            //     // Log for debugging
+            //     console.log(`Index ${i}:`, history, quizIdCondition);
+
+            //     if (quizIdCondition) {
+            //         filtered.push(history);
+            //     }
+            // }
+
+            // // Log the filtered array
+            // console.log("Filtered Array:", filtered);
+
+            // const filtered = [];
+
+            // for (let i = 0; i < (data.data || []).length; i++) {
+            //     const obj = data?.data ?? [];
+            //     const history = obj[i];
+            //     const quizIdCondition = history?.attempt?.quizId?.toString() === quizId.toString();
+
+            //     // Log for debugging
+            //     console.log(`Index ${i}:`, history, quizIdCondition, quizId, history?.attempt?.quizId?.toString());
+
+            //     if (quizIdCondition) {
+            //         filtered.push(history);
+            //     }
+            // }
+
+            // // Log the filtered array
+            // console.log("Filtered Array:", filtered);
+            const filtered = (data.data || []).filter(history => {
+                // Check if history is not null and quizId condition is met
+                return history && history.attempt.quizId.toString() === quizId.toString();
+            });
+
+            // Log the filtered array
+            console.log("Filtered Array:", filtered);
+
+            const filteredAttempts = filtered.filter(entry => entry !== null);
+
+            // Log the filtered attempts
+            console.log("Filtered Attempts:", filteredAttempts);
+
+
+            return filteredAttempts;
+        } catch (error) {
+            console.error('An error occurred while fetching quiz histories for quiz', error);
             return null;
         }
     }

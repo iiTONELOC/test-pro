@@ -1,3 +1,4 @@
+import { JSX } from 'preact/jsx-runtime';
 import { useInfoDrawerSignal } from '../../signals';
 import { clickHandler, keyHandler } from '../../utils';
 import { Columns, WindowIcon } from '../../assets/icons';

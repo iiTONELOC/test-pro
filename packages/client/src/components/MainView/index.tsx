@@ -1,9 +1,10 @@
-import { useMountedState, useCheckForHorizontalOverflow } from '../../hooks';
-import { useInfoDrawerSignal, InfoDrawerSignal } from '../../signals';
-import { useVirtualScrollBar } from '../VirtualScrollBar';
-import { QuizViewRouter } from '../QuizView';
-import { useRef } from 'preact/hooks';
 import { GoBack } from './GoBack';
+import { useRef } from 'preact/hooks';
+import { JSX } from 'preact/jsx-runtime';
+import { QuizViewRouter } from '../QuizView';
+import { useVirtualScrollBar } from '../VirtualScrollBar';
+import { useInfoDrawerSignal, InfoDrawerSignal } from '../../signals';
+import { useMountedState, useCheckForHorizontalOverflow } from '../../hooks';
 
 const routerContainingDivClasses = 'w-full w-min-max min-h-[calc(100vh-54px)] bg-gray-900 rounded-sm p-3 overflow-auto';
 

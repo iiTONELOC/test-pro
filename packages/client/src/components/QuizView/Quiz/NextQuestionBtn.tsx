@@ -1,4 +1,4 @@
-import { createRef } from 'preact';
+import { createRef, JSX } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { useMountedState } from '../../../hooks';
 import { QuizQuestionProps } from './QuizQuestion';

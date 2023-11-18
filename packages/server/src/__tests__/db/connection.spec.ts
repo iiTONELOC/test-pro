@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+import { expect, test } from '@jest/globals';
 import { dbConnection, dbClose } from '../../db/connection';
 
 import mongoose from 'mongoose';
@@ -11,7 +11,7 @@ test('dbConnection', async () => {
     expect(db.connection.readyState).toBe(1);
     expect(db.connection.host).toBe('localhost');
     expect(db.connection.port).toBe(27017);
-    expect(db.connection.name).toBe(process.env.DB_NAME);
+    expect(db.connection.name).toBe(process.env.TEST_DB_NAME);
 });
 
 // Verifies that the connection is closed

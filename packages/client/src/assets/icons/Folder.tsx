@@ -1,3 +1,4 @@
+import { JSX } from 'preact/jsx-runtime';
 import type { IconProps } from './SvgBase';
 import { SvgBase, defaultIconProps } from './SvgBase';
 

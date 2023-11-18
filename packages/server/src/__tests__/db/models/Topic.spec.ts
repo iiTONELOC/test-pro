@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test } from 'bun:test';
+import { afterAll, beforeAll, expect, test } from '@jest/globals';
 import TopicModel, { TopicModelType } from '../../../db/models/Topic';
 import { dbConnection, dbClose } from '../../../db/connection';
 

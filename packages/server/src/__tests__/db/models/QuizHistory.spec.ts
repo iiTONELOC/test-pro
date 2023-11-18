@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test } from 'bun:test';
+import { afterAll, beforeAll, expect, test } from '@jest/globals';
 import { dbConnection, dbClose } from '../../../db/connection';
 
 import mongoose from 'mongoose';

@@ -1,6 +1,6 @@
-import { clickHandler, trimClasses } from '../../utils';
-import { ActionBarIconProps } from '../ActionBar';
 import { ToolTip } from '../ToolTip';
+import { ActionBarIconProps } from '../ActionBar';
+import { clickHandler, trimClasses } from '../../utils';
 
 const buttonClasses = `w-10 h-10 flex items-center justify-center rounded-md text-gray-400 hover:text-gray-200 z-50`;
 const iconClasses = 'w-5 h-5 mb-1';

@@ -1,4 +1,4 @@
-import { createRef } from 'preact';
+import { createRef, JSX } from 'preact';
 import { trimClasses, uuid } from '../utils';
 import { useToolTipsOnFocus } from '../hooks';
 

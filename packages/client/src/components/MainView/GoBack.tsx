@@ -1,7 +1,8 @@
-import { useSelectedFileSignal, useInfoDrawerSignal, useQuizViewSignal, QuizViews } from '../../signals';
-import { ArrowLeftCircle } from '../../assets/icons/ArrowLeftCircle';
 import { ToolTip } from '../ToolTip';
 import { clickHandler } from '../../utils';
+import { ArrowLeftCircle } from '../../assets/icons/ArrowLeftCircle';
+import { useSelectedFileSignal, useInfoDrawerSignal, useQuizViewSignal, QuizViews } from '../../signals';
+
 
 const arrowClasses = 'w-8 h-8 hover:w-10 hover:h-10 transition-all hover:text-emerald-600';
 
@@ -28,11 +29,10 @@ export function GoBack() { // NOSONAR
     }
 
     return selectedFile.value !== '' ? (
-        <button onClick={handleClick} className={'absolute  z-10'}>
+        <button onClick={handleClick} className={'absolute bg-slate-900/[.8] rounded-full z-10'}>
             <ToolTip toolTipText='Click to go back' >
                 <ArrowLeftCircle className={arrowClasses} />
             </ToolTip>
         </button>
     ) : <></>
-
 }

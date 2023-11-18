@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+import { expect, test } from '@jest/globals';
 import { startServer } from './index';
 
 // test('startServer', async () => {
@@ -19,3 +19,7 @@ import { startServer } from './index';
 //         return;
 //     }
 // });
+
+test('IT should pass with no tests', () => {
+    expect(true).toBe(true);
+});

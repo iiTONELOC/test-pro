@@ -1,4 +1,5 @@
 import { TopicTag } from '../..';
+import { JSX } from 'preact/jsx-runtime';
 import { AnswerOptions } from './Answers/AnswerOptions';
 import { useMountedState } from '../../../hooks';
 import {

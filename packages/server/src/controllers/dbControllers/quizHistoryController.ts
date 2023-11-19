@@ -16,6 +16,8 @@ import type { IQuizHistory, QuizHistoryType, PopulatedQuizHistoryType } from '..
  *      getById: (id: string, queryParams: dbQueryParams) => Promise<QuizHistoryType | null>;
  *
  *      deleteById: (id: string, queryParams: dbQueryParams) => Promise<QuizHistoryType | null>;
+ * 
+ *     getByQuizId: (quizId: string, queryParams: dbQueryParams) => Promise<QuizHistoryType[] | null>;  
  * }
  * ```
  */
@@ -24,6 +26,7 @@ export interface IQuizHistoryController {
     create: (quizHistory: IQuizHistory, queryParams: dbQueryParams) => Promise<QuizHistoryType | null>;
     getById: (id: string, queryParams: dbQueryParams) => Promise<QuizHistoryType | null>;
     deleteById: (id: string, queryParams: dbQueryParams) => Promise<QuizHistoryType | null>;
+    getByQuizId: (quizId: string, queryParams: dbQueryParams) => Promise<QuizHistoryType[] | null>;
 }
 
 export type QuizHistoryModelResponse = (QuizHistoryType | PopulatedQuizHistoryType);
@@ -158,11 +161,43 @@ export const deleteById = async (id: string, queryParams: dbQueryParams): Promis
     return deletedQuizHistory;
 };
 
+export const getByQuizId = async (quizId: string, queryParams: dbQueryParams): Promise<QuizHistoryModelResponse[] | null> => {
+    const { showTimestamps } = queryParams ?? dbQueryParamDefaults;
+    const selectTerms = createSelectTerms(showTimestamps);
+
+    const matches: PopulatedQuizHistoryType[] = await QuizHistory
+        .find({
+            attempt: {
+                $in: await QuizAttempt.find({ quizId })
+            }
+        })
+        .populate({
+            path: 'attempt',
+            select: selectTerms,
+            populate: {
+                path: 'answeredQuestions',
+                select: selectTerms,
+                populate: {
+                    path: 'question',
+                    select: selectTerms,
+                    populate: {
+                        path: 'topics',
+                        select: selectTerms
+                    }
+                }
+            }
+        })
+        .select(selectTerms) as PopulatedQuizHistoryType[];
+
+    return matches.length > 0 ? matches : null;
+}
+
 export const QuizHistoryController: IQuizHistoryController = {
     getAll,
     create,
     getById,
-    deleteById
+    deleteById,
+    getByQuizId
 };
 
 export default QuizHistoryController;

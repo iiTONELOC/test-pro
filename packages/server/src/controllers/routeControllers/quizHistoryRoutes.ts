@@ -11,6 +11,7 @@ export interface IQuizHistoryRouteController {
     create(req: Request, res: Response): Promise<IApiResponse<QuizHistoryModelResponse>>;
     getById(req: Request, res: Response): Promise<IApiResponse<QuizHistoryModelResponse>>;
     deleteById(req: Request, res: Response): Promise<IApiResponse<QuizHistoryModelResponse>>;
+    getByQuizId(req: Request, res: Response): Promise<IApiResponse<QuizHistoryModelResponse[]>>;
 }
 
 export const quizHistoryRouteController: IQuizHistoryRouteController = {
@@ -44,6 +45,15 @@ export const quizHistoryRouteController: IQuizHistoryRouteController = {
         try {
             const quizHistory = await quizHistoryController.deleteById(id, extractDbQueryParams(req));
             return res.status(httpStatusCodes.OK).json({ data: quizHistory });
+        } catch (error: any) {
+            return handleRouteError(res, error.message);
+        }
+    },
+    getByQuizId: async (req, res): Promise<IApiResponse<QuizHistoryModelResponse[]>> => {
+        const { quizId } = req.params;
+        try {
+            const quizHistories = await quizHistoryController.getByQuizId(quizId, extractDbQueryParams(req));
+            return res.status(httpStatusCodes.OK).json({ data: quizHistories });
         } catch (error: any) {
             return handleRouteError(res, error.message);
         }

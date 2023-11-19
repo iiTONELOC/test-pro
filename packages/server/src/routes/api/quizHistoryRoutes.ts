@@ -17,4 +17,9 @@ router.route('/:id')
     // DELETE a quiz history by id
     .delete(quizHistoryRouteController.deleteById);
 
+//api/history/quiz/:quizId
+router.route('/quiz/:quizId')
+    // GET all quiz histories by quiz id
+    .get(quizHistoryRouteController.getByQuizId);
+
 export default router;

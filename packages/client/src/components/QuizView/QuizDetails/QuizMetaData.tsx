@@ -22,10 +22,10 @@ export function QuizMetaData(): JSX.Element {// NOSONAR
 
     return currentFileDetails ? (
         <div className={metaContainerDivClasses}>
+            <MetaDetail title={'Passing Score:'} value={`70%`} />
+            <MetaDetail title={'Number of Questions:'} value={currentFileDetails?.questions?.length ?? 0} />
             <MetaDetail title={'Created:'} value={dateTime(currentFileDetails?.createdAt ?? new Date())} />
             <MetaDetail title={'Last Modified:'} value={dateTime(currentFileDetails?.updatedAt ?? new Date())} />
-            <MetaDetail title={'Number of Questions:'} value={currentFileDetails?.questions?.length ?? 0} />
-            <MetaDetail title={'Passing Score:'} value={`70%`} />
             <MetaDetail title={'Number of Correct Answers To Pass:'} value={`${calculatePassingScore(currentFileDetails?.questions)}`} />
         </div>
     ) : <></>

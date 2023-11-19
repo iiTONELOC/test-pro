@@ -8,3 +8,5 @@ export { useCurrentFileSignal } from './CurrentFileSignal';
 export type { CurrentFileSignal } from './CurrentFileSignal';
 export type { QuizViewSignal } from './QuizViewSignal';
 export { useQuizViewSignal, QuizViews } from './QuizViewSignal';
+export { useInViewAttemptSignal } from './InViewAttemptSignal';
+export type { InViewAttemptSignal } from './InViewAttemptSignal';

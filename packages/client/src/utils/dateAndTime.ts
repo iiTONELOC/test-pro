@@ -37,9 +37,9 @@ export const displayElapsedTime = (elapsedTime: number): string => {
     const hours = Math.floor(minutes / 60);
 
     // determine the best way to display the time, if we dont have a value, dont display it
-    const displayHours = hours > 0 ? `${hours}hours` : '';
-    const displayMinutes = minutes > 0 ? `${minutes}minutes` : '';
-    const displaySeconds = seconds > 0 ? `${seconds}seconds` : '';
+    const displayHours = hours > 0 ? `${hours} hours` : '';
+    const displayMinutes = minutes > 0 ? `${minutes} minutes` : '';
+    const displaySeconds = seconds > 0 ? `${seconds} seconds` : '';
 
 
     // return the display string

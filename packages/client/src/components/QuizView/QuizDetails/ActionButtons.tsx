@@ -25,6 +25,7 @@ export function ActionButtons(): JSX.Element { // NOSONAR
             name: 'View Quiz History',
             action: () => {
                 setCurrentQuizView(QuizViews.QuizHistory);
+                isDrawerOpen.value && toggleDrawer();
             }
         },
         {

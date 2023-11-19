@@ -229,80 +229,15 @@ export const API = {
     async getQuizHistoriesForQuiz(quizId: string, props: dbQueryParams): Promise<PopulatedQuizHistoryType[] | null> {
         try {
             const { showTimestamps, needToPopulate } = props ?? defaultAPIQueryParams;
-            let baseUrl = `${API_URL}/history`;
+            let baseUrl = `${API_URL}/history/quiz/${quizId?.toString() ?? ''}`;
             baseUrl = buildURL(baseUrl, { showTimestamps, needToPopulate });
 
-            const response: Response = await fetch(baseUrl);
+            const response: Response = await fetch(baseUrl, {
+                method: 'GET', headers: { 'Content-Type': 'application/json' }
+            });
             const data: IApiResponse<PopulatedQuizHistoryType[]> = await response.json() as IApiResponse<PopulatedQuizHistoryType[]>;
 
-            console.log('data', data);
-            // // filter the histories by quizId
-            // const filtered = data.data?.filter(history => history?.attempt?.quizId?.toString() === quizId) ?? [];
-            // console.log('filtered', filtered);
-            // // filtered has a WAYYYY incorrect array length, if we have 2 actual items the length comes back as 100
-            // return filtered;
-
-            // const filtered = (data.data || []).filter((history, index) => {
-            //     const quizIdCondition = history?.attempt?.quizId?.toString() === quizId.toString();
-
-            //     // Log for debugging
-            //     console.log(`Index ${index}:`, history, quizIdCondition);
-
-            //     return quizIdCondition;
-            // }) || [];
-
-            // console.log('filtered', filtered);
-
-            // const filtered = [];
-
-            // for (let i = 0; i < (data.data || []).length; i++) {
-            //     const obj = data?.data ?? [];
-            //     const history = obj[i];
-            //     const quizIdCondition = history?.attempt?.quizId?.toString() === quizId.toString();
-
-            //     // Log for debugging
-            //     console.log(`Index ${i}:`, history, quizIdCondition);
-
-            //     if (quizIdCondition) {
-            //         filtered.push(history);
-            //     }
-            // }
-
-            // // Log the filtered array
-            // console.log("Filtered Array:", filtered);
-
-            // const filtered = [];
-
-            // for (let i = 0; i < (data.data || []).length; i++) {
-            //     const obj = data?.data ?? [];
-            //     const history = obj[i];
-            //     const quizIdCondition = history?.attempt?.quizId?.toString() === quizId.toString();
-
-            //     // Log for debugging
-            //     console.log(`Index ${i}:`, history, quizIdCondition, quizId, history?.attempt?.quizId?.toString());
-
-            //     if (quizIdCondition) {
-            //         filtered.push(history);
-            //     }
-            // }
-
-            // // Log the filtered array
-            // console.log("Filtered Array:", filtered);
-            const filtered = (data.data || []).filter(history => {
-                // Check if history is not null and quizId condition is met
-                return history && history.attempt.quizId.toString() === quizId.toString();
-            });
-
-            // Log the filtered array
-            console.log("Filtered Array:", filtered);
-
-            const filteredAttempts = filtered.filter(entry => entry !== null);
-
-            // Log the filtered attempts
-            console.log("Filtered Attempts:", filteredAttempts);
-
-
-            return filteredAttempts;
+            return data.data ?? null;
         } catch (error) {
             console.error('An error occurred while fetching quiz histories for quiz', error);
             return null;

@@ -1,55 +1,30 @@
-
-import { JSX } from 'preact/jsx-runtime';
 import { ToolTip } from '../../ToolTip';
-import { useEffect } from 'preact/hooks';
+import { JSX } from 'preact/jsx-runtime';
+import { useEffect, useState } from 'preact/hooks';
+import { HistoryListItem } from './HistoryListItem';
 import { PopulatedQuizHistoryType } from '../../../utils/api';
-import { calculateScore, dateTime, keyHandler, trimClasses, uuid, displayElapsedTime } from '../../../utils';
-
-
-const buttonClasses = `bg-slate-800 w-full hover:cursor-pointer hover:bg-slate-700 p-3 flex flex-wrap flex-row gap-2 justify-between
-items-center rounded-md text-gray-300 ease-in-out-300 transition-all focus:bg-slate-600 focus:border-2 focus:border-purple-500 focus:outline-none`;
-
-
-function HistoryItem({ history }: { history: PopulatedQuizHistoryType }): JSX.Element {
-    const taken = dateTime(history.attempt.dateTaken);
-    const passed = history.attempt.passed ? 'Passed' : 'Failed';
-    const score = calculateScore(history.attempt.earnedPoints, history.attempt.answeredQuestions.length);
-
-    const textBase = 'text-base';
-    return (
-        <button tabIndex={0} className={trimClasses(buttonClasses)}>
-            <p className={textBase}>{taken}</p>
-            <span className={'flex flex-wrap flex-row gap-2 items-center  '}>
-                <p className={'text-md'}> Result: {passed}</p>
-                <p className={'text-md'}> Score: {score}%</p>
-                <p className={'text-md'}> Time: {displayElapsedTime(history.attempt.elapsedTimeInMs)}</p>
-            </span>
-        </button >
-    )
-}
+import { keyHandler, uuid, clickHandler } from '../../../utils';
 
 export interface HistoryListProps {
     history: PopulatedQuizHistoryType[],
-    handleIndexChange: {
-        selectedIndex: number,
-        setSelectedIndex: (index: number) => void
-    }
+    setViewAttempt: (attempt: PopulatedQuizHistoryType) => void
 }
 
-export function HistoryList({ history, handleIndexChange }: HistoryListProps): JSX.Element {
-    const { selectedIndex, setSelectedIndex } = handleIndexChange;
-
+export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.Element { // NOSONAR
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const autoFocus = () => {
         const selector: NodeListOf<HTMLElement> = document.querySelectorAll('li > button');
-        if (selector.length > 0) {
-            selector[selectedIndex].focus();
-        }
+        selector.length > 0 && selector[selectedIndex].focus();
     };
 
-    useEffect(() => {
-        autoFocus();
-    }, [history, selectedIndex]);
+    const setAttempt = () => setViewAttempt(history[selectedIndex]);
+
+    const handleClick = (event: MouseEvent) => clickHandler({
+        event,
+        callback: setAttempt,
+        stopPropagation: true
+    });
 
     const handleArrowKeys = () => {
         if (selectedIndex < history.length - 1) {
@@ -57,40 +32,46 @@ export function HistoryList({ history, handleIndexChange }: HistoryListProps): J
         } else {
             setSelectedIndex(0);
         }
-    }
+    };
+
+    const handleEnterKey = (e: KeyboardEvent) => keyHandler({
+        event: e,
+        keyToWatch: 'Enter',
+        callback: setAttempt,
+        stopPropagation: true
+    });
 
 
-    const arrowDownKeyListener = (e: KeyboardEvent) => {
-        keyHandler({
-            event: e,
-            keyToWatch: 'ArrowDown',
-            callback: handleArrowKeys,
-            stopPropagation: true
-        });
-    }
+    const arrowDownKeyListener = (e: KeyboardEvent) => keyHandler({
+        event: e,
+        keyToWatch: 'ArrowDown',
+        callback: handleArrowKeys,
+        stopPropagation: true
+    });
 
-    const arrowUpKeyListener = (e: KeyboardEvent) => {
-        keyHandler({
-            event: e,
-            keyToWatch: 'ArrowUp',
-            callback: handleArrowKeys,
-            stopPropagation: false
-        });
-    }
+
+    const arrowUpKeyListener = (e: KeyboardEvent) => keyHandler({
+        event: e,
+        keyToWatch: 'ArrowUp',
+        callback: handleArrowKeys,
+        stopPropagation: false
+    });
 
     const handlers = (e: KeyboardEvent) => {
         arrowDownKeyListener(e);
         arrowUpKeyListener(e);
-    }
+        handleEnterKey(e);
+    };
+
+    useEffect(() => autoFocus(), [history, selectedIndex]);
 
 
     return history.length > 0 ? (
-        // TODO: ADD Button Handlers to scroll through the list with the arrow keys
         <ul className={'rounded-md w-full min-h-min max-h-[70vh] overflow-y-auto flex flex-col gap-3 '}>
             {history.map(historyItem => (
                 <ToolTip key={uuid()} toolTipText='View Quiz Attempt'>
-                    <li onKeyDown={handlers}>
-                        <HistoryItem history={historyItem} />
+                    <li onKeyDown={handlers} onClick={handleClick}>
+                        <HistoryListItem history={historyItem} />
                     </li>
                 </ToolTip>
             ))}

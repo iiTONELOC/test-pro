@@ -1,18 +1,28 @@
 {
   "name": "test-pro",
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "test": "cd packages/server && npm run test",
     "start": "cd  packages/server && npm run start",
+    "install": "concurrently \"npm run install-server\" \"npm run install-client\"",
+    "install-server": "cd packages/server && npm install",
+    "install-client": "cd packages/client && npm install",
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "cd packages/client && npm run dev",
     "dev-server": "cd packages/server && npm run dev",
+    "build": "concurrently \"npm run build-server\" \"npm run build-client\"",
+    "build-server": "cd packages/server && npm run build",
+    "build-client": "cd packages/client && npm run build",
     "createEnv": "node scripts/createEnv.mjs"
   },
   "dependencies": {
     "concurrently": "^8.2.2"
-  }
+  },
+  "description": "**`UNDER DEVELOPMENT`**",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

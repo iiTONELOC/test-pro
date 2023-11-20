@@ -115,6 +115,7 @@ const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFile
  * @returns the updated virtual file system
  */
 export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileSystem: VirtualFileSystem[]): VirtualFileSystem[] => {
+
     // get the quiz ids from the quizData
     const quizIds: string[] = quizData.map((quiz: QuizModelResponse): string => quiz?._id.toString());
 
@@ -125,6 +126,14 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
     if (remainingQuizIds.length > 0) {
         existingFileSystem = createVirtualQuizFileAndAddToFileSystem(remainingQuizIds, existingFileSystem, quizData);
     }
+
+    // check the existingFileSystem for any ids that are not in the quizData, these need to be removed
+    existingFileSystem = existingFileSystem.filter((child: VirtualFileSystem): boolean => {
+        if ('entryId' in child) {
+            return quizData.some((quiz: QuizModelResponse): boolean => quiz?._id.toString() === child.entryId);
+        }
+        return true;
+    });
 
     return existingFileSystem;
 };

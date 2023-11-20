@@ -31,17 +31,30 @@ export const getFormattedDate = (date: Date) => {
 };
 
 export const displayElapsedTime = (elapsedTime: number): string => {
-
     const seconds = Math.floor(elapsedTime / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
 
-    // determine the best way to display the time, if we dont have a value, dont display it
-    const displayHours = hours > 0 ? `${hours} hours` : '';
-    const displayMinutes = minutes > 0 ? `${minutes} minutes` : '';
-    const displaySeconds = seconds > 0 ? `${seconds} seconds` : '';
+    if (seconds < 60) {
+        return `${seconds} seconds`;
+    }
+
+    const remainingSeconds = seconds % 60;
+    const remainingMinutes = minutes % 60;
+    const remainingHours = hours % 24;
+
+    const displaySeconds = remainingSeconds > 0 ? `${remainingSeconds} seconds` : '';
+    const displayMinutes = remainingMinutes > 0 ? `${remainingMinutes} minutes` : '';
 
 
-    // return the display string
-    return `${displayHours} ${displayMinutes} ${displaySeconds}`
+    if (minutes < 60) {
+        return `${minutes} minutes ${displaySeconds}`;
+    }
+
+    if (hours < 24) {
+        return `${hours} hours ${displayMinutes} ${displaySeconds}`;
+    }
+
+    return `${days} days ${remainingHours} hours ${displayMinutes} ${displaySeconds}`;
 }

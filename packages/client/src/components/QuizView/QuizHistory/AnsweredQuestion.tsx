@@ -7,7 +7,7 @@ import { PopulatedQuizQuestionResultType } from '../../../utils/api';
 import { QuestionCardBody, QuestionCard, QuestionCardHeader } from '../../Question/Card';
 import { TopicModelType, clickHandler, displayElapsedTime, titleCase, uuid } from '../../../utils';
 
-function StatKey({ label }: { label: string }) {
+function StatKey({ label }: Readonly<{ label: string }>) {
     return (
         <span className={'bg-slate-800 py-2 px-3 rounded-sm rounded-l-md h-full flex items-center'}>
             <p>{label}</p>
@@ -54,7 +54,7 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
     const handleClick = (event: MouseEvent) => clickHandler({
         event,
         callback: handleSetShowCorrectAnswer,
-        stopPropagation: true,
+        stopPropagation: true
     });
 
     const checkSelection = () => {
@@ -91,7 +91,7 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
         }
     }, [showCorrectAnswer, isMounted]);
 
-
+    const correctClass = questionResult.isCorrect ? 'bg-green-700' : 'bg-red-700';
 
 
     return isMounted ? (
@@ -99,7 +99,7 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
             <QuestionCard>
                 <span className={'w-full flex flex-wrap flex-row justify-between '}>
                     <QuestionCardHeader topics={topics} />
-                    <span className={` py-2 px-3 bg-${questionResult.isCorrect ? 'green-700' : 'red-700'} rounded-md`}>
+                    <span className={` py-2 px-3 ${correctClass} rounded-md`}>
                         {questionResult.isCorrect ? 'Correct' : 'Incorrect'}
                     </span>
                 </span>
@@ -118,18 +118,15 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
                         <p>{questionResult.isCorrect ? 1 : 0} </p>
                     </StatLine>
                     {!questionResult.isCorrect && (
-                        <>
-                            <StatLine>
-                                <StatKey label={'Areas to Review:'} />
-                                {questionResult.question.areaToReview.map((area: string, index: number) => {
-                                    const isLast = index === questionResult.question.areaToReview.length - 1;
-                                    return (
-                                        <p key={uuid()}>{titleCase(area)}{!isLast && ','}</p>
-                                    )
-                                })}
-                            </StatLine>
-
-                        </>
+                        <StatLine>
+                            <StatKey label={'Areas to Review:'} />
+                            {questionResult.question.areaToReview.map((area: string, index: number) => {
+                                const isLast = index === questionResult.question.areaToReview.length - 1;
+                                return (
+                                    <p key={uuid()}>{titleCase(area)}{!isLast && ','}</p>
+                                )
+                            })}
+                        </StatLine>
                     )}
                     {(questionResult.isCorrect || showCorrectAnswer) && (
                         <StatLine>

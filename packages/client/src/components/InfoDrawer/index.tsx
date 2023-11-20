@@ -3,11 +3,9 @@ import { VirtualFile } from './VirtualFile';
 import { useMountedState } from '../../hooks';
 import { useEffect, useState } from 'preact/hooks';
 import { useInfoDrawerSignal, useQuizzesDbSignal } from '../../signals';
-import { trimClasses, getVirtualFileSystem, generateFileSystem } from '../../utils';
-
+import { trimClasses, getVirtualFileSystem, generateFileSystem, API } from '../../utils';
 
 import type { PopulatedQuizModel, QuizModelResponse, VirtualFileSystem, IVirtualDirectory, IVirtualFile } from '../../utils';
-
 
 const drawerClasses = `bg-gray-950/[.75] h-[calc(100vh-44px)] w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
 sm:text-sm lg:text-md xl:text-base flex`;
@@ -23,37 +21,31 @@ export function InfoDrawer(): JSX.Element {
     const quizData: QuizModelResponse[] = quizzesDb.value;
     const hideDrawer = !isDrawerOpen.value;
 
+    // fetches all the quizzes from the database when the drawer is open and the component is mounted
     useEffect(() => {
         if (isMounted && isDrawerOpen.value) {
-
-            const virtualFileSystem: VirtualFileSystem[] = getVirtualFileSystem();
-            const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]], virtualFileSystem);
-
-            // save the virtual file system
-            // compare the tempFileSystem with the virtualFileSystem
-            // if the virtual file system has items the tempFileSystem doesn't have, then
-            // they need to be removed from the virtual file system
-
-            const handleIrregularities = (virtualFileSystem: VirtualFileSystem[], tempFileSystem: VirtualFileSystem[]) => {
-                const virtualFileSystemNames = virtualFileSystem.map((entry: VirtualFileSystem) => entry.name);
-                const tempFileSystemNames = tempFileSystem.map((entry: VirtualFileSystem) => entry.name);
-
-                const irregularities = virtualFileSystemNames.filter((name: string) => !tempFileSystemNames.includes(name));
-
-                if (irregularities.length > 0) {
-                    const irregularitiesIndex = irregularities.map((name: string) => virtualFileSystemNames.indexOf(name));
-                    irregularitiesIndex.forEach((index: number) => {
-                        virtualFileSystem.splice(index, 1);
-                    });
-                }
-
-                return virtualFileSystem;
-            }
-
-            localStorage.setItem('virtualFileSystem', JSON.stringify(tempFileSystem));
-            setVirtualFileSystem(handleIrregularities(virtualFileSystem, tempFileSystem));
+            (async () => {
+                await API.getAllQuizzes({
+                    showTimestamps: true,
+                    needToPopulate: true
+                });
+            })();
         }
     }, [isMounted, isDrawerOpen.value, quizData.length]);
+
+    // if the drawer is open and the quiz data is populated, generate the virtual file system
+    useEffect(() => {
+        if (isMounted && isDrawerOpen.value && quizData.length > 0) {
+            // retrieve virtual file system from local storage
+            const virtualFileSystem: VirtualFileSystem[] = getVirtualFileSystem();
+            // generate virtual file system from quiz data and the existing virtual file system
+            const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]], virtualFileSystem);
+
+            // update virtual file system in local storage and state
+            localStorage.setItem('virtualFileSystem', JSON.stringify(tempFileSystem));
+            setVirtualFileSystem(tempFileSystem);
+        }
+    }, [isDrawerOpen.value, quizData.length]);
 
     if (hideDrawer) return <></>
 
@@ -61,7 +53,8 @@ export function InfoDrawer(): JSX.Element {
         <div className={trimClasses(drawerClasses)}>
             <ul
                 tabIndex={0}
-                className={ulClasses}>
+                className={ulClasses}
+            >
                 {virtualFileSystem.length > 0 && virtualFileSystem.map((entry: VirtualFileSystem, index: number) => (
                     <VirtualFile key={`${entry.name}-${index}`} file={entry as IVirtualFile} />// NOSONAR
                 ))}

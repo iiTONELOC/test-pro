@@ -63,6 +63,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             className={trimClasses(listItemClasses)}
+            data-fileId={file.entryId}
         >
             <ToolTip toolTipText={tip + '\n' + createdAndModified}>
                 <span

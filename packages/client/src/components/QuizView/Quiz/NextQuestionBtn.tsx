@@ -2,7 +2,7 @@ import { createRef, JSX } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { useMountedState } from '../../../hooks';
 import { QuizQuestionProps } from './QuizQuestion';
-import { MultipleChoiceProps } from '../Quiz/Answers/MultipleChoice';
+import { MultipleChoiceProps } from './Answers/AnswersMultipleChoice';
 import { PopulatedQuizModel, clickHandler, trimClasses, IAnsweredQuestionData } from '../../../utils';
 
 export type NextQuestionBtnProps = {

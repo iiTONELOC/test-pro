@@ -22,6 +22,7 @@ export function QuizDetailHeader({ isHistory }: Readonly<QuizDetailHeaderProps>)
             </h1>
 
             <div className={topicContainerClasses}>
+                {/* TODO: create an add topic ability if the quiz has no topics */}
                 {[...currentFileDetails.topics as TopicModelType[]]
                     .map(topic => (
                         <TopicTag key={uuid()} topic={topic.name} />

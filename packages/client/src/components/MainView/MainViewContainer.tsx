@@ -1,4 +1,4 @@
-import { useInfoDrawerSignal } from '../../signals';
+import { useInfoDrawerSignal, useQuizzesDbSignal } from '../../signals';
 import { useMountedState } from '../../hooks'
 import { InfoDrawer, MainView } from '../';
 import { useEffect } from 'preact/hooks';

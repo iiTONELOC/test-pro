@@ -22,7 +22,6 @@ export interface IQuizQuestionResultController {
     deleteById: (id: string, showTimestamps?: boolean) => Promise<QuizQuestionResultType | null>;
 }
 
-
 export const getAll = async (showTimestamps = false): Promise<QuizQuestionResultType[]> => {
     const selectTerms = createSelectTerms(showTimestamps);
     const quizQuestionResults: QuizQuestionResultType[] = await QuizQuestionResult.find({}).select(selectTerms) as QuizQuestionResultType[];

@@ -1,5 +1,5 @@
 import { Schema, model, HydratedDocument, Types } from 'mongoose';
-import { PopulatedQuizAttemptType, QuizAttemptType } from './QuizAttempt';
+import { PopulatedQuizAttemptType } from './QuizAttempt';
 
 /**
  * ```ts
@@ -34,7 +34,7 @@ export type QuizHistoryType = HydratedDocument<IQuizHistory> &
  *    attempt: {
  *      _id: Types.ObjectId;
  *      quizId: Types.ObjectId;
- *      answeredQuestions: Types.ObjectId[{
+ *      answeredQuestions: [{
  *          _id: Types.ObjectId;
  *          quizAttempt: Types.ObjectId;
  *          question: {
@@ -74,8 +74,7 @@ export type QuizHistoryType = HydratedDocument<IQuizHistory> &
  * };
  * ```
  */
-export type PopulatedQuizHistoryType = QuizHistoryType &
-{ attempt: QuizAttemptType | PopulatedQuizAttemptType };
+export type PopulatedQuizHistoryType = QuizHistoryType & { attempt: PopulatedQuizAttemptType };
 
 const QuizHistorySchema = new Schema({
     attempt: {

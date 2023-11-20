@@ -18,26 +18,27 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
         selector.length > 0 && selector[selectedIndex].focus();
     };
 
-    const setAttempt = () => setViewAttempt(history[selectedIndex]);
+    const setAttempt = (index: number) => setViewAttempt(history[index]);
 
-    const handleClick = (event: MouseEvent) => clickHandler({
-        event,
-        callback: setAttempt,
-        stopPropagation: true
-    });
+    const handleClick = (event: MouseEvent, index: number) => {
+        setSelectedIndex(index);
+        clickHandler({
+            event,
+            callback: () => setAttempt(index),
+            stopPropagation: true
+        });
 
-    const handleArrowKeys = () => {
-        if (selectedIndex < history.length - 1) {
-            setSelectedIndex(selectedIndex + 1);
-        } else {
-            setSelectedIndex(0);
-        }
+    };
+    const handleArrowKeys = (e: KeyboardEvent) => {
+        const index = e.key === 'ArrowDown' ? selectedIndex + 1 : selectedIndex - 1;
+        const newIndex = index < 0 ? history.length - 1 : index > history.length - 1 ? 0 : index;
+        setSelectedIndex(newIndex);
     };
 
     const handleEnterKey = (e: KeyboardEvent) => keyHandler({
         event: e,
         keyToWatch: 'Enter',
-        callback: setAttempt,
+        callback: () => setAttempt(selectedIndex),
         stopPropagation: true
     });
 
@@ -45,7 +46,7 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
     const arrowDownKeyListener = (e: KeyboardEvent) => keyHandler({
         event: e,
         keyToWatch: 'ArrowDown',
-        callback: handleArrowKeys,
+        callback: () => handleArrowKeys(e),
         stopPropagation: true
     });
 
@@ -53,7 +54,7 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
     const arrowUpKeyListener = (e: KeyboardEvent) => keyHandler({
         event: e,
         keyToWatch: 'ArrowUp',
-        callback: handleArrowKeys,
+        callback: () => handleArrowKeys(e),
         stopPropagation: false
     });
 
@@ -68,9 +69,9 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
 
     return history.length > 0 ? (
         <ul className={'rounded-md w-full min-h-min max-h-[70vh] overflow-y-auto flex flex-col gap-3 '}>
-            {history.map(historyItem => (
+            {history.map((historyItem, index) => (
                 <ToolTip key={uuid()} toolTipText='View Quiz Attempt'>
-                    <li onKeyDown={handlers} onClick={handleClick}>
+                    <li onKeyDown={handlers} onClick={(e) => handleClick(e, index)}>
                         <HistoryListItem history={historyItem} />
                     </li>
                 </ToolTip>

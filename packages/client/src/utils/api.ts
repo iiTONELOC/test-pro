@@ -10,10 +10,12 @@ import type {
     QuizModelResponse,
     PopulatedQuizModel,
     QuestionModelResponse,
+    QuizQuestionResultType,
     PopulatedQuizAttemptType,
     PopulatedQuizHistoryType,
     QuizAttemptModelResponse,
-    PopulatedQuestionModelType
+    PopulatedQuestionModelType,
+    PopulatedQuizQuestionResultType
 } from '../../../server/types';
 
 import { IQuizAttemptData, IAnsweredQuestionData } from '.';
@@ -31,10 +33,12 @@ export type {
     QuizModelResponse,
     PopulatedQuizModel,
     QuestionModelResponse,
+    QuizQuestionResultType,
     PopulatedQuizAttemptType,
     PopulatedQuizHistoryType,
     QuizAttemptModelResponse,
-    PopulatedQuestionModelType
+    PopulatedQuestionModelType,
+    PopulatedQuizQuestionResultType
 };
 
 /**

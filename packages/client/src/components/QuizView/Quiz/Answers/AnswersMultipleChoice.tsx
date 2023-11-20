@@ -1,29 +1,15 @@
+import { JSX } from 'preact/jsx-runtime';
 import { useEffect } from 'preact/hooks';
+import { clickHandler } from '../../../../utils';
 import { QuizQuestionProps } from '../QuizQuestion';
-import { clickHandler, trimClasses, uuid } from '../../../../utils';
-
-
-const optionIndex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-const divClasses = 'w-full h-full flex grid p-2 gap-3 text-shadow grid-cols-1 md:grid-cols-2';
-
-const buttonClasses = `bg-slate-700 rounded-md hover:bg-slate-600 text-white w-auto min-w-[250px]
-h-max flex flex-row flex-wrap items-center justify-between`;
-
-const modIndex = (index: number) => {
-    if (index >= optionIndex.length) {
-        return index - optionIndex.length;
-    }
-    return index;
-};
-
+import { MultipleChoiceOptions } from '../../../Question/MultipleChoiceOptions';
 
 export type MultipleChoiceProps = {
     options: string[];
     quizState: QuizQuestionProps['quizState'];
 }
 
-export function MultipleChoice({ options, quizState }: Readonly<MultipleChoiceProps>): JSX.Element {
+export function AnswersMultipleChoice({ options, quizState }: Readonly<MultipleChoiceProps>): JSX.Element {
     const { setCurrentQuestionAnswered, currentQuestionAnswered } = quizState;
 
     const handleClick = (event: Event) => {
@@ -66,23 +52,6 @@ export function MultipleChoice({ options, quizState }: Readonly<MultipleChoicePr
     }, [currentQuestionAnswered]);
 
     return (
-        <div className={divClasses}>
-            {options.map((option, index) => (
-                <button
-                    key={uuid()}
-                    data-option={option}
-                    onClick={handleClick}
-                    className={trimClasses(buttonClasses)}>
-                    <span className={'w-full h-full flex flex-row flex-wrap gap-3 justify-start items-center rounded-md'}>
-                        <p className={'w-[12%] p-3 rounded-md h-full bg-slate-800 flex justify-center items-center -ml-1'}>
-                            {optionIndex[modIndex(index)]}.
-                        </p>
-                        <p className={'flex flex-wrap flex-row'}>
-                            {option}
-                        </p>
-                    </span>
-                </button>
-            ))}
-        </div>
+        <MultipleChoiceOptions options={options} handleClick={handleClick} />
     )
 }

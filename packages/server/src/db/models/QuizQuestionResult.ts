@@ -75,7 +75,7 @@ export type QuizQuestionResultType = HydratedDocument<IQuizQuestionResult> &
 export type PopulatedQuizQuestionResultType = QuizQuestionResultType &
 {
     quizAttempt: Types.ObjectId;
-    question: QuestionModelType | PopulatedQuestionModelType
+    question: PopulatedQuestionModelType;
 };
 
 const QuizQuestionResultSchema = new Schema({

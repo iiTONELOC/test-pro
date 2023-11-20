@@ -128,14 +128,45 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
     }
 
     // check the existingFileSystem for any ids that are not in the quizData, these need to be removed
-    existingFileSystem = existingFileSystem.filter((child: VirtualFileSystem): boolean => {
+    const temp = existingFileSystem.filter((child: VirtualFileSystem): boolean => {
         if ('entryId' in child) {
             return quizData.some((quiz: QuizModelResponse): boolean => quiz?._id.toString() === child.entryId);
         }
         return true;
     });
 
-    return existingFileSystem;
+
+    // enforce the order of the virtual file system when merging
+    // we need to check for files and folders folders do not have entryIds they have a name property and children property
+    for (let i = 0; i < existingFileSystem.length; i++) {
+        // if the child is a virtual file
+        if ('entryId' in existingFileSystem[i]) {
+            // find the index of the child in the temp array
+            //@ts-ignore
+            const index = temp.findIndex((child: VirtualFileSystem): boolean => child.entryId === existingFileSystem[i].entryId);
+            // if the index is not -1 then the child exists in the temp array
+            if (index !== -1) {
+                // remove the child from the temp array
+                temp.splice(index, 1);
+                // add the child to the temp array at the same index as it was in the existingFileSystem
+                temp.splice(i, 0, existingFileSystem[i]);
+            }
+        } else {
+            // the child is a virtual directory
+            // find the index of the child in the temp array
+            //@ts-ignore
+            const index = temp.findIndex((child: VirtualFileSystem): boolean => child.name === existingFileSystem[i].name);
+            // if the index is not -1 then the child exists in the temp array
+            if (index !== -1) {
+                // remove the child from the temp array
+                temp.splice(index, 1);
+                // add the child to the temp array at the same index as it was in the existingFileSystem
+                temp.splice(i, 0, existingFileSystem[i]);
+            }
+        }
+    }
+
+    return temp;
 };
 
 
@@ -143,6 +174,10 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
  * Looks for the virtual file system in local storage and returns it, If it doesn't exist it returns an empty array
  * @returns an array of virtual file system objects
  */
-export const getVirtualFileSystem: () => VirtualFileSystem[] = (): VirtualFileSystem[] => JSON
+export const getVirtualFileSystemFromStorage: () => VirtualFileSystem[] = (): VirtualFileSystem[] => JSON
     .parse(localStorage.getItem('virtualFileSystem') ?? '[]') ?? [];
 
+
+export const setVirtualFileSystemToStorage = (virtualFileSystem: VirtualFileSystem[]): void => {
+    localStorage.setItem('virtualFileSystem', JSON.stringify(virtualFileSystem));
+};

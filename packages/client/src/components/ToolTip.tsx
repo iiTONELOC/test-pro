@@ -1,6 +1,7 @@
 import { createRef, JSX } from 'preact';
 import { trimClasses, uuid } from '../utils';
 import { useToolTipsOnFocus } from '../hooks';
+import { useEffect } from 'preact/hooks';
 
 
 /**
@@ -31,6 +32,29 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
     const title = toolTipText;
 
     useToolTipsOnFocus({ groupContainerRef });
+
+    useEffect(() => {
+        // listen for drag events on the group container
+        // if the group container is being dragged, hide the tooltips
+        const groupContainer = groupContainerRef.current;
+        //find the groupContainer's child div and add/remove the hidden class from it
+        const childDiv = groupContainer?.querySelector('div');
+
+        const handleDragStart = () => {
+            childDiv?.classList.add('invisible');
+        };
+        const handleDragEnd = () => {
+            childDiv?.classList.remove('invisible');
+        };
+
+        document?.addEventListener('dragstart', handleDragStart);
+        document?.addEventListener('dragend', handleDragEnd);
+
+        return () => {
+            document?.removeEventListener('dragstart', handleDragStart);
+            document?.removeEventListener('dragend', handleDragEnd);
+        };
+    }, []);
 
     return (
         <div

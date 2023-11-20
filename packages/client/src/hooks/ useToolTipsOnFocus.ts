@@ -22,6 +22,7 @@ export function useToolTipsOnFocus({ groupContainerRef }: ToolTipOnFocusProps): 
     };
 
     const handleFocusIn = (element: HTMLDivElement) => {
+        // make sure the element isnt being dragged
         if (element instanceof HTMLDivElement && element.classList.contains('hidden')) {
             hiddenElementRef.current = element;
             hiddenElementRef.current.classList.remove('hidden');

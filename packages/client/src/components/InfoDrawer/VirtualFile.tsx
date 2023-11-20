@@ -6,6 +6,7 @@ import { clickHandler, dateTime, keyHandler, trimClasses } from '../../utils';
 import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
 
 import type { IVirtualFile } from '../../utils/virtualFileSystem';
+import { DraggableItem } from '../DragAndDrop';
 
 const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:bg-slate-800
 rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;
@@ -58,22 +59,25 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     }, [listItemRef]);
 
     return (
-        <li
-            ref={listItemRef}
-            onClick={handleClick}
-            onKeyDown={handleKeyDown}
-            className={trimClasses(listItemClasses)}
-            data-fileId={file.entryId}
-        >
-            <ToolTip toolTipText={tip + '\n' + createdAndModified}>
-                <span
-                    tabIndex={0}
-                    className={'w-full flex flex-row gap-1 items-center'}>
-                    <DocumentIcon className='w-4 h-4' />
+        <DraggableItem id={file.entryId} >
+            <li
+                ref={listItemRef}
+                onClick={handleClick}
+                onKeyDown={handleKeyDown}
+                className={trimClasses(listItemClasses)}
 
-                    <p className={'text-base'}>{file.name}</p>
-                </span>
-            </ToolTip>
-        </li>
+            >
+                <ToolTip toolTipText={tip + '\n' + createdAndModified}>
+                    <span
+                        tabIndex={0}
+                        className={'w-full flex flex-row gap-1 items-center'}>
+                        <DocumentIcon className='w-4 h-4' />
+
+                        <p data-id={file.entryId} className={'text-base'}>{file.name}</p>
+                    </span>
+                </ToolTip>
+            </li>
+        </DraggableItem>
+
     )
 }

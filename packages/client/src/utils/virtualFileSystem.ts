@@ -41,7 +41,7 @@ export type VirtualFileSystem = (IVirtualDirectory | IVirtualFile);
  * @param children an array of virtual file system objects to add to the virtual directory
  * @returns The created virtual directory object
  */
-const createVirtualDirectory = (name: string, children: VirtualFileSystem[] = []): IVirtualDirectory => ({ name, children });
+export const createVirtualDirectory = (name: string, children: VirtualFileSystem[] = []): IVirtualDirectory => ({ name, children });
 
 /**
  * Creates a virtual file with the given name, entryId and topics
@@ -107,6 +107,19 @@ const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFile
     return existingFileSystem;
 }
 
+/**
+ * Looks for the entryId in the given virtual file system and returns it if found
+ * @param item a virtual file system object
+ * @returns the entryId if it exists, otherwise the name of the object
+ */
+export const getItemIdOrFolderName = (item: IVirtualDirectory | IVirtualFile): string => {
+    if ((item as IVirtualFile).entryId) {
+        return (item as IVirtualFile).entryId;
+    } else {
+        return (item as IVirtualDirectory).name;
+    }
+};
+
 
 /**
  * Generates a virtual file system from the given quiz data and merges it with the existing virtual file system if it exists
@@ -120,7 +133,7 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
     const quizIds: string[] = quizData.map((quiz: QuizModelResponse): string => quiz?._id.toString());
 
     // update the quizIds array to remove any quizzes that are already in the virtual file system
-    const remainingQuizIds = checkFolder(existingFileSystem, quizIds);
+    const remainingQuizIds: string[] = checkFolder(existingFileSystem, quizIds);
 
     // for any quiz ids that are left over, we need to create a file for them and update the virtual file system
     if (remainingQuizIds.length > 0) {
@@ -128,42 +141,30 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
     }
 
     // check the existingFileSystem for any ids that are not in the quizData, these need to be removed
-    const temp = existingFileSystem.filter((child: VirtualFileSystem): boolean => {
+    const temp: VirtualFileSystem[] = existingFileSystem.filter((child: VirtualFileSystem): boolean => {
         if ('entryId' in child) {
             return quizData.some((quiz: QuizModelResponse): boolean => quiz?._id.toString() === child.entryId);
         }
         return true;
     });
 
+    const updateIndex = (index: number, i: number): void => {
+        // remove the child from the temp array
+        temp.splice(index, 1);
+        // add the child to the temp array at the same index as it was in the existingFileSystem
+        temp.splice(i, 0, existingFileSystem[i]);
+    }
 
-    // enforce the order of the virtual file system when merging
-    // we need to check for files and folders folders do not have entryIds they have a name property and children property
+    // // enforce the order of the virtual file system when merging
+    // // we need to check for files and folders folders do not have entryIds they have a name property and children property
     for (let i = 0; i < existingFileSystem.length; i++) {
-        // if the child is a virtual file
-        if ('entryId' in existingFileSystem[i]) {
-            // find the index of the child in the temp array
-            //@ts-ignore
-            const index = temp.findIndex((child: VirtualFileSystem): boolean => child.entryId === existingFileSystem[i].entryId);
-            // if the index is not -1 then the child exists in the temp array
-            if (index !== -1) {
-                // remove the child from the temp array
-                temp.splice(index, 1);
-                // add the child to the temp array at the same index as it was in the existingFileSystem
-                temp.splice(i, 0, existingFileSystem[i]);
-            }
-        } else {
-            // the child is a virtual directory
-            // find the index of the child in the temp array
-            //@ts-ignore
-            const index = temp.findIndex((child: VirtualFileSystem): boolean => child.name === existingFileSystem[i].name);
-            // if the index is not -1 then the child exists in the temp array
-            if (index !== -1) {
-                // remove the child from the temp array
-                temp.splice(index, 1);
-                // add the child to the temp array at the same index as it was in the existingFileSystem
-                temp.splice(i, 0, existingFileSystem[i]);
-            }
+        const index: number = temp.findIndex((child: VirtualFileSystem): boolean =>
+            getItemIdOrFolderName(child) === getItemIdOrFolderName(existingFileSystem[i]));
+        if (index !== -1) {
+            updateIndex(index, i);
         }
+        // should happen when an item was deleted from the db but still exists in the virtual file system
+        // the item in question should have been filtered when the temp array was created so do nothing
     }
 
     return temp;
@@ -178,6 +179,10 @@ export const getVirtualFileSystemFromStorage: () => VirtualFileSystem[] = (): Vi
     .parse(localStorage.getItem('virtualFileSystem') ?? '[]') ?? [];
 
 
+/**
+ * Sets the virtual file system in local storage
+ * @param virtualFileSystem the virtual file system object to set in local storage
+ */
 export const setVirtualFileSystemToStorage = (virtualFileSystem: VirtualFileSystem[]): void => {
     localStorage.setItem('virtualFileSystem', JSON.stringify(virtualFileSystem));
 };

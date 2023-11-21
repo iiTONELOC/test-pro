@@ -29,8 +29,9 @@ export const DraggableItem = ({ id, children }: IDraggableItemProps) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             className={trimClasses(classes)}
+            data-id={id}
         >
             {children}
-        </span>
+        </span >
     );
 };

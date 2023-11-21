@@ -1,12 +1,15 @@
 export { useQuizzesDbSignal } from './QuizzesDbSignal';
-export type { QuizzesDbSignal } from './QuizzesDbSignal';
 export { useInfoDrawerSignal } from './InfoDrawerSignal';
-export type { InfoDrawerSignal } from './InfoDrawerSignal';
-export { useSelectedFileSignal } from './SelectedFileSignal';
-export type { SelectedFileSignal } from './SelectedFileSignal';
 export { useCurrentFileSignal } from './CurrentFileSignal';
-export type { CurrentFileSignal } from './CurrentFileSignal';
-export type { QuizViewSignal } from './QuizViewSignal';
-export { useQuizViewSignal, QuizViews } from './QuizViewSignal';
+export { useSelectedFileSignal } from './SelectedFileSignal';
 export { useInViewAttemptSignal } from './InViewAttemptSignal';
+export { useQuizViewSignal, QuizViews } from './QuizViewSignal';
+
+
+export type { QuizViewSignal } from './QuizViewSignal';
+export type { QuizzesDbSignal } from './QuizzesDbSignal';
+export type { InfoDrawerSignal } from './InfoDrawerSignal';
+export type { CurrentFileSignal } from './CurrentFileSignal';
+export type { SelectedFileSignal } from './SelectedFileSignal';
 export type { InViewAttemptSignal } from './InViewAttemptSignal';
+

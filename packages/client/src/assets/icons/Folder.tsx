@@ -6,9 +6,12 @@ const d = 'M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-
 
 export function Folder({
     className = defaultIconProps.IconClassName,
-    color = defaultIconProps.IconColor }: Readonly<IconProps>): JSX.Element {
+    color = defaultIconProps.IconColor,
+    onClick }: Readonly<IconProps>,
+): JSX.Element {
     return (
         <SvgBase
+            onClick={onClick}
             className={className}
             color={color}
             d={d}

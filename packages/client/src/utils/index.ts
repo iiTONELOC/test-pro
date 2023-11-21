@@ -31,6 +31,11 @@ export { quizRunnerState } from './quizRunner';
 // Export Date and Time
 export * from './dateAndTime';
 
+// Export Array Shuffling
 export { shuffle } from './shuffle';
 
+// Export Math helpers
 export * from './math';
+
+// Export Drag and Drop helpers
+export * from './drop';

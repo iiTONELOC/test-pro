@@ -11,7 +11,7 @@ import type { PopulatedQuizModel, QuizModelResponse, TopicModelType } from './ap
  */
 export interface IVirtualDirectory {
     name: string;
-    children: VirtualFileSystem[];
+    children: (IVirtualDirectory | IVirtualFile)[];
     topics?: string[];
 }
 
@@ -60,6 +60,8 @@ const createVirtualFile = (name: string, entryId: string, topics: string[], crea
  * @returns an array of quiz ids that were not found in the virtual file system
  */
 const checkFolder = (existingFolder: VirtualFileSystem[], quizIds: string[]): string[] => {
+    if (!existingFolder) return [];
+
     for (const child of existingFolder) {
         // if virtual file
         if (child && 'entryId' in child && quizIds.includes(child.entryId)) {
@@ -113,6 +115,7 @@ const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFile
  * @returns the entryId if it exists, otherwise the name of the object
  */
 export const getItemIdOrFolderName = (item: IVirtualDirectory | IVirtualFile): string => {
+    if (!item) throw new Error('item is undefined');
     if ((item as IVirtualFile).entryId) {
         return (item as IVirtualFile).entryId;
     } else {
@@ -142,6 +145,7 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
 
     // check the existingFileSystem for any ids that are not in the quizData, these need to be removed
     const temp: VirtualFileSystem[] = existingFileSystem.filter((child: VirtualFileSystem): boolean => {
+        if (!child) return false;
         if ('entryId' in child) {
             return quizData.some((quiz: QuizModelResponse): boolean => quiz?._id.toString() === child.entryId);
         }
@@ -158,8 +162,16 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
     // // enforce the order of the virtual file system when merging
     // // we need to check for files and folders folders do not have entryIds they have a name property and children property
     for (let i = 0; i < existingFileSystem.length; i++) {
-        const index: number = temp.findIndex((child: VirtualFileSystem): boolean =>
-            getItemIdOrFolderName(child) === getItemIdOrFolderName(existingFileSystem[i]));
+        const index: number = temp.findIndex((child: VirtualFileSystem): boolean => {
+            try {
+                return getItemIdOrFolderName(child) === getItemIdOrFolderName(existingFileSystem[i])
+            } catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+
+
         if (index !== -1) {
             updateIndex(index, i);
         }

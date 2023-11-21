@@ -70,7 +70,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
                 <ToolTip toolTipText={tip + '\n' + createdAndModified}>
                     <span
                         tabIndex={0}
-                        className={'w-full flex flex-row gap-1 items-center'}>
+                        className={'w-full flex flex-row gap-1 items-center ml-1'}>
                         <DocumentIcon className='w-4 h-4' />
 
                         <p data-id={file.entryId} className={'text-base'}>{file.name}</p>

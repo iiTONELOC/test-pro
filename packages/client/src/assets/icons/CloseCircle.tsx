@@ -1,13 +1,13 @@
 import { JSX } from 'preact/jsx-runtime';
 import type { IconProps } from './SvgBase';
-import { defaultIconProps, SvgBase } from './SvgBase';
+import { SvgBase, defaultIconProps } from './SvgBase';
 
-const d = 'M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z'
+const d = 'M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
 
-export function FolderPlus({
+export function CloseCircle({
     className = defaultIconProps.IconClassName,
     color = defaultIconProps.IconColor,
-    onClick = () => { }
+    onClick
 }: Readonly<IconProps>): JSX.Element {
     return (
         <SvgBase

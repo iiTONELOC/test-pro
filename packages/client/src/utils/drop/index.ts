@@ -1,22 +1,5 @@
-import { IVirtualDirectory, IVirtualFile, VirtualFileSystem } from '../virtualFileSystem';
+import { IVirtualDirectory, IVirtualFile, VirtualFileSystem, findFileInVfs, findFolderInVfs } from '../virtualFileSystem';
 
-function getFoldersFromVirtualFileSystem(virtualFileSystem: VirtualFileSystem[]) {
-    // @ts-ignore
-    return virtualFileSystem.filter(item => item?.children);
-}
-
-function findContainingFolder(virtualFileSystem: VirtualFileSystem[], itemId: string) {
-    const folders: VirtualFileSystem[] = getFoldersFromVirtualFileSystem(virtualFileSystem);
-
-    return folders.find(
-        // @ts-ignore
-        folder => folder?.children?.find(item => item?.entryId === itemId));
-}
-
-function findItemInContainingFolder(containingFolder: IVirtualDirectory, itemId: string) {
-    // @ts-ignore
-    return containingFolder?.children?.find(item => item?.entryId === itemId);
-}
 
 export interface IMoveHandlerParams {
     virtualFileSystem: VirtualFileSystem[];
@@ -24,25 +7,9 @@ export interface IMoveHandlerParams {
     targetItemId: string;
 }
 
-
-function generateFoldersToOpen(virtualFileSystem: VirtualFileSystem[], draggedItemId: string, targetItemId: string) {
-    const foldersToOpen: string[] = [];
-    const draggedItemContainingFolder: VirtualFileSystem | undefined = findContainingFolder(virtualFileSystem, draggedItemId);
-    const targetItemContainingFolder: VirtualFileSystem | undefined = findContainingFolder(virtualFileSystem, targetItemId);
-
-    // @ts-ignore
-    const draggedItemContainingFolderHasChildren = draggedItemContainingFolder?.children?.length ?? 0;
-    // @ts-ignore
-    const targetItemContainingFolderHasChildren = targetItemContainingFolder?.children?.length ?? 0;
-
-    if (draggedItemContainingFolderHasChildren > 0) foldersToOpen.push(draggedItemContainingFolder?.name ?? '');
-    if (targetItemContainingFolderHasChildren > 0) foldersToOpen.push(targetItemContainingFolder?.name ?? '');
-
-
-    return foldersToOpen;
-}
-
-export type IMoveHandler = (params: IMoveHandlerParams) => { virtualFileSystem: VirtualFileSystem[]; foldersToReOpen: string[] };
+export type IMoveHandler = (params: IMoveHandlerParams) => {
+    virtualFileSystem: VirtualFileSystem[]; foldersToReOpen: string[]
+};
 
 
 /**
@@ -52,57 +19,51 @@ export type IMoveHandler = (params: IMoveHandlerParams) => { virtualFileSystem: 
  * @param targetItemId the id of the item being dragged to
  * @returns the updated virtual file system
  */
-export function handleMoveFileToFolder({ virtualFileSystem, draggedItemId, targetItemId }: IMoveHandlerParams): ReturnType<IMoveHandler> {
+export function handleMoveFileToFolder({ virtualFileSystem, draggedItemId, targetItemId }:
+    IMoveHandlerParams): ReturnType<IMoveHandler> {
+
+    const foldersToReOpen = [];
     const updated = [...virtualFileSystem];
+    const { containingFolder } = findFileInVfs(updated, draggedItemId);
+    const draggedItem = findFileInVfs(updated, draggedItemId).found as IVirtualFile;
 
-    // find the location of the draggedItemId in the virtualFileSystem
-    // @ts-ignore
-    const folders: VirtualFileSystem[] = getFoldersFromVirtualFileSystem(updated);
-
-    const containingFolder: VirtualFileSystem | undefined = findContainingFolder(updated, draggedItemId);
-
-    // look for the dragged item in the containing folder
-    // @ts-ignore
-    const draggedItemFromFolder: VirtualFileSystem | undefined = findItemInContainingFolder(containingFolder, draggedItemId);
-    // if there is no containing folder for the dragged item then it must be in the root
-    // @ts-ignore
-    const draggedItemFromRoot: VirtualFileSystem | undefined = updated.find(item => item?.entryId === draggedItemId);
-    const draggedItem = draggedItemFromFolder ?? draggedItemFromRoot ?? null;
-
-    // if we can't find the dragged item then throw an error, but this should never happen
-    if (!draggedItem) throw new Error('Dragged item not found');
-
-    // handle the case where the dragged item is in the root of the virtual file system
-    const removed = !containingFolder ? updated.splice(updated.indexOf(draggedItem), 1).pop() :
+    draggedItem && (() => {
+        // handle the case where the dragged item is in the root of the virtual file system
+        const removed = !containingFolder ? updated.splice(updated.indexOf(draggedItem), 1).pop() :
+            // @ts-ignore
+            containingFolder?.children?.splice(containingFolder?.children?.indexOf(draggedItem), 1).pop();
+        if ((containingFolder?.children?.length ?? 0) > 0) foldersToReOpen.push(containingFolder?.name ?? '');
+        // find the location of the targetItemId in the virtualFileSystem
+        const targetFolder = findFolderInVfs(updated, targetItemId).found as IVirtualDirectory;
+        if ((targetFolder?.children?.length ?? 0) > 0) foldersToReOpen.push(targetFolder?.name ?? '');
+        // look for the children property on the target folder
         // @ts-ignore
-        containingFolder?.children?.splice(containingFolder?.children?.indexOf(draggedItem), 1).pop();
+        const targetFolderChildren = targetFolder?.children ?? null;
 
-    // find the location of the targetItemId in the virtualFileSystem
-    const targetFolder = folders.find(folder => folder.name === targetItemId) ?? null;
-    // look for the children property on the target folder
-    // @ts-ignore
-    const targetFolderChildren = targetFolder?.children ?? null;
+        if (!targetFolder) {
+            // if there is no target folder then we are moving the dragged item to the root
+            removed && updated.push(removed);
+        } else {
+            // if there is a target folder with children then add the dragged item to it
+            // @ts-ignore
+            removed && targetFolderChildren?.push(removed);
+            // if there was no target folder then we are moving the dragged item to the root
+            removed && !targetFolderChildren && updated.push(removed);
+        }
+    })();
 
-    if (!targetFolder) {
-        console.log('target folder not found, moving to root');
-        // if there is no target folder then we are moving the dragged item to the root
-        removed && updated.push(removed);
-    } else {
-        // if there is a target folder with children then add the dragged item to it
-        // @ts-ignore
-        removed && targetFolderChildren?.push(removed);
-        // if there was no target folder then we are moving the dragged item to the root
-        removed && !targetFolderChildren && updated.push(removed);
-    }
-    return { virtualFileSystem: updated, foldersToReOpen: generateFoldersToOpen(updated, draggedItemId, targetItemId) };
+
+    return { virtualFileSystem: updated, foldersToReOpen };
 }
 
 
 
-export function handleMoveFileToFile({ virtualFileSystem, draggedItemId, targetItemId }: IMoveHandlerParams): ReturnType<IMoveHandler> {
+export function handleMoveFileToFile({ virtualFileSystem, draggedItemId, targetItemId }:
+    IMoveHandlerParams): ReturnType<IMoveHandler> {
+
     const updated = [...virtualFileSystem];
-    const targetContainingFolder: VirtualFileSystem | undefined = findContainingFolder(virtualFileSystem, targetItemId);
-    const draggedContainingFolder: VirtualFileSystem | undefined = findContainingFolder(virtualFileSystem, draggedItemId);
+    const { containingFolder: targetContainingFolder } = findFolderInVfs(virtualFileSystem, targetItemId);
+    const { containingFolder: draggedContainingFolder } = findFolderInVfs(virtualFileSystem, draggedItemId);
 
 
     // if the folder names are the same, then we are moving the dragged item to the same folder but possibly a different position
@@ -118,8 +79,7 @@ export function handleMoveFileToFile({ virtualFileSystem, draggedItemId, targetI
             const removed: IVirtualFile | undefined = updated.splice(updated.indexOf(itemToMove), 1).pop();
 
             // find the target folder
-            const targetFolder: IVirtualDirectory = updated.find(folder => folder.name === targetItemId) as IVirtualDirectory;
-
+            const targetFolder: IVirtualDirectory = findFolderInVfs(updated, targetItemId).found as IVirtualDirectory;
 
             // handles root to root
             if (targetFolder === undefined && targetContainingFolder === undefined) {
@@ -132,8 +92,15 @@ export function handleMoveFileToFile({ virtualFileSystem, draggedItemId, targetI
                 // @ts-ignore
                 updated.splice(targetItemIndex, 0, removed);
             } else {
-                // move the itemToMove to the target folder
-                itemToMove && targetFolder?.children?.push(removed as IVirtualFile);
+
+                if (!targetFolder) {
+                    // @ts-ignore
+                    updated.splice(updated.indexOf(itemToMove), 0, removed);
+                } else {
+                    // move the itemToMove to the target folder
+                    itemToMove && targetFolder?.children?.push(removed as IVirtualFile);
+                }
+
             }
         } else {
             console.log('SAME FOLDER - NOT HANDLED');
@@ -141,7 +108,7 @@ export function handleMoveFileToFile({ virtualFileSystem, draggedItemId, targetI
     } else {
         // move the dragged item out of its containing folder and to the target folder
         // @ts-ignore
-        const draggedItemFromFolder: VirtualFileSystem | undefined = findItemInContainingFolder(draggedContainingFolder, draggedItemId);
+        const draggedItemFromFolder: VirtualFileSystem | undefined = findFileInVfs(draggedContainingFolder, draggedItemId);
 
         // place it in the target folder
         // @ts-ignore
@@ -152,49 +119,8 @@ export function handleMoveFileToFile({ virtualFileSystem, draggedItemId, targetI
         draggedItemFromFolder && draggedContainingFolder?.children?.splice(draggedContainingFolder?.children?.indexOf(draggedItemFromFolder), 1);
     }
 
-    return { virtualFileSystem: updated, foldersToReOpen: generateFoldersToOpen(updated, draggedItemId, targetItemId) };
+    return { virtualFileSystem: updated, foldersToReOpen: [] };
 }
-
-
-function findFolderInFS(
-    virtualFileSystem: VirtualFileSystem[],
-    folderName: string,
-    draggedItemId?: string
-): { found: VirtualFileSystem | null; containingFolder: VirtualFileSystem | null } {
-    let found: VirtualFileSystem | null = null;
-    let containingFolder: VirtualFileSystem | null = null;
-
-    for (const folder of virtualFileSystem) {
-        if (folder.name === folderName) {
-            found = folder;
-            containingFolder = null;
-            break;
-        } else {
-            // @ts-ignore
-            const didFind = folder?.children?.find(item => item?.name === draggedItemId);
-            if (didFind) {
-                found = didFind;
-                containingFolder = folder;
-                break;
-            } else {
-                // we need to look in the children of this folder for any folders and recurse down
-                // @ts-ignore
-                const folders = folder?.children?.filter(item => item?.children);
-                if (folders) {
-                    const { found: foundInFolder, containingFolder: containingFolderInFolder } = findFolderInFS(folders, folderName, draggedItemId);
-                    if (foundInFolder) {
-                        found = foundInFolder;
-                        containingFolder = containingFolderInFolder;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    return { found, containingFolder };
-}
-
 
 export function handleMoveFolderToFolder({ virtualFileSystem, draggedItemId, targetItemId }: IMoveHandlerParams) {
     const updated = [...virtualFileSystem];
@@ -203,21 +129,7 @@ export function handleMoveFolderToFolder({ virtualFileSystem, draggedItemId, tar
     // if moving to the root folder
     if (targetItemId === '__root__') {
         // we need to look for the dragged item in the virtual file system, it could be at root or in another folder
-        const folders: VirtualFileSystem[] = getFoldersFromVirtualFileSystem(updated);
-
-        let { found, containingFolder } = findFolderInFS(folders, draggedItemId);
-
-        for (const folder of folders) {
-            if (folder.name === draggedItemId) {
-                found = folder;
-                containingFolder = null;
-                break;
-            } else {
-                // @ts-ignore
-                found = folder?.children?.find(item => item?.name === draggedItemId);
-                containingFolder = folder;
-            }
-        }
+        const { found, containingFolder } = findFolderInVfs(updated, draggedItemId);
 
         // remove the dragged item from the foundsContainingFolder and place it in the root
         // @ts-ignore
@@ -229,13 +141,13 @@ export function handleMoveFolderToFolder({ virtualFileSystem, draggedItemId, tar
 
         // not moving to the root
     } else {
-        const targetFolder: IVirtualDirectory | undefined = findFolderInFS(updated, targetItemId, draggedItemId).found as IVirtualDirectory;
-        let { found, containingFolder } = findFolderInFS(updated, draggedItemId, targetItemId);
+        const targetFolder: IVirtualDirectory | undefined = findFolderInVfs(updated, targetItemId).found as IVirtualDirectory;
+        const { found, containingFolder } = findFolderInVfs(updated, draggedItemId);
 
 
         if (!found && draggedItemId !== targetItemId) {
-            const draggedItem = findFolderInFS(updated, draggedItemId, targetItemId);
-            console.log({ draggedItem });
+            const draggedItem = findFolderInVfs(updated, draggedItemId);
+            console.log('NOT IMPLEMENTED FOLDER to FOLDER missing targetItemID', { draggedItem });
         }
 
         if (containingFolder?.name === targetFolder?.name) {
@@ -248,11 +160,8 @@ export function handleMoveFolderToFolder({ virtualFileSystem, draggedItemId, tar
 
         }
         else {
-            console.log('different directory')
-
             if (!containingFolder) {
                 //item is in the root
-                console.log('item is in the root');
 
                 // move the found item to the target folder's children
                 // @ts-ignore
@@ -268,6 +177,46 @@ export function handleMoveFolderToFolder({ virtualFileSystem, draggedItemId, tar
     return { virtualFileSystem: updated, foldersToReOpen: [targetFolderName ?? ''] };
 }
 
+
+export function handleMoveFolderToFile({ virtualFileSystem, draggedItemId, targetItemId }: IMoveHandlerParams) {
+    console.log('handleMoveFolderToFile');
+    const updated = [...virtualFileSystem];
+
+    let targetFolderName: string | undefined = undefined;
+    const targetFolder: IVirtualDirectory | undefined = findFolderInVfs(updated, targetItemId).found as IVirtualDirectory;
+    const { found, containingFolder } = findFolderInVfs(updated, draggedItemId);
+
+
+    if (!containingFolder && !targetFolder) {
+        // root to root move
+        // we need to find the the index of the dragged item in the virtual file system
+        // @ts-ignore
+        const draggedItemIndex = virtualFileSystem.findIndex(item => item?.name === draggedItemId);
+        // @ts-ignore
+        const targetIndex = virtualFileSystem.findIndex(item => item?.entryId === targetItemId);
+        console.log({ draggedItemIndex, targetIndex });
+
+        const copy = [...virtualFileSystem];
+
+        if (draggedItemIndex !== -1 && targetIndex !== -1) {
+            // we need to move the dragged item to the target index
+            updated[draggedItemIndex] = copy[targetIndex];
+            updated[targetIndex] = copy[draggedItemIndex];
+        } else {
+            console.log('FOLDER TO FILE UNKNOWN INDEXES', { draggedItemIndex, targetIndex });
+        }
+
+
+
+
+    } else {
+        console.log('NOT IMPLEMENTED - folder to file with containing and target folders');
+        console.log({ found, containingFolder, targetFolder, updated, draggedItemId, targetItemId, targetFolderName, virtualFileSystem });
+
+    }
+
+    return { virtualFileSystem: updated, foldersToReOpen: [targetFolderName ?? ''] };
+}
 
 
 

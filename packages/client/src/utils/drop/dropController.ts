@@ -1,5 +1,5 @@
-import { handleMoveFileToFile, handleMoveFileToFolder, handleMoveFolderToFolder } from '.';
-import { VirtualFileSystem, getItemIdOrFolderName } from '../virtualFileSystem';
+import { handleMoveFileToFile, handleMoveFileToFolder, handleMoveFolderToFile, handleMoveFolderToFolder } from '.';
+import { VirtualFileSystem } from '../virtualFileSystem';
 
 export interface IDropControllerParams {
     draggedItemId: string;
@@ -13,7 +13,6 @@ function reOpenFolders(folderToReOpen: string[]): void {
         if (!folder || folder.trim() === '') return;
         setTimeout(() => {
             // Look for a p element in the dom with a data-id attribute equal to the updated folder value and
-            console.log({ folder });
             const p = document.querySelector(`p[data-id="${folder}"].text-base`);
             if (p instanceof HTMLParagraphElement) {
                 p.click();
@@ -25,7 +24,6 @@ function reOpenFolders(folderToReOpen: string[]): void {
 export function dropController({ draggedItemId, targetItemId, virtualFileSystem, updateVirtualFileSystem }: IDropControllerParams) {
     // make a copy of the virtual file system so we can update the dragged item's position
     const updatedItems = [...virtualFileSystem];
-
 
     const isUUID = (id: string) => id?.length === 24 && /^[0-9a-fA-F]{24}$/.test(id);
 
@@ -41,6 +39,9 @@ export function dropController({ draggedItemId, targetItemId, virtualFileSystem,
         return
     } else if (!draggedItemIsUUID && targetIsUUID) {
         console.log('MOVING FOLDER TO FILE')
+        const updated = handleMoveFolderToFile({ virtualFileSystem: updatedItems, draggedItemId, targetItemId });
+        updateVirtualFileSystem(updated.virtualFileSystem);
+        reOpenFolders(updated.foldersToReOpen);
         return
     } else if (draggedItemIsUUID && !targetIsUUID) {
         console.log('MOVING FILE TO FOLDER')

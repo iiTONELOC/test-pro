@@ -198,3 +198,82 @@ export const getVirtualFileSystemFromStorage: () => VirtualFileSystem[] = (): Vi
 export const setVirtualFileSystemToStorage = (virtualFileSystem: VirtualFileSystem[]): void => {
     localStorage.setItem('virtualFileSystem', JSON.stringify(virtualFileSystem));
 };
+
+export function findFolderInVfs(
+    virtualFileSystem: VirtualFileSystem[],
+    folderName: string,
+): { found: VirtualFileSystem | null; containingFolder: VirtualFileSystem | null } {
+    let found: VirtualFileSystem | null = null;
+    let containingFolder: VirtualFileSystem | null = null;
+
+
+    // for each folder in the virtual file system, look for our folder with the folderName, it could be at root or in another folder
+    for (const folder of virtualFileSystem) {
+        if (folder.name === folderName) {
+            found = folder;
+            containingFolder = null;
+            break;
+        }
+        // @ts-ignore
+        const didFind = folder?.children?.find(item => item?.name === folderName);
+        if (didFind) {
+            found = didFind;
+            containingFolder = folder;
+            break;
+        } else {
+            // we need to look in the children of this folder for any folders and recurse down
+            // @ts-ignore
+            const folders = folder?.children?.filter(item => item?.children);
+            if (folders) {
+                const { found: foundInFolder, containingFolder: containingFolderInFolder } = findFolderInVfs(folders, folderName);
+                if (foundInFolder) {
+                    found = foundInFolder;
+                    containingFolder = containingFolderInFolder;
+                    break;
+                }
+            }
+        }
+
+    }
+
+    return { found, containingFolder };
+}
+
+export function findFileInVfs(virtualFileSystem: VirtualFileSystem[], entryId: string): { found: IVirtualFile | null; containingFolder: IVirtualDirectory | null } {
+    let found: IVirtualFile | null = null;
+    let containingFolder: IVirtualDirectory | null = null;
+
+    // see if the entryId is in the root
+    // @ts-ignore
+    const didFind = virtualFileSystem?.find(item => item?.entryId === entryId);
+    if (didFind) {
+        found = didFind as IVirtualFile;
+        containingFolder = null;
+    }
+
+    // for each folder in the virtual file system, look for our file with the entryId
+    for (const folder of virtualFileSystem) {
+        // @ts-ignore
+        const didFind = folder?.children?.find(item => item?.entryId === entryId);
+        if (didFind) {
+            found = didFind;
+            containingFolder = folder as IVirtualDirectory;
+            break;
+        } else {
+            // we need to look in the children of this folder for any folders and recurse down
+            // @ts-ignore
+            const folders = folder?.children?.filter(item => item?.children);
+            if (folders) {
+                const { found: foundInFolder, containingFolder: containingFolderInFolder } = findFileInVfs(folders, entryId);
+                if (foundInFolder) {
+                    found = foundInFolder;
+                    containingFolder = containingFolderInFolder;
+                    break;
+                }
+            }
+        }
+    }
+
+    return { found, containingFolder };
+}
+

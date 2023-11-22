@@ -15,10 +15,7 @@ export { default as API, defaultAPIQueryParams } from './api';
 
 // Export Virtual File System
 export type { IVirtualDirectory, IVirtualFile, VirtualFileSystem } from './virtualFileSystem';
-export {
-    getVirtualFileSystemFromStorage, generateFileSystem, setVirtualFileSystemToStorage,
-    getItemIdOrFolderName, createVirtualDirectory
-} from './virtualFileSystem';
+export * from './virtualFileSystem';
 
 // Export Event Controllers
 export type { ClickHandlerProps, KeyHandlerProps } from './eventControllers';

@@ -7,62 +7,9 @@ export interface IDropControllerParams {
     updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
 }
 
-function reOpenFolders(folderToReOpen: string[]): void {
-    for (const folder of folderToReOpen) {
-        if (!folder || folder.trim() === '') return;
-        setTimeout(() => {
-            // Look for a p element in the dom with a data-id attribute equal to the updated folder value and
-            const p = document.querySelector(`p[data-id="${folder}"].text-base`);
-            if (p instanceof HTMLParagraphElement) {
-                p.click();
-            }
-        }, 10);
-    }
-}
-
-const getTargetItemsIndex = (
-    updatedItems: VirtualFileSystem[],
-    targetItemIsFolder: boolean,
-    foundTargetItem: VirtualFileSystem | null,
-    foundTargetItemContainingFolder: VirtualFileSystem | null
-): number => {
-    return foundTargetItemContainingFolder === null ? updatedItems
-        // @ts-ignore
-        .findIndex(item => targetItemIsFolder ? item.name === foundTargetItem?.name : item?.entryId === foundTargetItem?.entryId) :
-        // @ts-ignore
-        foundTargetItemContainingFolder?.children.findIndex(item => targetItemIsFolder ? item.name === foundTargetItem?.name : item?.entryId === foundTargetItem?.entryId);
-};
-
-const getDraggedItemsIndex = (
-    updatedItems: VirtualFileSystem[],
-    draggedItemIsFolder: boolean,
-    foundDraggedItem: VirtualFileSystem | null,
-    foundDraggedItemContainingFolder: VirtualFileSystem | null
-): number => {
-    return foundDraggedItemContainingFolder === null ? updatedItems
-        // @ts-ignore
-        .findIndex(item => draggedItemIsFolder ? item.name === foundDraggedItem?.name : item?.entryId === foundDraggedItem?.entryId) :
-        // @ts-ignore
-        foundDraggedItemContainingFolder?.children.findIndex(item => draggedItemIsFolder ? item.name === foundDraggedItem?.name : item?.entryId === foundDraggedItem?.entryId);
-};
-
-const getDraggedItem = (
-    draggedIsFolder: boolean, draggedItemId: string, virtualFileSystem: VirtualFileSystem[]): {
-        found: VirtualFileSystem | null;
-        containingFolder: VirtualFileSystem | null;
-    } => {
-    return draggedIsFolder ?
-        findFolderInVfs([...virtualFileSystem], draggedItemId) :
-        findFileInVfs([...virtualFileSystem], draggedItemId);
-}
-
-const getTargetItem = (targetIsFolder: boolean, targetItemId: string, virtualFileSystem: VirtualFileSystem[]): {
+type ItemSearchResults = {
     found: VirtualFileSystem | null;
     containingFolder: VirtualFileSystem | null;
-} => {
-    return targetIsFolder ?
-        findFolderInVfs([...virtualFileSystem], targetItemId) :
-        findFileInVfs([...virtualFileSystem], targetItemId);
 }
 
 interface IMoveDraggedToFolderParams {
@@ -70,13 +17,82 @@ interface IMoveDraggedToFolderParams {
     removed: VirtualFileSystem[];
     updatedItems: VirtualFileSystem[];
     foundTargetItem: VirtualFileSystem | null;
-    targetItem: {
-        found: VirtualFileSystem | null;
-        containingFolder: VirtualFileSystem | null;
-    },
-
+    targetItem: ItemSearchResults;
 }
 
+interface IMoveDraggedToFileParams {
+    targetItemsIndex: number;
+    draggedItemIsFolder: boolean;
+    removed: VirtualFileSystem[];
+    updatedItems: VirtualFileSystem[];
+    foundTargetItemContainingFolder: VirtualFileSystem | null;
+}
+
+interface IHandleMovementParams {
+    draggedItemsIndex: number;
+    targetItemsIndex: number;
+    draggedItemIsFolder: boolean;
+    updatedItems: VirtualFileSystem[];
+    foundDraggedItem: VirtualFileSystem | null;
+    foundTargetItem: VirtualFileSystem | null;
+    foundDraggedItemContainingFolder: VirtualFileSystem | null;
+    foundTargetItemContainingFolder: VirtualFileSystem | null;
+    targetItem: ItemSearchResults;
+    draggedItem: ItemSearchResults;
+    updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
+}
+
+
+/**
+ * Returns the index of the item in the virtual file system, this index is relative to the containing folder
+ * 
+ * @param updatedItems a copy of the virtual file system
+ * @param itemIsFolder  whether the item is a folder or not
+ * @param foundItem the item we are looking for
+ * @param foundItemContainingFolder the folder that contains the item we are looking for
+ * @returns the relative index of the item in the containing folder or -1 if the item is not found
+ */
+const getItemIndex = (
+    updatedItems: VirtualFileSystem[],
+    itemIsFolder: boolean,
+    foundItem: VirtualFileSystem | null,
+    foundItemContainingFolder: VirtualFileSystem | null
+): number => {
+    return foundItemContainingFolder === null ? updatedItems
+        // @ts-ignore
+        .findIndex(item => itemIsFolder ? item.name === foundItem?.name : item?.entryId === foundItem?.entryId) :
+        // @ts-ignore
+        foundItemContainingFolder?.children.findIndex(item => itemIsFolder ? item.name === foundItem?.name : item?.entryId === foundItem?.entryId);
+}
+
+
+/**
+ * Locates the item in the virtual file system
+ * 
+ * @param itemIsFolder whether the item is a folder or not
+ * @param itemId the id of the item we are looking for (if this is a folder then this is the folder name)
+ * @param virtualFileSystem a copy of the virtual file system to search
+ * @returns 
+ */
+const findItemInVfs = (itemIsFolder: boolean, itemId: string, virtualFileSystem: VirtualFileSystem[]): {
+    found: VirtualFileSystem | null;
+    containingFolder: VirtualFileSystem | null;
+} => {
+    return itemIsFolder ?
+        findFolderInVfs([...virtualFileSystem], itemId) :
+        findFileInVfs([...virtualFileSystem], itemId);
+}
+
+/**
+ * Handles moving the dragged item to the folder it is being dropped on
+ *
+ * @param draggedItemIsFolder whether the dragged item is a folder or not
+ * @param removed the dragged item that has been removed from the virtual file system
+ * @param updatedItems a copy of the virtual file system
+ * @param foundTargetItem the target item we are moving the dragged item to
+ * @param targetItem object containing the target item and the containing folder of the target item
+ * @returns an updated copy of the virtual file system
+ */
 function moveDraggedToFolder({
     removed,
     targetItem,
@@ -99,18 +115,25 @@ function moveDraggedToFolder({
             foundTargetItem?.children?.push(removed[0]);
     }
 
+    // need to figure out which folders to reopen, we need to reopen the dragged item's containing folder if it has children
+    // and the target item's containing folder if it has children,
+
+
     return updatedItems;
 }
 
-interface IMoveDraggedToFileParams {
-    targetItemsIndex: number;
-    draggedItemIsFolder: boolean;
-    removed: VirtualFileSystem[];
-    updatedItems: VirtualFileSystem[];
-    foundTargetItemContainingFolder: VirtualFileSystem | null;
-}
 
 
+/**
+ * Handles moving the dragged item to the file it is being dropped on
+ *
+ * @param targetItemsIndex the index of the target item in the containing folder
+ * @param draggedItemIsFolder whether the dragged item is a folder or not
+ * @param removed the dragged item that has been removed from the virtual file system
+ * @param updatedItems a copy of the virtual file system
+ * @param foundTargetItemContainingFolder the containing folder of the target item
+ * @returns an updated copy of the virtual file system
+ */
 function moveDraggedToFile({
     removed,
     updatedItems,
@@ -145,26 +168,24 @@ function moveDraggedToFile({
     return updatedItems;
 }
 
-interface IHandleMovementParams {
-    draggedItemsIndex: number;
-    targetItemsIndex: number;
-    draggedItemIsFolder: boolean;
-    updatedItems: VirtualFileSystem[];
-    foundDraggedItem: VirtualFileSystem | null;
-    foundTargetItem: VirtualFileSystem | null;
-    foundDraggedItemContainingFolder: VirtualFileSystem | null;
-    foundTargetItemContainingFolder: VirtualFileSystem | null;
-    targetItem: {
-        found: VirtualFileSystem | null;
-        containingFolder: VirtualFileSystem | null;
-    },
-    draggedItem: {
-        found: VirtualFileSystem | null;
-        containingFolder: VirtualFileSystem | null;
-    },
-    updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
-}
 
+/**
+ * Handles moving the dragged item to the target item by calling the appropriate function and updating the virtual file system
+ *
+ * @param targetItem the target item we are moving the dragged item to
+ * @param draggedItem the dragged item we are moving
+ * @param updatedItems a copy of the virtual file system
+ * @param foundTargetItem the target item we are moving the dragged item to
+ * @param targetItemsIndex the index of the target item in the containing folder
+ * @param foundDraggedItem the dragged item we are moving
+ * @param draggedItemsIndex the index of the dragged item in the containing folder
+ * @param draggedItemIsFolder whether the dragged item is a folder or not
+ * @param updateVirtualFileSystem a function to update the virtual file system
+ * @param foundTargetItemContainingFolder the containing folder of the target item
+ * @param foundDraggedItemContainingFolder the containing folder of the dragged item
+ * 
+ * @returns void
+ */
 function handleMovement({
     targetItem,
     draggedItem,
@@ -217,7 +238,17 @@ function handleMovement({
 }
 
 
-
+/**
+ * Handles dropping the dragged item on the target item by generating necessary data 
+ * for the handleMovement function and calling it
+ *
+ * @param draggedItemId the id of the dragged item
+ * @param targetItemId the id of the target item
+ * @param virtualFileSystem a copy of the virtual file system
+ * @param updateVirtualFileSystem a function to update the virtual file system
+ *
+ * @returns void
+ */
 export function dropController({ draggedItemId, targetItemId, virtualFileSystem, updateVirtualFileSystem }: IDropControllerParams) {
     // make a copy of the virtual file system so we can update the dragged item's position
     const updatedItems = [...virtualFileSystem];
@@ -230,18 +261,18 @@ export function dropController({ draggedItemId, targetItemId, virtualFileSystem,
     const targetItemIsFolder = !targetIsUUID;
     const draggedItemIsFolder = !draggedItemIsUUID;
 
-    const targetItem = getTargetItem(targetItemIsFolder, targetItemId, updatedItems);
-    const draggedItem = getDraggedItem(draggedItemIsFolder, draggedItemId, updatedItems);
+    const targetItem = findItemInVfs(targetItemIsFolder, targetItemId, updatedItems);
+    const draggedItem = findItemInVfs(draggedItemIsFolder, draggedItemId, updatedItems);
 
-    const foundTargetItem = targetItem.found
-    const foundDraggedItem = draggedItem.found
+    const foundTargetItem = targetItem.found;
+    const foundDraggedItem = draggedItem.found;
     const foundTargetItemContainingFolder = targetItem.containingFolder;
     const foundDraggedItemContainingFolder = draggedItem.containingFolder;
 
 
     // we need to move the found dragged item to the found target item folder
-    const targetItemsIndex = getTargetItemsIndex(updatedItems, targetItemIsFolder, foundTargetItem, targetItem.containingFolder);
-    const draggedItemsIndex = getDraggedItemsIndex(updatedItems, draggedItemIsFolder, foundDraggedItem, draggedItem.containingFolder);
+    const targetItemsIndex = getItemIndex(updatedItems, targetItemIsFolder, foundTargetItem, targetItem.containingFolder);
+    const draggedItemsIndex = getItemIndex(updatedItems, draggedItemIsFolder, foundDraggedItem, draggedItem.containingFolder);
 
     handleMovement({
         targetItem,
@@ -257,4 +288,3 @@ export function dropController({ draggedItemId, targetItemId, virtualFileSystem,
         foundDraggedItemContainingFolder
     });
 }
-

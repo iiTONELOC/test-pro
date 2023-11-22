@@ -13,6 +13,7 @@ export interface IVirtualDirectory {
     name: string;
     children: (IVirtualDirectory | IVirtualFile)[];
     topics?: string[];
+    isOpen: boolean;
 }
 
 /**
@@ -41,7 +42,7 @@ export type VirtualFileSystem = (IVirtualDirectory | IVirtualFile);
  * @param children an array of virtual file system objects to add to the virtual directory
  * @returns The created virtual directory object
  */
-export const createVirtualDirectory = (name: string, children: VirtualFileSystem[] = []): IVirtualDirectory => ({ name, children });
+export const createVirtualDirectory = (name: string, children: VirtualFileSystem[] = []): IVirtualDirectory => ({ name, children, isOpen: false });
 
 /**
  * Creates a virtual file with the given name, entryId and topics
@@ -51,7 +52,7 @@ export const createVirtualDirectory = (name: string, children: VirtualFileSystem
  * @returns The created virtual file object
  */
 const createVirtualFile = (name: string, entryId: string, topics: string[], createdAt: Date, updatedAt: Date): IVirtualFile => (
-    { name, entryId, topics, createdAt, updatedAt });
+    { name, entryId, topics, createdAt, updatedAt, });
 
 /**
  *  Checks the virtual file system for the quiz ids
@@ -187,8 +188,12 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
  * Looks for the virtual file system in local storage and returns it, If it doesn't exist it returns an empty array
  * @returns an array of virtual file system objects
  */
-export const getVirtualFileSystemFromStorage: () => VirtualFileSystem[] = (): VirtualFileSystem[] => JSON
-    .parse(localStorage.getItem('virtualFileSystem') ?? '[]') ?? [];
+/**
+ * Retrieves the virtual file system from local storage
+ * @returns an array of virtual file system objects
+ */
+export const getVirtualFileSystemFromStorage = (): VirtualFileSystem[] =>
+    JSON.parse(localStorage.getItem('virtualFileSystem') ?? '[]') ?? [];
 
 
 /**

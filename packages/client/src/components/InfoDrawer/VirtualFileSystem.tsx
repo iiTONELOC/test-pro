@@ -4,18 +4,19 @@ import { useMountedState } from '../../hooks';
 import { VirtualFolder } from './VirtualFolder';
 import { VirtualFileSystem, IVirtualFile, IVirtualDirectory, uuid } from '../../utils';
 
-
-// import { useEffect } from 'preact/hooks';
-
 const ulClasses = 'bg-gray-900 w-full h-full overflow-y-auto p-1 rounded-sm';
 
 
 export interface IVirtualFileSystemProps {
-    dropHandler: (draggedItemId: string, targetItemId: string) => void;
     virtualFileSystem: VirtualFileSystem[];
+    dropHandler: (draggedItemId: string, targetItemId: string) => void;
+    updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
 }
 
-export function VirtualFileSystemComponent({ dropHandler, virtualFileSystem }: Readonly<IVirtualFileSystemProps>): JSX.Element {
+export function VirtualFileSystemComponent({
+    dropHandler,
+    virtualFileSystem,
+    updateVirtualFileSystem }: Readonly<IVirtualFileSystemProps>): JSX.Element {
     const isMounted = useMountedState();
 
     return isMounted ? (
@@ -25,12 +26,12 @@ export function VirtualFileSystemComponent({ dropHandler, virtualFileSystem }: R
                 if (!entry) return <></>;
                 //@ts-ignore
                 if ('children' in entry as IVirtualDirectory) {
-
                     return <VirtualFolder
                         key={`${entry.name}-${uuid()}`}
-                        virtualFolder={entry as IVirtualDirectory}
-                        virtualFileSystem={virtualFileSystem}
                         dropHandler={dropHandler}
+                        virtualFileSystem={virtualFileSystem}
+                        virtualFolder={entry as IVirtualDirectory}
+                        updateVirtualFileSystem={updateVirtualFileSystem}
                     />// NOSONAR
                 } else {
                     return <VirtualFile key={`${entry.name}-${index}`} file={entry as IVirtualFile} />// NOSONAR 

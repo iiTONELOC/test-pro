@@ -1,21 +1,38 @@
-import { useEffect, useState } from 'preact/hooks';
 import { useMountedState } from '.';
+import { useEffect, useState } from 'preact/hooks';
 import { useInfoDrawerSignal, useQuizzesDbSignal } from '../signals';
 import {
     VirtualFileSystem, QuizModelResponse, API, getVirtualFileSystemFromStorage,
     generateFileSystem, setVirtualFileSystemToStorage, PopulatedQuizModel
 } from '../utils';
 
-
+export type VirtualFileSystemState = { [key: string]: VirtualFileSystem };
 
 export interface IUseVirtualFileSystem {
-    virtualFileSystem: VirtualFileSystem[];
+    virtualFileSystem: VirtualFileSystemState
     updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
     setRefresh: (refresh: boolean) => void;
 }
 
+export const convertArrayToStateObject = (array: VirtualFileSystem[]): VirtualFileSystemState => {
+    const temp: VirtualFileSystemState = {};
+    array.forEach(entry => {
+        // @ts-ignore
+        temp[entry?.entryId ?? entry.name] = entry;
+    });
+    return temp;
+};
+
+export const convertStateObjectToArray = (stateObject: VirtualFileSystemState): VirtualFileSystem[] => {
+    const temp: VirtualFileSystem[] = [];
+    Object.keys(stateObject).forEach(key => {
+        temp.push(stateObject[key]);
+    });
+    return temp;
+}
+
 export function useVirtualFileSystem() {
-    const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystem[]>(getVirtualFileSystemFromStorage());
+    const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystemState>(convertArrayToStateObject(getVirtualFileSystemFromStorage()));
     const [refresh, setRefresh] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
     const { isDrawerOpen } = useInfoDrawerSignal();
     const isMounted: boolean = useMountedState();
@@ -24,12 +41,15 @@ export function useVirtualFileSystem() {
 
     const quizData: QuizModelResponse[] = quizzesDb.value;
 
-    const updateVirtualFileSystem = (virtualFileSystem: VirtualFileSystem[]) => {
-        //set local component state
-        setVirtualFileSystem(virtualFileSystem);
-        //set local storage
-        setVirtualFileSystemToStorage(virtualFileSystem);
+    const updateVirtualFileSystem = (_virtualFileSystem: VirtualFileSystem[]) => {
+        console.log('updating virtual file system');
+        console.log(_virtualFileSystem);
+        console.log(virtualFileSystem);
+        const tempObj = convertArrayToStateObject(_virtualFileSystem);
 
+        setVirtualFileSystem(tempObj);
+        // set an array of the virtual file system to storage
+        setVirtualFileSystemToStorage(convertStateObjectToArray(tempObj));
     };
 
 
@@ -58,7 +78,9 @@ export function useVirtualFileSystem() {
 
             updateVirtualFileSystem(tempFileSystem);
         }
-    }, [isDrawerOpen.value, quizData.length, refresh]);
+    }, [isDrawerOpen.value, quizData.length, refresh,
+    Object.keys(virtualFileSystem).length,
+    Object.entries(virtualFileSystem).length]);
 
 
     return {

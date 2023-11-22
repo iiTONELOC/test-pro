@@ -1,12 +1,10 @@
 import { JSX } from 'preact/jsx-runtime';
-import { useRef, useState } from 'preact/hooks';
-import { Folder, FolderOpen } from '../../assets/icons';
-import { DraggableItem, DroppableArea, handleOnDrop } from '../DragAndDrop';
-import { IVirtualDirectory, VirtualFileSystem, trimClasses } from '../../utils';
-import { VirtualFileSystemComponent } from './VirtualFileSystem';
 import { useMountedState, } from '../../hooks';
-
-
+import { DraggableItem } from '../DragAndDrop';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { Folder, FolderOpen } from '../../assets/icons';
+import { VirtualFileSystemComponent } from './VirtualFileSystem';
+import { IVirtualDirectory, VirtualFileSystem, trimClasses } from '../../utils';
 
 
 const listItemClasses = `text-gray-300 w-full flex flex-col items-start justify-start hover:bg-slate-800
@@ -16,12 +14,25 @@ export interface IVirtualFolderProps {
     virtualFolder: IVirtualDirectory;
     virtualFileSystem: VirtualFileSystem[];
     dropHandler: (draggedItemId: string, targetItemId: string) => void;
+    updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
 }
 
-export function VirtualFolder({ virtualFolder, dropHandler }: IVirtualFolderProps): JSX.Element {// NOSONAR
+export function VirtualFolder({
+    dropHandler,
+    virtualFolder,
+    virtualFileSystem,
+    updateVirtualFileSystem
+}: IVirtualFolderProps): JSX.Element {// NOSONAR
     const listItemRef = useRef<HTMLLIElement>(null);
     const [isOpen, setIsOpen] = useState(false);
     const isMounted = useMountedState();
+
+
+
+    useEffect(() => {
+        if (!isMounted) return;
+        setIsOpen(virtualFolder.isOpen);
+    }, [isMounted]);
 
 
     const classNames = 'w-5 h-5';
@@ -29,10 +40,15 @@ export function VirtualFolder({ virtualFolder, dropHandler }: IVirtualFolderProp
         e.stopPropagation();
         e.preventDefault();
         setIsOpen(!isOpen);
+
+        if (virtualFolder.isOpen !== !isOpen) {
+            virtualFolder.isOpen = !isOpen;
+            console.log('UPDATING VIRTUAL FILE SYSTEM')
+            updateVirtualFileSystem(virtualFileSystem);
+        }
     }
 
     return isMounted ? (
-
         <li
             ref={listItemRef}
             onClick={toggleOpen}
@@ -53,10 +69,10 @@ export function VirtualFolder({ virtualFolder, dropHandler }: IVirtualFolderProp
             {isOpen && virtualFolder.children.length > 0 &&
                 <VirtualFileSystemComponent
                     // id={virtualFolder?.name}
-                    virtualFileSystem={virtualFolder.children}
                     dropHandler={dropHandler}
+                    virtualFileSystem={virtualFolder.children}
+                    updateVirtualFileSystem={updateVirtualFileSystem}
                 />}
         </li>
-
     ) : <></>
 }

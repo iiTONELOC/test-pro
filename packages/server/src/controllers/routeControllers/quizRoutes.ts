@@ -139,7 +139,7 @@ export const quizRouteController: IQuizRouteController = {
         try {
             const { quizData } = req.body as { quizData: IQuizByJsonData };
             const { showTimestamps, needToPopulate }: dbQueryParams = extractDbQueryParams(req);
-            const { name, topics, questions } = quizData;
+            const { name, topics, questions } = quizData ?? {};
 
             const existingQuiz: QuizModelResponse | null = await Quiz.findOne({ name });
             if (existingQuiz) {

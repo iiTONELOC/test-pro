@@ -73,7 +73,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
                         className={'w-full flex flex-row gap-1 items-center ml-1'}>
                         <DocumentIcon className='w-4 h-4' />
 
-                        <p data-id={file.entryId} className={'text-base'}>{file.name}</p>
+                        <p data-id={file.entryId} className={'text-xs'}>{file.name}</p>
                     </span>
                 </ToolTip>
             </li>

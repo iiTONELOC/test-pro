@@ -1,5 +1,5 @@
 
-import { trimClasses } from '../utils';
+import { trimClasses, uuid } from '../utils';
 import { createRef, JSX } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { useToolTipsOnFocus } from '../hooks';
@@ -70,7 +70,7 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
                 <ul>
                     <pre>
                         {title.split('\n').map((line: string) => (
-                            <li key={line.slice(0, 15)}>
+                            <li key={uuid()}>
                                 <p className={''}>{line}</p>
                             </li>
                         ))}

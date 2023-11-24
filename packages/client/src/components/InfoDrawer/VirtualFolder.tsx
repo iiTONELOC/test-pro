@@ -82,7 +82,7 @@ export function VirtualFolder({
                 <span tabIndex={0} className={'w-full flex flex-row gap-1 items-center'}>
 
                     {isOpen ? <FolderOpen className={classNames} /> : <Folder className={classNames} />}
-                    <p data-id={virtualFolder.name} className={'text-base'}>
+                    <p data-id={virtualFolder.name} className={'text-sm'}>
                         {virtualFolder.name}
                     </p>
 

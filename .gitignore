@@ -176,3 +176,5 @@ dist
 
 # Local files
 .local*
+
+/data

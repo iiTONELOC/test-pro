@@ -4,15 +4,13 @@
 
 ## Screenshot
 
-![Screenshot](./assets/screenshots/screenshot.png)
+![Screenshot](./assets/screenshots/testproscreenshot.png)
 
 ## Description
 
 ### COMING SOON
 
 Test Pro is a studying tool designed to help you study for exams and retain information.
-
-This project was created using `bun init` in bun v1.0.3. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
 
 ### Motivation
 
@@ -24,7 +22,7 @@ I am a FullStack Web Developer and CyberOps Engineering Student currently prepar
 
 ## Tech Stack
 
-- Bun
+- Node
 - Typescript
 - Express
 - Mongoose ODM
@@ -41,7 +39,7 @@ If you do not have MongoDB installed on your computer [you can follow the instru
 From the root of the project run the following command to install the dependencies:
 
 ```bash
-bun install
+npm install
 ```
 
 ### Creating Environment Variables
@@ -57,7 +55,7 @@ DB_URI = 'mongodb://localhost:27017/'
 To create the file run the following command:
 
 ```bash
-bun createEnv
+npm run createEnv
 ```
 
 Be sure to replace the default values inside of the parenthesis \' \' with your own database names and the URI to your MongoDB if you are using MongoAtlas over the local installation
@@ -67,7 +65,7 @@ Be sure to replace the default values inside of the parenthesis \' \' with your 
 To verify tests run:
 
 ```bash
-bun test
+npm run test
 ```
 
 ### Running in Development
@@ -77,17 +75,17 @@ bun test
 This will start the API sever and load the Vite dev environment for the front-end.
 
 ```bash
-bun dev
+npm run dev
 ```
 
 #### Just the Front End
 
 ```bash
-bun dev-client
+npm run dev-client
 ```
 
 #### Just the API Server
 
 ```bash
-bun dev-server
+npm run dev-server
 ```

@@ -1,7 +1,9 @@
+
+import { trimClasses } from '../utils';
 import { createRef, JSX } from 'preact';
-import { trimClasses, uuid } from '../utils';
-import { useToolTipsOnFocus } from '../hooks';
 import { useEffect } from 'preact/hooks';
+import { useToolTipsOnFocus } from '../hooks';
+
 
 
 /**
@@ -30,6 +32,7 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
     const groupContainerRef = createRef<HTMLDivElement>();
 
     const title = toolTipText;
+
 
     useToolTipsOnFocus({ groupContainerRef });
 
@@ -67,7 +70,7 @@ export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
                 <ul>
                     <pre>
                         {title.split('\n').map((line: string) => (
-                            <li key={uuid()}>
+                            <li key={line.slice(0, 15)}>
                                 <p className={''}>{line}</p>
                             </li>
                         ))}

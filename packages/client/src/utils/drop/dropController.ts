@@ -1,4 +1,4 @@
-import { VirtualFileSystem, findFileInVfs, findFolderInVfs } from '../virtualFileSystem';
+import { IVirtualDirectory, VirtualFileSystem, findFileInVfs, findFolderInVfs } from '../virtualFileSystem';
 
 export interface IDropControllerParams {
     draggedItemId: string;
@@ -84,6 +84,28 @@ const findItemInVfs = (itemIsFolder: boolean, itemId: string, virtualFileSystem:
 }
 
 /**
+ * Determines if the dragged item is a descendant of the target item
+ * 
+ * @param parent the target item
+ * @param child the dragged item
+ * @returns true or false depending on whether the dragged item is a descendant of the target item
+ */
+function isDescendant(parent: IVirtualDirectory, child: IVirtualDirectory): boolean {
+    if (parent.children) {
+        for (let i = 0; i < parent.children.length; i++) {
+            let entry = parent.children[i];
+            if (entry.name === child.name) {
+                return true;
+            }
+            // @ts-ignore
+            if (entry.children && isDescendant(entry, child)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+/**
  * Handles moving the dragged item to the folder it is being dropped on
  *
  * @param draggedItemIsFolder whether the dragged item is a folder or not
@@ -100,6 +122,8 @@ function moveDraggedToFolder({
     foundTargetItem,
     draggedItemIsFolder
 }: IMoveDraggedToFolderParams): VirtualFileSystem[] {
+
+
     if (draggedItemIsFolder) {
         // @ts-ignore
         foundTargetItem?.children && foundTargetItem?.children?.push(removed[0]);
@@ -201,6 +225,10 @@ function handleMovement({
 }: IHandleMovementParams) {
 
     if (foundDraggedItem?.name !== foundTargetItem?.name) {
+
+        if (isDescendant(draggedItem.found as unknown as IVirtualDirectory, foundTargetItem as unknown as IVirtualDirectory)) {
+            return;
+        }
         // remove the dragged item from the virtual file system
         const removed = foundDraggedItemContainingFolder !== null ?
             // @ts-ignore

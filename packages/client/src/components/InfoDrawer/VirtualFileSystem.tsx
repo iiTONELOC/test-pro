@@ -2,7 +2,7 @@ import { JSX } from 'preact/jsx-runtime';
 import { VirtualFile } from './VirtualFile';
 import { useMountedState } from '../../hooks';
 import { VirtualFolder } from './VirtualFolder';
-import { VirtualFileSystem, IVirtualFile, IVirtualDirectory, uuid } from '../../utils';
+import { VirtualFileSystem, IVirtualFile, IVirtualDirectory } from '../../utils';
 
 const ulClasses = 'bg-gray-900 w-full h-full overflow-y-auto p-1 rounded-sm';
 
@@ -27,7 +27,7 @@ export function VirtualFileSystemComponent({
                 //@ts-ignore
                 if ('children' in entry as IVirtualDirectory) {
                     return <VirtualFolder
-                        key={`${entry.name}-${uuid()}`}
+                        key={`${entry.name}`}
                         dropHandler={dropHandler}
                         virtualFileSystem={virtualFileSystem}
                         virtualFolder={entry as IVirtualDirectory}

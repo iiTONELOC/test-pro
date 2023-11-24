@@ -1,11 +1,13 @@
+import { useMemo } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 import { trimClasses } from '../../utils';
 import { ActionButtons } from './ActionButtons';
+import { useVirtualFileSystem } from '../../hooks';
 import { useInfoDrawerSignal } from '../../signals';
 import { DroppableArea, handleOnDrop } from '../DragAndDrop';
 import { VirtualFileSystemComponent } from './VirtualFileSystem';
-import { useMountedState, useVirtualFileSystem } from '../../hooks';
 import { convertStateObjectToArray } from '../../hooks/useVirtualFileSystem';
+
 
 const drawerClasses = `bg-gray-950/[.75] h-[calc(100vh-44px)] w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
 sm:text-sm lg:text-md xl:text-base flex flex-col justify-start`;
@@ -16,12 +18,11 @@ export function InfoDrawer(): JSX.Element {
     const { virtualFileSystem, updateVirtualFileSystem, setRefresh } = useVirtualFileSystem();
 
     const { isDrawerOpen } = useInfoDrawerSignal();
-    const isMounted: boolean = useMountedState();
 
     const hideDrawer = !isDrawerOpen.value;
     const vfs = virtualFileSystem;
 
-    const vfsArray = convertStateObjectToArray(vfs);
+    const vfsArray = useMemo(() => convertStateObjectToArray(vfs), [vfs]);
 
     const dropHandler = (draggedItemId: string, targetItemId: string) =>
         handleOnDrop({
@@ -33,7 +34,7 @@ export function InfoDrawer(): JSX.Element {
 
     if (hideDrawer) return <></>
 
-    return isMounted ? (
+    return (
         <div className={trimClasses(drawerClasses)}>
             <ActionButtons
                 needToRefresh={setRefresh}
@@ -55,7 +56,7 @@ export function InfoDrawer(): JSX.Element {
                 <p className={liClasses}>No Quizzes Found!</p>
             }
         </div>
-    ) : <></>
+    )
 }
 
 export default InfoDrawer;

@@ -1,5 +1,5 @@
 import { JSX } from 'preact/jsx-runtime';
-import { uuid, trimClasses } from '../../utils';
+import { trimClasses } from '../../utils';
 
 const optionIndex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const optionClasses = ' flex flex-row justify-start items-center text-left w-[88%] h-full'
@@ -25,7 +25,7 @@ export function MultipleChoiceOptions({ options, handleClick, isHistory = false 
         <div className={divClasses}>
             {options.map((option, index) => (
                 <button
-                    key={uuid()}
+                    key={option}
                     data-option={option}
                     onClick={handleOnClick}
                     className={trimClasses(buttonClasses)}>

@@ -42,11 +42,7 @@ export function useVirtualFileSystem() {
     const quizData: QuizModelResponse[] = quizzesDb.value;
 
     const updateVirtualFileSystem = (_virtualFileSystem: VirtualFileSystem[]) => {
-        console.log('updating virtual file system');
-        console.log(_virtualFileSystem);
-        console.log(virtualFileSystem);
         const tempObj = convertArrayToStateObject(_virtualFileSystem);
-
         setVirtualFileSystem(tempObj);
         // set an array of the virtual file system to storage
         setVirtualFileSystemToStorage(convertStateObjectToArray(tempObj));

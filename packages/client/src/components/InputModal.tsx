@@ -1,10 +1,9 @@
 import { ToolTip } from './ToolTip';
 import { JSX } from 'preact/jsx-runtime';
+import { useMountedState } from '../hooks';
 import { CloseCircle } from '../assets/icons';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { VirtualFileSystem, createVirtualDirectory } from '../utils';
-import { useMountedState } from '../hooks';
-
 
 export interface InputModalProps {
     toggleClose: () => void,
@@ -13,6 +12,20 @@ export interface InputModalProps {
     needToRefresh: () => void,
     updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void,
 }
+
+function getFolderNames(item: VirtualFileSystem): string[] {
+    let names: string[] = [];
+    // @ts-ignore
+    if (item.children) {
+        names.push(item.name);
+        // @ts-ignore
+        for (let child of item.children) {
+            names = names.concat(getFolderNames(child));
+        }
+    }
+    return names;
+}
+
 
 export function InputModal({ toggleClose, virtualFileSystem, needToRefresh, updateVirtualFileSystem, headingText = 'Input Modal' }: Readonly<InputModalProps>): JSX.Element {
     const isMounted = useMountedState();
@@ -24,19 +37,7 @@ export function InputModal({ toggleClose, virtualFileSystem, needToRefresh, upda
 
     const checkUniqueFolderName = (input: string) => {
         // folder names must be unique in the same directory
-        // files have names too so folders are entries with children and names
-        const folderNames = virtualFileSystem.map((item: VirtualFileSystem) => {
-            // @ts-ignore
-            if (item?.children) {
-                return item.name;
-            }
-            return null;
-        }).filter((item: string | null) => item !== null);
-
-        console.log('folderNames', folderNames);
-
-        console.log('Is input unique?', !folderNames.includes(input));
-
+        const folderNames = virtualFileSystem.map((item) => getFolderNames(item)).flat();
         return !folderNames.includes(input);
     };
 
@@ -64,21 +65,18 @@ export function InputModal({ toggleClose, virtualFileSystem, needToRefresh, upda
     }
 
     const handleOnSubmit = (e: Event) => {
-        console.log('submit');
+
         e.preventDefault();
         e.stopPropagation();
 
         const hasErrors = checkForInputErrors(formState.input);
         if (!hasErrors) {
-            console.log('no errors');
             // create a virtual file system folder
             const newFolder = createVirtualDirectory(formState.input);
             // @ts-ignore
             const temp = virtualFileSystem;
             temp.push(newFolder);
 
-            console.log('UPDATING VIRTUAL FILE SYSTEM', temp);
-            console.log({ newFolder, virtualFileSystem: virtualFileSystem })
             updateVirtualFileSystem(temp);
             needToRefresh();
             toggleClose();

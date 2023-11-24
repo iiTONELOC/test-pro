@@ -4,7 +4,7 @@ import { DraggableItem } from '../DragAndDrop';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Folder, FolderOpen } from '../../assets/icons';
 import { VirtualFileSystemComponent } from './VirtualFileSystem';
-import { IVirtualDirectory, VirtualFileSystem, trimClasses } from '../../utils';
+import { IVirtualDirectory, VirtualFileSystem, getVirtualFileSystemFromStorage, trimClasses } from '../../utils';
 
 
 const listItemClasses = `text-gray-300 w-full flex flex-col items-start justify-start hover:bg-slate-800
@@ -43,8 +43,30 @@ export function VirtualFolder({
 
         if (virtualFolder.isOpen !== !isOpen) {
             virtualFolder.isOpen = !isOpen;
-            console.log('UPDATING VIRTUAL FILE SYSTEM')
-            updateVirtualFileSystem(virtualFileSystem);
+            // grab the virtual file system from local storage
+            const storage = getVirtualFileSystemFromStorage()
+            // look for the virtual folder in the virtual file system, it could be nested at any level
+
+            const lookForFolder = (virtualFileSystem: VirtualFileSystem[], virtualFolder: IVirtualDirectory): VirtualFileSystem | undefined => {
+                for (const entry of virtualFileSystem) {
+                    if (entry.name === virtualFolder.name) {
+                        // @ts-ignore
+                        return entry;
+                    }
+                    if ('children' in entry) {
+                        let found = lookForFolder(entry.children, virtualFolder);
+                        if (found) return found;
+                    }
+                }
+            }
+
+            const found = lookForFolder(storage, virtualFolder) as IVirtualDirectory;
+            found.isOpen = !isOpen;
+
+            localStorage.setItem('virtualFileSystem', JSON.stringify(storage));
+
+
+            // updateVirtualFileSystem(virtualFileSystem);
         }
     }
 

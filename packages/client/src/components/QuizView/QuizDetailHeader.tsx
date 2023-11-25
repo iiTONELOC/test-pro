@@ -4,8 +4,8 @@ import { titleCase, uuid } from '../../utils';
 import { TopicModelType } from '../../utils/api';
 import { useCurrentFileSignal } from '../../signals';
 
-const h1Classes = 'text-4xl mt-8 lg:mt-0 font-bold lg:text-center';
-const topicContainerClasses = 'w-max-w-screen-lg flex flex-wrap flex-row lg:place-content-center gap-3 my-6 lg:m-6';
+const h1Classes = 'text-3xl md:text-4xl mt-8 lg:mt-0 font-bold lg:text-center';
+
 
 export interface QuizDetailHeaderProps {
     isHistory?: boolean;
@@ -14,9 +14,10 @@ export interface QuizDetailHeaderProps {
 export function QuizDetailHeader({ isHistory }: Readonly<QuizDetailHeaderProps>): JSX.Element {// NOSONAR
     const { fileDetails } = useCurrentFileSignal();
     const currentFileDetails = fileDetails.value;
-
+    const headerClasses = isHistory ? 'w-full flex flex-col justify-start items-center mt-1 gap-3 mb-6' : 'w-[415px] sm:w-[550px] md:w-[675px] lg:w-[920px] xl:w-[1100px] mt-1';
+    const topicContainerClasses = `${isHistory ? 'w-max-w-screen-md px-2' : 'w-max-w-screen-lg'} flex flex-wrap flex-row lg:place-content-center gap-3 my-6 lg:m-6`;
     return currentFileDetails ? (
-        <header className={'max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg'}>
+        <header className={headerClasses}>
             <h1 className={h1Classes}>
                 {titleCase(currentFileDetails.name)} {isHistory ? 'History' : 'Details'}
             </h1>

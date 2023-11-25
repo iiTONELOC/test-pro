@@ -9,7 +9,6 @@ enum AnswerTypes {
     MultipleChoice = 'MultipleChoice',
     FillInTheBlank = 'FillInTheBlank',
     ShortAnswer = 'ShortAnswer',
-    TrueFalse = 'TrueFalse',
     Matching = 'Matching',
     Ordering = 'Ordering',
     Image = 'Image'
@@ -35,9 +34,6 @@ function AnswerOptionSwitch({ quizState, question }: Readonly<AnswerOptionProps>
     switch (selectedQuestionType) {
         case AnswerTypes.MultipleChoice:
             return <AnswersMultipleChoice options={question?.options ?? []} quizState={quizState} />;
-        case AnswerTypes.TrueFalse:
-            // TODO: implement TrueFalse
-            return <>True False</>;
         case AnswerTypes.FillInTheBlank:
             // TODO: implement FillInTheBlank
             return <>Fill in The Blank</>;
@@ -65,9 +61,6 @@ function AnsweredAnswerOptionSwitch({ question }: Readonly<AnsweredQuizQuestionP
     switch (selectedQuestionType) {
         case AnswerTypes.MultipleChoice:
             return <AnsweredMultipleChoice options={question?.options ?? []} />;
-        case AnswerTypes.TrueFalse:
-            // TODO: implement TrueFalse
-            return <>True False</>;
         case AnswerTypes.FillInTheBlank:
             // TODO: implement FillInTheBlank
             return <>Fill in The Blank</>;

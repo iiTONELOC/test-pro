@@ -1,5 +1,6 @@
 import { JSX } from 'preact/jsx-runtime';
 import { trimClasses } from '../../utils';
+import { useMountedState } from '../../hooks';
 
 const optionIndex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const optionClasses = ' flex flex-row justify-start items-center text-left w-[88%] h-full'
@@ -16,12 +17,13 @@ export interface IMultipleChoiceOptionsProps {
 }
 
 export function MultipleChoiceOptions({ options, handleClick, isHistory = false }: Readonly<IMultipleChoiceOptionsProps>): JSX.Element {
-    const buttonClasses = `bg-slate-700 rounded-md ${!isHistory ? 'hover:bg-slate-600' : 'hover:cursor-default'} text-white w-auto min-w-[250px]
-    h-max flex flex-row flex-wrap items-center justify-between`;
+    const buttonClasses = `bg-slate-700 rounded-md ${!isHistory ? 'hover:bg-slate-600' : 'hover:cursor-default'} text-white
+    w-auto min-w-[250px] h-max flex flex-row flex-wrap items-center justify-between`;
 
+    const isMounted = useMountedState();
     const handleOnClick = handleClick ?? undefined ? handleClick : () => { };
 
-    return (
+    return isMounted ? (
         <div className={divClasses}>
             {options.map((option, index) => (
                 <button
@@ -40,5 +42,5 @@ export function MultipleChoiceOptions({ options, handleClick, isHistory = false 
                 </button>
             ))}
         </div>
-    )
+    ) : <></>;
 }

@@ -5,7 +5,7 @@ import { useMountedState, useShowQuizDetails } from '../../../hooks';
 
 
 const notSelectedClasses = 'text-gray-300 text-center text-base';
-const divContainerClasses = 'h-full min-h-[calc(100vh-10vh)] flex-col justify-start justify-between';
+const divContainerClasses = 'h-full min-h-[calc(100vh-70px)] flex-col justify-start justify-between overflow-auto';
 
 
 export function QuizDetails(): JSX.Element {// NOSONAR

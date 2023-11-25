@@ -11,7 +11,7 @@ export function HistoryStats({ stats }: Readonly<IHistoryStats>): JSX.Element {/
         <div className={'w-full h-auto flex flex-wrap flex-row justify-center'}>
             <div className={'bg-slate-950 rounded-md w-max h-max py-2 px-4 mb-6 text-left lg:text-center'}>
                 <h2 className={'text-2xl mb-4'}>Stats</h2>
-                <div className={'w-full h-auto flex flex-col gap-2 text-base'}>
+                <div className={'w-full h-auto flex flex-col gap-2 text-sm  md:text-md lg:text-base'}>
                     <p>Best Time: {displayElapsedTime(bestTime)}</p>
                     <p>Number of Attempts: {numberOfAttempts}</p>
                     <p>Overall Average Score: {averageScore.toFixed(2)}%</p>

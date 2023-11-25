@@ -7,7 +7,7 @@ const metaContainerDivClasses = 'flex flex-col gap-2 w-full items-start lg:items
 
 function MetaDetail({ title, value }: Readonly<{ title: string, value: any }>): JSX.Element {
     return (
-        <div className={'flex flex-col gap-2 text-gray-300'}>
+        <div className={'flex flex-col gap-2 text-gray-300 text-xs sm:text-sm md:text-md lg:text-base'}>
             <p>
                 <span className={'font-bold'}>{title}</span>{' '}
                 <span>{value}</span>

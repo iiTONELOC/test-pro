@@ -6,7 +6,6 @@ import { VirtualFileSystem, IVirtualFile, IVirtualDirectory } from '../../utils'
 
 const ulClasses = 'bg-gray-900 w-full h-full overflow-y-auto p-1 rounded-sm';
 
-
 export interface IVirtualFileSystemProps {
     virtualFileSystem: VirtualFileSystem[];
     dropHandler: (draggedItemId: string, targetItemId: string) => void;
@@ -20,7 +19,6 @@ export function VirtualFileSystemComponent({
     const isMounted = useMountedState();
 
     return isMounted ? (
-        // <DroppableArea id={id} onDrop={dropHandler}>
         <ul className={ulClasses}>
             {virtualFileSystem.length > 0 && virtualFileSystem.map((entry: VirtualFileSystem, index: number) => {
                 if (!entry) return <></>;
@@ -29,7 +27,6 @@ export function VirtualFileSystemComponent({
                     return <VirtualFolder
                         key={`${entry.name}`}
                         dropHandler={dropHandler}
-                        virtualFileSystem={virtualFileSystem}
                         virtualFolder={entry as IVirtualDirectory}
                         updateVirtualFileSystem={updateVirtualFileSystem}
                     />// NOSONAR
@@ -38,6 +35,5 @@ export function VirtualFileSystemComponent({
                 }
             })}
         </ul>
-        // </DroppableArea>
     ) : <></>
 }

@@ -184,10 +184,7 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
 };
 
 
-/**
- * Looks for the virtual file system in local storage and returns it, If it doesn't exist it returns an empty array
- * @returns an array of virtual file system objects
- */
+
 /**
  * Retrieves the virtual file system from local storage
  * @returns an array of virtual file system objects
@@ -238,7 +235,6 @@ export function findFolderInVfs(
                 }
             }
         }
-
     }
 
     return { found, containingFolder };

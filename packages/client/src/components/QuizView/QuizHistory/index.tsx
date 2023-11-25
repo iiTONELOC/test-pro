@@ -41,7 +41,7 @@ const generateHistoryStats = (history: PopulatedQuizHistoryType[]): IHistoryStat
     };
 };
 
-const divContainerClasses = 'h-full min-h-[calc(100vh-10vh)] flex-col justify-start justify-between p-2';
+const divContainerClasses = 'h-full min-h-[calc(100vh-10vh)] flex-col justify-center items-center  p - 2';
 
 
 export function QuizHistory(): JSX.Element {//NOSONAR

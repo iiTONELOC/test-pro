@@ -13,14 +13,14 @@ export function HistoryListItem({ history }: Readonly<{ history: PopulatedQuizHi
     const passed = history.attempt.passed ? 'Passed' : 'Failed';
     const score = calculateScore(history.attempt.earnedPoints, history.attempt.answeredQuestions.length);
 
-    const textBase = 'text-base';
+
     return (
         <button tabIndex={0} className={trimClasses(buttonClasses)}>
-            <p className={textBase}>{taken}</p>
-            <span className={'flex flex-wrap flex-row gap-2 items-center  '}>
-                <p className={'text-md'}> Result: {passed}</p>
-                <p className={'text-md'}> Score: {score}%</p>
-                <p className={'text-md'}> Time: {displayElapsedTime(history.attempt.elapsedTimeInMs)}</p>
+            <p className={'text-md lg:text-base '}>{taken}</p>
+            <span className={'flex flex-wrap flex-row gap-2 items-center text-sm md:text-md lg:text-lg'}>
+                <p> Result: {passed}</p>
+                <p> Score: {score}%</p>
+                <p> Time: {displayElapsedTime(history.attempt.elapsedTimeInMs)}</p>
             </span>
         </button >
     )

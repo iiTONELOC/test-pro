@@ -9,7 +9,7 @@ import { VirtualFileSystemComponent } from './VirtualFileSystem';
 import { convertStateObjectToArray } from '../../hooks/useVirtualFileSystem';
 
 
-const drawerClasses = `bg-gray-950/[.75] h-[calc(100vh-44px)] w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
+const drawerClasses = `bg-gray-950/[.75] h-full w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 
 sm:text-sm lg:text-md xl:text-base flex flex-col justify-start`;
 
 const liClasses = 'text-center text-gray-500';
@@ -36,6 +36,7 @@ export function InfoDrawer(): JSX.Element {
 
     return (
         <div className={trimClasses(drawerClasses)}>
+
             <ActionButtons
                 needToRefresh={setRefresh}
                 virtualFileSystem={vfsArray}
@@ -43,9 +44,7 @@ export function InfoDrawer(): JSX.Element {
 
             <DroppableArea onDrop={dropHandler} id={'__root__'}>
                 <VirtualFileSystemComponent
-
                     dropHandler={dropHandler}
-
                     virtualFileSystem={vfsArray}
                     updateVirtualFileSystem={updateVirtualFileSystem}
                 />

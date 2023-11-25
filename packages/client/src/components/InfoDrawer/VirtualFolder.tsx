@@ -8,34 +8,21 @@ import { IVirtualDirectory, VirtualFileSystem, getVirtualFileSystemFromStorage, 
 
 
 const listItemClasses = `text-gray-300 w-full flex flex-col items-start justify-start hover:bg-slate-800
-rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;
+rounded-md transition ease-in delay-100 cursor-pointer gap-1 truncate p-1`;
 
 export interface IVirtualFolderProps {
     virtualFolder: IVirtualDirectory;
-    virtualFileSystem: VirtualFileSystem[];
     dropHandler: (draggedItemId: string, targetItemId: string) => void;
     updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
 }
 
-export function VirtualFolder({
-    dropHandler,
-    virtualFolder,
-    virtualFileSystem,
-    updateVirtualFileSystem
-}: IVirtualFolderProps): JSX.Element {// NOSONAR
+export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSystem }: IVirtualFolderProps): JSX.Element {// NOSONAR
     const listItemRef = useRef<HTMLLIElement>(null);
     const [isOpen, setIsOpen] = useState(false);
     const isMounted = useMountedState();
 
+    const folderClassNames = 'w-5 h-5';
 
-
-    useEffect(() => {
-        if (!isMounted) return;
-        setIsOpen(virtualFolder.isOpen);
-    }, [isMounted]);
-
-
-    const classNames = 'w-5 h-5';
     const toggleOpen = (e: Event) => {
         e.stopPropagation();
         e.preventDefault();
@@ -45,7 +32,7 @@ export function VirtualFolder({
             virtualFolder.isOpen = !isOpen;
             // grab the virtual file system from local storage
             const storage = getVirtualFileSystemFromStorage()
-            // look for the virtual folder in the virtual file system, it could be nested at any level
+
 
             const lookForFolder = (virtualFileSystem: VirtualFileSystem[], virtualFolder: IVirtualDirectory): VirtualFileSystem | undefined => {
                 for (const entry of virtualFileSystem) {
@@ -62,13 +49,17 @@ export function VirtualFolder({
 
             const found = lookForFolder(storage, virtualFolder) as IVirtualDirectory;
             found.isOpen = !isOpen;
-
             localStorage.setItem('virtualFileSystem', JSON.stringify(storage));
-
-
-            // updateVirtualFileSystem(virtualFileSystem);
         }
     }
+
+
+    useEffect(() => {
+        if (!isMounted) return;
+        setIsOpen(virtualFolder.isOpen);
+    }, [isMounted]);
+
+
 
     return isMounted ? (
         <li
@@ -79,9 +70,9 @@ export function VirtualFolder({
             className={trimClasses(listItemClasses)}
         >
             <DraggableItem id={virtualFolder.name} >
-                <span tabIndex={0} className={'w-full flex flex-row gap-1 items-center'}>
+                <span tabIndex={0} className={'w-full flex flex-row gap-1 items-center '}>
 
-                    {isOpen ? <FolderOpen className={classNames} /> : <Folder className={classNames} />}
+                    {isOpen ? <FolderOpen className={folderClassNames} /> : <Folder className={folderClassNames} />}
                     <p data-id={virtualFolder.name} className={'text-sm'}>
                         {virtualFolder.name}
                     </p>

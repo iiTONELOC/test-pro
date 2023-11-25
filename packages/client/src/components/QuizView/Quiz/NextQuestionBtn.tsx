@@ -47,7 +47,9 @@ export function NextQuestionBtn({ quizState }: Readonly<NextQuestionBtnProps>): 
     const handleClick = (event: Event) => {
         clickHandler({
             event: event as unknown as MouseEvent,
-            callback: () => currentQuestionAnswered && handleAddAnswer(currentQuestionAnswered, quizState),
+            callback: () => {
+                currentQuestionAnswered && handleAddAnswer(currentQuestionAnswered, quizState);
+            },
             stopPropagation: true
         });
     };

@@ -3,9 +3,9 @@ import { quizController, questionController } from '../dbControllers';
 import { handleRouteError, httpStatusCodes, extractDbQueryParams } from './routeUtils';
 
 import type { IApiResponse, QuizModelResponse, dbQueryParams } from '../types';
-import { QuestionTypeEnums, TopicModelType } from '../../db/types';
+import { QuestionTypeEnums } from '../../db/types';
 import { Topic, Quiz, Question } from '../../db/models';
-import { Types } from 'mongoose';
+
 
 /**
  * ```ts

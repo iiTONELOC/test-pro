@@ -1,10 +1,10 @@
 import { JSX } from 'preact/jsx-runtime';
 import { useMountedState, } from '../../hooks';
 import { DraggableItem } from '../DragAndDrop';
-import { useEffect, useRef, useState } from 'preact/hooks';
 import { Folder, FolderOpen } from '../../assets/icons';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { VirtualFileSystemComponent } from './VirtualFileSystem';
-import { IVirtualDirectory, VirtualFileSystem, getVirtualFileSystemFromStorage, trimClasses } from '../../utils';
+import { API, IVirtualDirectory, VirtualFileSystem, getVirtualFileSystem, trimClasses } from '../../utils';
 
 
 const listItemClasses = `text-gray-300 w-full flex flex-col items-start justify-start hover:bg-slate-800
@@ -30,26 +30,29 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
 
         if (virtualFolder.isOpen !== !isOpen) {
             virtualFolder.isOpen = !isOpen;
-            // grab the virtual file system from local storage
-            const storage = getVirtualFileSystemFromStorage()
 
+            (async () => {
+                const storage = await getVirtualFileSystem()
 
-            const lookForFolder = (virtualFileSystem: VirtualFileSystem[], virtualFolder: IVirtualDirectory): VirtualFileSystem | undefined => {
-                for (const entry of virtualFileSystem) {
-                    if (entry.name === virtualFolder.name) {
-                        // @ts-ignore
-                        return entry;
-                    }
-                    if ('children' in entry) {
-                        let found = lookForFolder(entry.children, virtualFolder);
-                        if (found) return found;
+                const lookForFolder = (virtualFileSystem: VirtualFileSystem[], virtualFolder: IVirtualDirectory): VirtualFileSystem | undefined => {
+                    for (const entry of virtualFileSystem) {
+                        if (entry.name === virtualFolder.name) {
+                            // @ts-ignore
+                            return entry;
+                        }
+                        if ('children' in entry) {
+                            let found = lookForFolder(entry.children, virtualFolder);
+                            if (found) return found;
+                        }
                     }
                 }
-            }
 
-            const found = lookForFolder(storage, virtualFolder) as IVirtualDirectory;
-            found.isOpen = !isOpen;
-            localStorage.setItem('virtualFileSystem', JSON.stringify(storage));
+                const found = lookForFolder(storage, virtualFolder) as IVirtualDirectory;
+                found.isOpen = !isOpen;
+
+                await API.updateVfs(JSON.parse(JSON.stringify(storage)));
+            })()
+
         }
     }
 

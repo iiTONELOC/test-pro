@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "test": "cd packages/server && npm run test",
-    "start": "cd  packages/server && npm run start",
+    "start": "cd packages/server && npm run start",
     "install": "concurrently \"npm run install-server\" \"npm run install-client\"",
     "install-server": "cd packages/server && npm install",
     "install-client": "cd packages/client && npm install",

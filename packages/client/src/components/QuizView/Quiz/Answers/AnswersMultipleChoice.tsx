@@ -15,6 +15,8 @@ export function AnswersMultipleChoice({ options, quizState }: Readonly<MultipleC
     const isMounted: boolean = useMountedState();
     const previouslyClicked = useRef<HTMLElement | null>(null);
 
+    const indigoHex = '#6366F1';
+
     const handleClick = (event: Event) => {
         const answer = event.target as HTMLElement
 
@@ -29,12 +31,12 @@ export function AnswersMultipleChoice({ options, quizState }: Readonly<MultipleC
     };
 
     const removeSelectedHighlight = () => {
-        previouslyClicked.current?.classList.remove('bg-indigo-500', 'hover:bg-indigo-600');
-    }
+        previouslyClicked.current?.style.removeProperty('background-color');
+    };
 
     const addSelectedHighlight = (button: HTMLElement) => {
-        button.classList.add('bg-indigo-500', 'hover:bg-indigo-600');
-    }
+        button.style.setProperty('background-color', indigoHex);
+    };
 
     useEffect(() => {
         isMounted && setTimeout(() => {

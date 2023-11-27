@@ -1,5 +1,5 @@
 import { Schema, model, HydratedDocument, Types } from 'mongoose';
-import { QuestionModelType, PopulatedQuestionModelType } from './types';
+import { PopulatedQuestionModelType } from './types';
 
 /**
  * ```ts

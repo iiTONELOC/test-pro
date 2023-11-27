@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import vfsRoutes from './vfsRoutes';
 import quizRoutes from './quizRoutes';
 import topicRoutes from './topicRoutes';
 import questionRoutes from './questionRoutes';
@@ -7,6 +8,7 @@ import quizHistoryRoutes from './quizHistoryRoutes';
 
 const router = Router();
 
+router.use('/vfs', vfsRoutes)
 router.use('/quizzes', quizRoutes);
 router.use('/topics', topicRoutes);
 router.use('/questions', questionRoutes);

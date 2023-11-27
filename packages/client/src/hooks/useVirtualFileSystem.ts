@@ -2,8 +2,8 @@ import { useMountedState } from '.';
 import { useEffect, useState } from 'preact/hooks';
 import { useInfoDrawerSignal, useQuizzesDbSignal } from '../signals';
 import {
-    VirtualFileSystem, QuizModelResponse, API, getVirtualFileSystemFromStorage,
-    generateFileSystem, setVirtualFileSystemToStorage, PopulatedQuizModel
+    VirtualFileSystem, QuizModelResponse, API, getVirtualFileSystem,
+    generateFileSystem, PopulatedQuizModel
 } from '../utils';
 
 export type VirtualFileSystemState = { [key: string]: VirtualFileSystem };
@@ -32,7 +32,7 @@ export const convertStateObjectToArray = (stateObject: VirtualFileSystemState): 
 }
 
 export function useVirtualFileSystem() {
-    const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystemState>(convertArrayToStateObject(getVirtualFileSystemFromStorage()));
+    const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystemState>({});
     const [refresh, setRefresh] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
     const { isDrawerOpen } = useInfoDrawerSignal();
     const isMounted: boolean = useMountedState();
@@ -41,11 +41,13 @@ export function useVirtualFileSystem() {
 
     const quizData: QuizModelResponse[] = quizzesDb.value;
 
-    const updateVirtualFileSystem = (_virtualFileSystem: VirtualFileSystem[]) => {
+    const updateVirtualFileSystem = async (_virtualFileSystem: VirtualFileSystem[]) => {
         const tempObj = convertArrayToStateObject(_virtualFileSystem);
         setVirtualFileSystem(tempObj);
         // set an array of the virtual file system to storage
-        setVirtualFileSystemToStorage(convertStateObjectToArray(tempObj));
+        // setVirtualFileSystemToStorage(convertStateObjectToArray(tempObj));
+        const updatedVfs = { "virtualFileSystem": convertStateObjectToArray(tempObj) }
+        await API.updateVfs(JSON.parse(JSON.stringify(updatedVfs)));
     };
 
 
@@ -53,12 +55,16 @@ export function useVirtualFileSystem() {
     useEffect(() => {
         if (isMounted && isDrawerOpen.value) {
             (async () => {
-                await API.getAllQuizzes({
-                    showTimestamps: true,
-                    needToPopulate: true
-                });
-            })();
+                try {
+                    await API.getAllQuizzes({
+                        showTimestamps: true,
+                        needToPopulate: true
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
 
+            })();
         }
     }, [isMounted, isDrawerOpen.value, quizData.length]);
 
@@ -66,13 +72,17 @@ export function useVirtualFileSystem() {
     useEffect(() => {
         if (isMounted && isDrawerOpen.value && quizData.length > 0) {
 
+            (async () => {
+                const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]],
+                    await getVirtualFileSystem())
+                    .filter(entry => entry !== null);
 
+                console.log('tempFileSystem', tempFileSystem);
+
+                updateVirtualFileSystem(tempFileSystem);
+            })()
             // generate virtual file system from quiz data and the existing virtual file system
-            const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]],
-                getVirtualFileSystemFromStorage())
-                .filter(entry => entry !== null);
 
-            updateVirtualFileSystem(tempFileSystem);
         }
     }, [isDrawerOpen.value, quizData.length, refresh,
     Object.keys(virtualFileSystem).length,

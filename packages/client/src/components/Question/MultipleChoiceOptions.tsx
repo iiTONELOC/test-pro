@@ -3,7 +3,7 @@ import { trimClasses } from '../../utils';
 import { useMountedState } from '../../hooks';
 
 const optionIndex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const optionClasses = ' flex flex-row justify-start items-center text-left w-[88%] h-full'
+const optionClasses = ' flex flex-row justify-start items-center text-left w-[88%] h-full p-1'
 const spanClasses = 'w-full h-full flex flex-row gap-3 justify-start items-center rounded-md';
 const optIndexClasses = 'w-[12%] p-3 rounded-md h-full bg-slate-800 flex justify-center items-center -ml-1';
 const divClasses = 'w-full h-full flex grid p-2 gap-3 text-shadow grid-cols-1 md:grid-cols-2';

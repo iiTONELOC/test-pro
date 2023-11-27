@@ -28,8 +28,8 @@ export function InfoDrawer(): JSX.Element {
         handleOnDrop({
             draggedItemId,
             targetItemId,
-            virtualFileSystem: vfsArray,
-            updateVirtualFileSystem
+            updateVirtualFileSystem,
+            virtualFileSystem: vfsArray
         });
 
     if (hideDrawer) return <></>

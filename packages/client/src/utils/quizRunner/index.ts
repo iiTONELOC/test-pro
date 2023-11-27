@@ -5,7 +5,6 @@ import {
     PopulatedQuizModel, QuizModelResponse,
     calculatePassingScore, PopulatedQuestionModelType, shuffle, API
 } from '..';
-import { set } from 'mongoose';
 
 export interface IAnsweredQuestionData {
     answeredQuestion: {

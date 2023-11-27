@@ -1,4 +1,4 @@
-import type { PopulatedQuizModel, QuizModelResponse, TopicModelType } from './api';
+import { API, type PopulatedQuizModel, type QuizModelResponse, type TopicModelType } from './api';
 
 /**
  * ```ts
@@ -189,17 +189,25 @@ export const generateFileSystem = (quizData: PopulatedQuizModel[], existingFileS
  * Retrieves the virtual file system from local storage
  * @returns an array of virtual file system objects
  */
-export const getVirtualFileSystemFromStorage = (): VirtualFileSystem[] =>
-    JSON.parse(localStorage.getItem('virtualFileSystem') ?? '[]') ?? [];
+export const getVirtualFileSystem = async (): Promise<VirtualFileSystem[]> => {
+    const vfs = await API.getVfs();
 
+    if (!vfs) return [];
 
-/**
- * Sets the virtual file system in local storage
- * @param virtualFileSystem the virtual file system object to set in local storage
- */
-export const setVirtualFileSystemToStorage = (virtualFileSystem: VirtualFileSystem[]): void => {
-    localStorage.setItem('virtualFileSystem', JSON.stringify(virtualFileSystem));
-};
+    const { virtualFileSystem } = vfs as unknown as { virtualFileSystem: VirtualFileSystem[] };
+
+    if (!virtualFileSystem) return [];
+
+    return virtualFileSystem;
+}
+
+// /**
+//  * Sets the virtual file system in local storage
+//  * @param virtualFileSystem the virtual file system object to set in local storage
+//  */
+// export const setVirtualFileSystemToStorage = (virtualFileSystem: VirtualFileSystem[]): void => {
+//     localStorage.setItem('virtualFileSystem', JSON.stringify(virtualFileSystem));
+// };
 
 export function findFolderInVfs(
     virtualFileSystem: VirtualFileSystem[],

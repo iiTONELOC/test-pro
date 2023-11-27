@@ -246,7 +246,40 @@ export const API = {
             console.error('An error occurred while fetching quiz histories for quiz', error);
             return null;
         }
-    }
+    },
+    getVfs: async (): Promise<JSON | null> => {
+        try {
+            const response: Response = await fetch(`${API_URL}/vfs`);
+            const data: IApiResponse<JSON> = await response.json() as IApiResponse<JSON>;
+            return data.data ?? null;
+        } catch (error) {
+            console.error('An error occurred while fetching vfs', error);
+            return null;
+        }
+    },
+    updateVfs: async (vfs: JSON): Promise<JSON | null> => {
+        try {
+            const response: Response = await fetch(`${API_URL}/vfs`, {
+                body: JSON.stringify(vfs),
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }
+            });
+            const data: IApiResponse<JSON> = await response.json() as IApiResponse<JSON>;
+            return data.data ?? null;
+        } catch (error) {
+            console.error('An error occurred while updating vfs', error);
+            return null;
+        }
+    },
+    deleteVfs: async (): Promise<JSON | null> => {
+        try {
+            const response: Response = await fetch(`${API_URL}/vfs`, { method: 'DELETE' });
+            const data: IApiResponse<JSON> = await response.json() as IApiResponse<JSON>;
+            return data.data ?? null;
+        } catch (error) {
+            console.error('An error occurred while deleting vfs', error);
+            return null;
+        }
+    },
 };
 
 export default API;

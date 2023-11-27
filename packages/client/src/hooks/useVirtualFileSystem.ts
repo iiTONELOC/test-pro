@@ -3,7 +3,8 @@ import { useEffect, useState } from 'preact/hooks';
 import { useInfoDrawerSignal, useQuizzesDbSignal } from '../signals';
 import {
     VirtualFileSystem, QuizModelResponse, API, getVirtualFileSystem,
-    generateFileSystem, PopulatedQuizModel
+    generateFileSystem, PopulatedQuizModel, toJsonObj, createVfsObject,
+    convertArrayToStateObject
 } from '../utils';
 
 export type VirtualFileSystemState = { [key: string]: VirtualFileSystem };
@@ -14,22 +15,7 @@ export interface IUseVirtualFileSystem {
     setRefresh: (refresh: boolean) => void;
 }
 
-export const convertArrayToStateObject = (array: VirtualFileSystem[]): VirtualFileSystemState => {
-    const temp: VirtualFileSystemState = {};
-    array.forEach(entry => {
-        // @ts-ignore
-        temp[entry?.entryId ?? entry.name] = entry;
-    });
-    return temp;
-};
 
-export const convertStateObjectToArray = (stateObject: VirtualFileSystemState): VirtualFileSystem[] => {
-    const temp: VirtualFileSystem[] = [];
-    Object.keys(stateObject).forEach(key => {
-        temp.push(stateObject[key]);
-    });
-    return temp;
-}
 
 export function useVirtualFileSystem() {
     const [virtualFileSystem, setVirtualFileSystem] = useState<VirtualFileSystemState>({});
@@ -42,12 +28,13 @@ export function useVirtualFileSystem() {
     const quizData: QuizModelResponse[] = quizzesDb.value;
 
     const updateVirtualFileSystem = async (_virtualFileSystem: VirtualFileSystem[]) => {
+        // update the virtual file system's local state
         const tempObj = convertArrayToStateObject(_virtualFileSystem);
         setVirtualFileSystem(tempObj);
-        // set an array of the virtual file system to storage
-        // setVirtualFileSystemToStorage(convertStateObjectToArray(tempObj));
-        const updatedVfs = { "virtualFileSystem": convertStateObjectToArray(tempObj) }
-        await API.updateVfs(JSON.parse(JSON.stringify(updatedVfs)));
+
+        // update the virtual file system stored on the server
+        const updatedVfs = createVfsObject(tempObj)
+        await API.updateVfs(toJsonObj(updatedVfs));
     };
 
 
@@ -76,8 +63,6 @@ export function useVirtualFileSystem() {
                 const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]],
                     await getVirtualFileSystem())
                     .filter(entry => entry !== null);
-
-                console.log('tempFileSystem', tempFileSystem);
 
                 updateVirtualFileSystem(tempFileSystem);
             })()

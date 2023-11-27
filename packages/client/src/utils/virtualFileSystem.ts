@@ -1,3 +1,4 @@
+import { VirtualFileSystemState } from '../hooks/useVirtualFileSystem';
 import { API, type PopulatedQuizModel, type QuizModelResponse, type TopicModelType } from './api';
 
 /**
@@ -201,13 +202,6 @@ export const getVirtualFileSystem = async (): Promise<VirtualFileSystem[]> => {
     return virtualFileSystem;
 }
 
-// /**
-//  * Sets the virtual file system in local storage
-//  * @param virtualFileSystem the virtual file system object to set in local storage
-//  */
-// export const setVirtualFileSystemToStorage = (virtualFileSystem: VirtualFileSystem[]): void => {
-//     localStorage.setItem('virtualFileSystem', JSON.stringify(virtualFileSystem));
-// };
 
 export function findFolderInVfs(
     virtualFileSystem: VirtualFileSystem[],
@@ -284,5 +278,25 @@ export function findFileInVfs(virtualFileSystem: VirtualFileSystem[], entryId: s
     }
 
     return { found, containingFolder };
+}
+
+export const createVfsObject = (objectToInsert: VirtualFileSystemState) => ({ "virtualFileSystem": convertStateObjectToArray(objectToInsert) });
+
+
+export const convertArrayToStateObject = (array: VirtualFileSystem[]): VirtualFileSystemState => {
+    const temp: VirtualFileSystemState = {};
+    array.forEach(entry => {
+        // @ts-ignore
+        temp[entry?.entryId ?? entry.name] = entry;
+    });
+    return temp;
+};
+
+export const convertStateObjectToArray = (stateObject: VirtualFileSystemState): VirtualFileSystem[] => {
+    const temp: VirtualFileSystem[] = [];
+    Object.keys(stateObject).forEach(key => {
+        temp.push(stateObject[key]);
+    });
+    return temp;
 }
 

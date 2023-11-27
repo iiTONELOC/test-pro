@@ -1,14 +1,14 @@
 import { JSX } from 'preact/jsx-runtime';
-import { useMountedState, } from '../../hooks';
-import { DraggableItem } from '../DragAndDrop';
-import { Folder, FolderOpen } from '../../assets/icons';
+import { useMountedState } from '../../../hooks';
+import VirtualComponent from './VirtualComponent';
+import { Folder, FolderOpen } from '../../../assets/icons';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { VirtualFileSystemComponent } from './VirtualFileSystem';
-import { API, IVirtualDirectory, VirtualFileSystem, getVirtualFileSystem, trimClasses } from '../../utils';
+import {
+    API, IVirtualDirectory, VirtualFileSystem, getVirtualFileSystem,
+    convertArrayToStateObject, createVfsObject, toJsonObj
+} from '../../../utils';
 
-
-const listItemClasses = `text-gray-300 w-full flex flex-col items-start justify-start hover:bg-slate-800
-rounded-md transition ease-in delay-100 cursor-pointer gap-1 truncate p-1`;
 
 export interface IVirtualFolderProps {
     virtualFolder: IVirtualDirectory;
@@ -30,11 +30,13 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
 
         if (virtualFolder.isOpen !== !isOpen) {
             virtualFolder.isOpen = !isOpen;
-
             (async () => {
                 const storage = await getVirtualFileSystem()
+                const lookForFolder = (
+                    virtualFileSystem: VirtualFileSystem[],
+                    virtualFolder: IVirtualDirectory
+                ): VirtualFileSystem | undefined => {
 
-                const lookForFolder = (virtualFileSystem: VirtualFileSystem[], virtualFolder: IVirtualDirectory): VirtualFileSystem | undefined => {
                     for (const entry of virtualFileSystem) {
                         if (entry.name === virtualFolder.name) {
                             // @ts-ignore
@@ -50,45 +52,42 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
                 const found = lookForFolder(storage, virtualFolder) as IVirtualDirectory;
                 found.isOpen = !isOpen;
 
-                await API.updateVfs(JSON.parse(JSON.stringify(storage)));
-            })()
-
+                const updatedVfs = createVfsObject(convertArrayToStateObject(storage));
+                await API.updateVfs(toJsonObj(updatedVfs));
+            })();
         }
     }
-
 
     useEffect(() => {
         if (!isMounted) return;
         setIsOpen(virtualFolder.isOpen);
     }, [isMounted]);
 
-
-
     return isMounted ? (
-        <li
+        <VirtualComponent
+            isFolder={true}
             ref={listItemRef}
             onClick={toggleOpen}
             onKeyDown={() => { }}
-            data-id={virtualFolder.name}
-            className={trimClasses(listItemClasses)}
+            draggableId={virtualFolder.name}
         >
-            <DraggableItem id={virtualFolder.name} >
-                <span tabIndex={0} className={'w-full flex flex-row gap-1 items-center '}>
-
-                    {isOpen ? <FolderOpen className={folderClassNames} /> : <Folder className={folderClassNames} />}
-                    <p data-id={virtualFolder.name} className={'text-sm'}>
-                        {virtualFolder.name}
-                    </p>
-
-                </span>
-            </DraggableItem>
-            {isOpen && virtualFolder.children.length > 0 &&
+            <span tabIndex={0} className={'w-full flex flex-row gap-1 items-center '}>
+                {isOpen ?
+                    <FolderOpen className={folderClassNames} /> :
+                    <Folder className={folderClassNames} />
+                }
+                <p data-id={virtualFolder.name} className={'text-sm'}>
+                    {virtualFolder.name}
+                </p>
+            </span>
+            {
+                isOpen && virtualFolder.children.length > 0 &&
                 <VirtualFileSystemComponent
-                    // id={virtualFolder?.name}
                     dropHandler={dropHandler}
                     virtualFileSystem={virtualFolder.children}
                     updateVirtualFileSystem={updateVirtualFileSystem}
-                />}
-        </li>
+                />
+            }
+        </VirtualComponent>
     ) : <></>
 }

@@ -1,12 +1,13 @@
-import { ToolTip } from '../ToolTip';
+import { ToolTip } from '../../ToolTip';
 import { JSX } from 'preact/jsx-runtime';
+import { useMountedState } from '../../../hooks';
 import { useEffect, useRef } from 'preact/hooks';
-import { Document as DocumentIcon } from '../../assets/icons';
-import { clickHandler, dateTime, keyHandler, trimClasses } from '../../utils';
-import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
+import VirtualComponent from './VirtualComponent';
+import { Document as DocumentIcon } from '../../../assets/icons';
+import { clickHandler, dateTime, keyHandler } from '../../../utils';
+import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../../signals';
 
-import type { IVirtualFile } from '../../utils/virtualFileSystem';
-import { DraggableItem } from '../DragAndDrop';
+import type { IVirtualFile } from '../../../utils/virtualFileSystem';
 
 const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:bg-slate-800
 rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;
@@ -15,6 +16,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     const { setSelectedFile, selectedFile } = useSelectedFileSignal();
     const { setCurrentQuizView } = useQuizViewSignal();
     const listItemRef = useRef<HTMLLIElement>(null);
+    const isMounted = useMountedState();
 
     const currentFile = selectedFile.value;
 
@@ -40,7 +42,7 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     useEffect(() => {
         // if the element within the list item is focused then change the background color like it would be if it was hovered
         const handleFocus = () => {
-            if (listItemRef.current?.contains(document.activeElement)) {
+            if (listItemRef?.current?.contains(document.activeElement)) {
                 listItemRef.current.classList.add('bg-slate-800');
             }
         };
@@ -53,31 +55,29 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
         listItemRef?.current?.addEventListener('focusout', handleFocusOut);
 
         return () => {
+            if (!isMounted) return;
             listItemRef?.current?.removeEventListener('focusin', handleFocus);
             listItemRef?.current?.removeEventListener('focusout', handleFocusOut);
         };
     }, [listItemRef]);
 
-    return (
-        <DraggableItem id={file.entryId} >
-            <li
-                ref={listItemRef}
-                onClick={handleClick}
-                onKeyDown={handleKeyDown}
-                className={trimClasses(listItemClasses)}
+    return isMounted ? (
+        <VirtualComponent
+            ref={listItemRef}
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}
+            draggableId={file.entryId}
+            className={listItemClasses}
+        >
+            <ToolTip toolTipText={tip + '\n' + createdAndModified}>
+                <span
+                    tabIndex={0}
+                    className={'w-full flex flex-row gap-1 items-center ml-1'}>
+                    <DocumentIcon className='w-4 h-4' />
 
-            >
-                <ToolTip toolTipText={tip + '\n' + createdAndModified}>
-                    <span
-                        tabIndex={0}
-                        className={'w-full flex flex-row gap-1 items-center ml-1'}>
-                        <DocumentIcon className='w-4 h-4' />
-
-                        <p data-id={file.entryId} className={'text-xs'}>{file.name}</p>
-                    </span>
-                </ToolTip>
-            </li>
-        </DraggableItem>
-
-    )
+                    <p data-id={file.entryId} className={'text-xs'}>{file.name}</p>
+                </span>
+            </ToolTip>
+        </VirtualComponent>
+    ) : <></>
 }

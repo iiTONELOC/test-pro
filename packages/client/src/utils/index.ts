@@ -4,6 +4,8 @@ export const titleCase = (str = '') => str.split(' ').map(word => word[0].toUppe
 
 export const calculatePassingScore = (questions: any[]): number => !questions ? 0 : Math.ceil(questions.length * 0.7);
 
+export const toJsonObj = (any: any): any => JSON.parse(JSON.stringify(any));
+
 // Export the utility modules
 
 // Export the API

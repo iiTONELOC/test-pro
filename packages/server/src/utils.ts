@@ -1,13 +1,12 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
-const vfsStorageLocation = path.join(__dirname, '../data/vfs');
+const folderLocation = '../data/vfs';
+const vfsStorageLocation = path.resolve(__dirname, folderLocation);
 const vfsStorageFile = path.join(vfsStorageLocation, 'vfs.json');
 
+
 function createVfs() {
-    // create the vfsStorageLocation if it does not exist
-    // create the vfsStorageFile if it does not exist
-    // return an empty object
     const locationExists = fs.existsSync(vfsStorageLocation);
 
     if (!locationExists) {
@@ -26,15 +25,10 @@ function createVfs() {
 }
 
 function readVfs() {
-    // read the json file from the vfsStorageFile location, if the file does not exist, create it and return an empty object
     return createVfs();
 }
 
 function writeVfs(vfs: JSON) {
-    // make sure the vfsStorageLocation exists
-    // write the vfs object to the vfsStorageFile
-    // ensure that the vfs is valid JSON
-
     try {
         const isValidJson = JSON.stringify(vfs) === JSON.stringify(JSON.parse(JSON.stringify(vfs)));
         if (!isValidJson) throw new Error('Invalid JSON')

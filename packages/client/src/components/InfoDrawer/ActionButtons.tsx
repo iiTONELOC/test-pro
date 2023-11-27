@@ -1,10 +1,10 @@
 import { ToolTip } from '../ToolTip';
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
-import { VirtualFileSystem, trimClasses } from '../../utils';
-import { InputModal } from '../InputModal';
 import { useMountedState } from '../../hooks';
 import { FolderPlus } from '../../assets/icons';
+import { VirtualFileSystem, trimClasses } from '../../utils';
+import { AddFolderToRoot } from '../InputModals/hooks/AddFolderToRoot';
 
 
 const actionIconStyle = `h-5 w-5 text-gray-300 hover:text-white cursor-pointer hover:w-6 hover:h-6 ease-in-out
@@ -29,11 +29,12 @@ export function ActionButtons({ virtualFileSystem, needToRefresh, updateVirtualF
                     <FolderPlus className={trimClasses(actionIconStyle)} onClick={toggleState} />
                 </ToolTip>
             </div>
-            {showInputModal && <InputModal
+            {showInputModal && <AddFolderToRoot
+                toggleClose={toggleState}
                 needToRefresh={needToRefresh}
                 virtualFileSystem={virtualFileSystem}
                 updateVirtualFileSystem={updateVirtualFileSystem}
-                toggleClose={toggleState} headingText='Enter a Folder Name' />}
+            />}
         </>
 
     ) : <></>;

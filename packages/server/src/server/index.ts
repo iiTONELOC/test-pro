@@ -6,8 +6,6 @@ import routes from '../routes';
 import { loadEnv } from '../loadEnv';
 import { handleBodyParser } from './middleware';
 
-
-
 loadEnv();
 
 export const startServer = async (callback?: Function) => {
@@ -34,8 +32,6 @@ export const startServer = async (callback?: Function) => {
     }
 
     server.use(routes);
-
-
 
     // start server
     server.listen(parseInt(port, 10), () => {

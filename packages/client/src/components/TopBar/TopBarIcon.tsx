@@ -6,6 +6,7 @@ const buttonClasses = `w-10 h-10 flex items-center justify-center rounded-md tex
 const iconClasses = 'w-5 h-5 mb-1';
 
 export function TopBarIcon({ Icon, title, action, id }: Readonly<ActionBarIconProps>) {
+
     const handleClick = (event: MouseEvent) => {
         clickHandler({
             event,

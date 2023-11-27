@@ -1,7 +1,7 @@
 import { JSX } from 'preact/jsx-runtime';
 import { useInfoDrawerSignal } from '../../signals';
 import { clickHandler, keyHandler } from '../../utils';
-import { Columns, WindowIcon } from '../../assets/icons';
+import { Folder, FolderOpen } from '../../assets/icons';
 
 export function InfoDrawerToggler(): JSX.Element {
     const { isDrawerOpen, toggleDrawer } = useInfoDrawerSignal();
@@ -20,8 +20,8 @@ export function InfoDrawerToggler(): JSX.Element {
             onClick={handleCLick}
             onKeyDown={handleKeyDown}
         >
-            {!isDrawerOpen.value && <Columns className={iconClasses} />}
-            {isDrawerOpen.value && <WindowIcon className={iconClasses} />}
+            {!isDrawerOpen.value && <Folder className={iconClasses} />}
+            {isDrawerOpen.value && <FolderOpen className={iconClasses} />}
         </span>
     )
 }

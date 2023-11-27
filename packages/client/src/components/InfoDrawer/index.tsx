@@ -1,12 +1,11 @@
 import { useMemo } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
-import { trimClasses } from '../../utils';
 import { ActionButtons } from './ActionButtons';
 import { useVirtualFileSystem } from '../../hooks';
 import { useInfoDrawerSignal } from '../../signals';
 import { DroppableArea, handleOnDrop } from '../DragAndDrop';
-import { VirtualFileSystemComponent } from './VirtualFileSystem';
-import { convertStateObjectToArray } from '../../hooks/useVirtualFileSystem';
+import { VirtualFileSystemComponent } from './VirtualFileSystem/VirtualFileSystem';
+import { trimClasses, convertStateObjectToArray } from '../../utils';
 
 
 const drawerClasses = `bg-gray-950/[.75] h-full w-1/3 lg:w-1/4 xl:w-1/6 p-1 truncate text-xs 

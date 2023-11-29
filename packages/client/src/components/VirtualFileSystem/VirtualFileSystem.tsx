@@ -1,10 +1,10 @@
 import { JSX } from 'preact/jsx-runtime';
 import { VirtualFile } from './VirtualFile';
-import { useMountedState } from '../../../hooks';
+import { useMountedState } from '../../hooks';
 import { VirtualFolder } from './VirtualFolder';
-import { VirtualFileSystem, IVirtualFile, IVirtualDirectory } from '../../../utils';
+import { VirtualFileSystem, IVirtualFile, IVirtualDirectory } from '../../utils';
 
-const ulClasses = 'bg-gray-900 w-full h-full overflow-y-auto p-1 rounded-sm';
+const ulClasses = ' bg-slate-950 w-full h-auto p-1 rounded-sm ';
 
 export interface IVirtualFileSystemProps {
     virtualFileSystem: VirtualFileSystem[];
@@ -35,5 +35,5 @@ export function VirtualFileSystemComponent({
                 }
             })}
         </ul>
-    ) : <></>
+    ) : <></>;
 }

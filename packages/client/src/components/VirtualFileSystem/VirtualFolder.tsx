@@ -1,13 +1,13 @@
 import { JSX } from 'preact/jsx-runtime';
-import { useMountedState } from '../../../hooks';
+import { useMountedState } from '../../hooks';
 import VirtualComponent from './VirtualComponent';
-import { Folder, FolderOpen } from '../../../assets/icons';
+import { Folder, FolderOpen } from '../../assets/icons';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { VirtualFileSystemComponent } from './VirtualFileSystem';
 import {
     API, IVirtualDirectory, VirtualFileSystem, getVirtualFileSystem,
     convertArrayToStateObject, createVfsObject, toJsonObj
-} from '../../../utils';
+} from '../../utils';
 
 
 export interface IVirtualFolderProps {
@@ -63,7 +63,7 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
         setIsOpen(virtualFolder.isOpen);
     }, [isMounted]);
 
-    return isMounted ? (
+    return (
         <VirtualComponent
             isFolder={true}
             ref={listItemRef}
@@ -89,5 +89,5 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
                 />
             }
         </VirtualComponent>
-    ) : <></>
+    )
 }

@@ -1,10 +1,10 @@
 import { Ref } from 'preact';
 import { JSX } from 'preact/jsx-runtime';
 import { ReactNode } from 'preact/compat';
-import { trimClasses } from '../../../utils';
-import { ContextMenu } from '../../ContextMenu';
-import { DraggableItem } from '../../DragAndDrop';
-import { useContextMenuSignal } from '../../../signals';
+import { trimClasses } from '../../utils';
+import { ContextMenu } from '../ContextMenu';
+import { DraggableItem } from '../DragAndDrop';
+import { useContextMenuSignal } from '../../signals';
 
 
 export interface IVirtualComponentProps {

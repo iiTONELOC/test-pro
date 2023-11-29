@@ -1,4 +1,5 @@
 import { ReactNode } from 'preact/compat';
+import { useDraggingContextSignal } from '../../signals';
 
 
 export interface IDroppableAreaProps {
@@ -8,6 +9,8 @@ export interface IDroppableAreaProps {
 }
 
 export const DroppableArea = ({ onDrop, children, id = '__root__' }: IDroppableAreaProps) => {
+    const { isDragging } = useDraggingContextSignal();
+
     const handleDragOver = (e: DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -19,6 +22,7 @@ export const DroppableArea = ({ onDrop, children, id = '__root__' }: IDroppableA
         e.stopPropagation();
 
         const droppedItemId = e?.dataTransfer?.getData('text/plain');
+
         //@ts-ignore
         let targetItemId = e?.target?.dataset?.id;
 
@@ -28,19 +32,19 @@ export const DroppableArea = ({ onDrop, children, id = '__root__' }: IDroppableA
             targetItemId = e?.target?.parentElement?.dataset?.id
         }
 
-        droppedItemId && onDrop(droppedItemId, targetItemId as string);
+        droppedItemId && (() => {
+            onDrop(droppedItemId, targetItemId as string);
+            isDragging.value = false;
+        })();
     };
 
 
     return (
         <div
-            className={'w-full h-full'}
+            className={'w-full min-h-[calc(100vh-97px)] overflow-auto overscroll-contain bg-slate-950'}
             onDragOver={handleDragOver}
-            // onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            data-id={id}
-
-        >
+            data-id={id}>
             {children}
         </div>
     );

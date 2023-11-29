@@ -16,7 +16,6 @@ export type {
 export { default as API, defaultAPIQueryParams } from './api';
 
 // Export Virtual File System
-export type { IVirtualDirectory, IVirtualFile, VirtualFileSystem } from './virtualFileSystem';
 export * from './virtualFileSystem';
 
 // Export Event Controllers

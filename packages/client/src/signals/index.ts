@@ -6,6 +6,8 @@ export { useSelectedFileSignal } from './SelectedFileSignal';
 export { useInViewAttemptSignal } from './InViewAttemptSignal';
 export { useQuizViewSignal, QuizViews } from './QuizViewSignal';
 
+export { useDraggingContextSignal } from './DraggingContextSignal';
+export type { DraggingContextSignal } from './DraggingContextSignal';
 
 export type { QuizViewSignal } from './QuizViewSignal';
 export type { QuizzesDbSignal } from './QuizzesDbSignal';

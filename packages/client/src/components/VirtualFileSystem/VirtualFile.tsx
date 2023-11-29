@@ -1,13 +1,11 @@
-import { ToolTip } from '../../ToolTip';
+import { ToolTip } from '../ToolTip';
 import { JSX } from 'preact/jsx-runtime';
-import { useMountedState } from '../../../hooks';
+import { useMountedState } from '../../hooks';
 import { useEffect, useRef } from 'preact/hooks';
 import VirtualComponent from './VirtualComponent';
-import { Document as DocumentIcon } from '../../../assets/icons';
-import { clickHandler, dateTime, keyHandler } from '../../../utils';
-import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../../signals';
-
-import type { IVirtualFile } from '../../../utils/virtualFileSystem';
+import { Document as DocumentIcon } from '../../assets/icons';
+import { clickHandler, dateTime, keyHandler, IVirtualFile } from '../../utils';
+import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
 
 const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:bg-slate-800
 rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;

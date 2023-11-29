@@ -32,13 +32,13 @@ interface IHandleMovementParams {
     draggedItemsIndex: number;
     targetItemsIndex: number;
     draggedItemIsFolder: boolean;
+    targetItem: ItemSearchResults;
+    draggedItem: ItemSearchResults;
     updatedItems: VirtualFileSystem[];
     foundDraggedItem: VirtualFileSystem | null;
     foundTargetItem: VirtualFileSystem | null;
     foundDraggedItemContainingFolder: VirtualFileSystem | null;
     foundTargetItemContainingFolder: VirtualFileSystem | null;
-    targetItem: ItemSearchResults;
-    draggedItem: ItemSearchResults;
     updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
 }
 
@@ -92,13 +92,13 @@ const findItemInVfs = (itemIsFolder: boolean, itemId: string, virtualFileSystem:
  */
 function isDescendant(parent: IVirtualDirectory, child: IVirtualDirectory): boolean {
     if (parent.children) {
-        for (let i = 0; i < parent.children.length; i++) {
-            let entry = parent.children[i];
-            if (entry.name === child.name) {
+        for (const element of parent?.children) {
+            let entry = element;
+            if (entry?.name === child?.name) {
                 return true;
             }
             // @ts-ignore
-            if (entry.children && isDescendant(entry, child)) {
+            if (entry?.children && isDescendant(entry, child)) {
                 return true;
             }
         }
@@ -226,9 +226,11 @@ function handleMovement({
 
     if (foundDraggedItem?.name !== foundTargetItem?.name) {
 
-        if (isDescendant(draggedItem.found as unknown as IVirtualDirectory, foundTargetItem as unknown as IVirtualDirectory)) {
+        if (isDescendant(draggedItem.found as unknown as IVirtualDirectory,
+            foundTargetItem as unknown as IVirtualDirectory)) {
             return;
         }
+
         // remove the dragged item from the virtual file system
         const removed = foundDraggedItemContainingFolder !== null ?
             // @ts-ignore

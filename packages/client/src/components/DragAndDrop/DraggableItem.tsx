@@ -1,7 +1,6 @@
-// DraggableItem.js
 import { ReactNode } from 'preact/compat';
-import { useState } from 'preact/hooks';
 import { trimClasses } from '../../utils';
+import { useDraggingContextSignal } from '../../signals';
 
 export interface IDraggableItemProps {
     id: string;
@@ -9,25 +8,24 @@ export interface IDraggableItemProps {
 }
 
 export const DraggableItem = ({ id, children }: IDraggableItemProps) => {
-    const [isDragging, setIsDragging] = useState(false);
+    const { isDragging } = useDraggingContextSignal();
+
+    const dragging = isDragging.value;
 
     const handleDragStart = (e: DragEvent) => {
-        setIsDragging(true);
-        e?.dataTransfer?.setData('text/plain', id);
+        if (!dragging) {
+            isDragging.value = true;
+            e?.dataTransfer?.setData('text/plain', id);
+        }
     };
 
-    const handleDragEnd = () => {
-        setIsDragging(false);
-    };
-
-    const classes = `w-full h-auto ${isDragging ? 'border-2 border-gray-400' : ''} 
-    ${isDragging ? 'opacity-50' : ''} ${isDragging ? 'cursor-move' : ''}`
+    const classes = `w-full h-auto ${dragging ? 'border-2 border-gray-400' : ''} 
+    ${dragging ? 'opacity-50' : ''} ${dragging ? 'cursor-move' : ''}`
 
     return (
         <span
             draggable
             onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
             className={trimClasses(classes)}
             data-id={id}
         >

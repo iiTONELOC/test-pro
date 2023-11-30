@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -8,36 +9,39 @@ import { handleBodyParser } from './middleware';
 
 loadEnv();
 
+const port = process.env.PORT ?? '3000';
+
 export const startServer = async (callback?: Function) => {
     // Create Express server
-    const server = express();
+    const app = express();
 
-    const port = process.env.PORT ?? '3000';
-    server.use(helmet());
-    server.use(handleBodyParser);
-    server.use(express.urlencoded({ extended: true }));
-    server.use(express.json());
-    server.use(cors());
+    // create the https server and bootstrap the express app
 
 
+    app.use(helmet());
+    app.use(handleBodyParser);
+    app.use(express.urlencoded({ extended: true }));
+    app.use(express.json());
+    app.use(cors());
 
     // if we are in production, serve our React app's index.html file
     if (process.env.NODE_ENV === 'production') {
         const clientFolder = path.resolve(__dirname, '../../../client/dist');
 
-        server.use(express.static(clientFolder));
-        server.get('/', (req, res) => {
+        app.use(express.static(clientFolder));
+        app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, clientFolder, 'index.html'));
         });
     }
 
-    server.use(routes);
+    // turn on the api routes
+    app.use(routes);
 
-    // start server
-    server.listen(parseInt(port, 10), () => {
+    // start listening for incoming https requests
+    app.listen(parseInt(port, 10), () => {
         console.log(`Listening on port ${port}...`);
         if (callback) callback();
     });
 
-    return server;
+    return app;
 };

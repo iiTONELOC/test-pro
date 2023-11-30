@@ -178,3 +178,5 @@ dist
 .local*
 data/
 lib/
+certs/
+~/

@@ -41,7 +41,8 @@
     "ignore": [
       "test/*",
       "data/*",
-      "lib/*"
+      "lib/*",
+      "certs/*"
     ]
   },
   "keywords": []

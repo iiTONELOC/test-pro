@@ -3,11 +3,11 @@
   "type": "module",
   "scripts": {
     "test": "cd packages/server && npm run test",
-    "start": "cd packages/server && npm run start",
+    "start": "scripts/start.sh",
     "install": "concurrently \"npm run install-server\" \"npm run install-client\"",
     "install-server": "cd packages/server && npm install",
     "install-client": "cd packages/client && npm install",
-    "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
+    "dev": "scripts/setDev.sh && concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "cd packages/client && npm run dev",
     "dev-server": "cd packages/server && npm run dev",
     "build": "concurrently \"npm run build-server\" \"npm run build-client\"",

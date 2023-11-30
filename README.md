@@ -20,6 +20,12 @@ I am a FullStack Web Developer and CyberOps Engineering Student currently prepar
 
 `As a learner, I want to create quiz questions to reinforce my understanding of various topics and prepare for my exams. The ability to revisit and retake these quizzes is important to me. Additionally, I would like to review questions associated with a specific topic. Post-quiz, I aim to review both correct and incorrect answers, assess my score, and evaluate the time I spent on the quiz. Although accessing this tool across multiple devices is desirable, it's currently not a priority, as I can effectively study using a single computer for now.`
 
+## Demo
+
+Click to watch the demo
+
+[![Demo](./assets/screenshots/demo.png)](https://drive.google.com/file/d/1GCLM1YE9Fu5b3wlTM_zq3bGPZeBMjU4v/view?usp=sharing)
+
 ## Tech Stack
 
 - Node

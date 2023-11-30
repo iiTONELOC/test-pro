@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 const folderLocation = '../data/vfs';
-const vfsStorageLocation = path.resolve(__dirname, folderLocation);
+const nodeEnv = process.env.NODE_ENV || 'development';
+const vfsStorageLocation = path.resolve(__dirname, (folderLocation + '-' + nodeEnv));
 const vfsStorageFile = path.join(vfsStorageLocation, 'vfs.json');
 
 

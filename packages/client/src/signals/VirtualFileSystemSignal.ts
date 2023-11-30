@@ -2,11 +2,10 @@
 import { signal, Signal } from '@preact/signals';
 import {
     API, convertArrayToStateObject, createVfsObject,
-    toJsonObj, VirtualFileSystem
+    toJsonObj, VirtualFileSystem, VirtualFileSystemState
 } from '../utils';
 
 
-export type VirtualFileSystemState = { [key: string]: VirtualFileSystem };
 export const virtualFileSystemSignal: Signal<VirtualFileSystemState> = signal({});
 
 export interface IUseVirtualFileSystemSignal {

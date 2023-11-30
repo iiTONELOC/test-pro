@@ -1,6 +1,6 @@
-import { VirtualFileSystemState } from '../hooks/useVirtualFileSystem';
 import { API, type PopulatedQuizModel, type QuizModelResponse, type TopicModelType } from './api';
 
+export type VirtualFileSystemState = { [key: string]: VirtualFileSystem };
 /**
  * ```ts
  * export interface IVirtualDirectory {

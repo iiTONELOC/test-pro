@@ -5,10 +5,12 @@ export { useContextMenuSignal } from './ContextMenuSignal';
 export { useSelectedFileSignal } from './SelectedFileSignal';
 export { useInViewAttemptSignal } from './InViewAttemptSignal';
 export { useQuizViewSignal, QuizViews } from './QuizViewSignal';
-
 export { useDraggingContextSignal } from './DraggingContextSignal';
-export type { DraggingContextSignal } from './DraggingContextSignal';
+export { useVirtualFileSystemSignal } from './VirtualFileSystemSignal';
 
+export { useInputModalSignal } from './InputModalSignal';
+
+export type { InputModalSignal } from './InputModalSignal';
 export type { QuizViewSignal } from './QuizViewSignal';
 export type { QuizzesDbSignal } from './QuizzesDbSignal';
 export type { InfoDrawerSignal } from './InfoDrawerSignal';
@@ -16,4 +18,5 @@ export type { CurrentFileSignal } from './CurrentFileSignal';
 export type { SelectedFileSignal } from './SelectedFileSignal';
 export type { InViewAttemptSignal } from './InViewAttemptSignal';
 export type { CurrentContextMenuSignal } from './ContextMenuSignal';
-
+export type { DraggingContextSignal } from './DraggingContextSignal';
+export type { IUseVirtualFileSystemSignal } from './VirtualFileSystemSignal';

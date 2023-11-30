@@ -1,20 +1,21 @@
 import { JSX } from 'preact/jsx-runtime';
-import { useMountedState } from '../../hooks';
 import { useContextMenuSignal } from '../../signals';
-import { FolderActions } from './ActionButtons/FolderActions';
 import { FileActions } from './ActionButtons/FileActions';
+import { FolderActions } from './ActionButtons/FolderActions';
+
 
 const buttonClasses = 'w-full p-1 text-white rounded-md boarder-2 hover:border-slate-900  hover:bg-slate-700';
 
 export function ContextMenu(): JSX.Element {
     const { position, isFolder } = useContextMenuSignal();
-    const isMounted = useMountedState();
 
-    const ActionButtons = () => isFolder.value ? FolderActions({ className: buttonClasses }) :
+    const ActionButtons = () => isFolder.value ?
+        FolderActions({ className: buttonClasses }) :
         FileActions({ className: buttonClasses });
 
-    return isMounted ? (
+    return (
         <div
+            id='context-menu'
             style={{
                 position: 'absolute',
                 left: (position.value.x),
@@ -28,5 +29,5 @@ export function ContextMenu(): JSX.Element {
                 <ActionButtons />
             </menu>
         </div>
-    ) : <></>
+    )
 }

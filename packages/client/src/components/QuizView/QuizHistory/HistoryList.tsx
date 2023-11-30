@@ -68,14 +68,17 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
 
 
     return history.length > 0 ? (
-        <ul className={'rounded-md w-full min-h-min max-h-[70vh] overflow-y-auto flex flex-col gap-3 '}>
-            {history.map((historyItem, index) => (
-                <ToolTip key={uuid()} toolTipText='View Quiz Attempt'>
-                    <li onKeyDown={handlers} onClick={(e) => handleClick(e, index)}>
-                        <HistoryListItem history={historyItem} />
-                    </li>
-                </ToolTip>
-            ))}
-        </ul>
+        <div className={'w-full h-full min-h-max flex flex-row justify-center items-center py-2 my-4 place-self-center'}>
+            <ul className={'rounded-md w-5/6 min-h-min max-h-[70vh] overflow-y-auto flex flex-col gap-3'}>
+                {history.map((historyItem, index) => (
+                    <ToolTip key={uuid()} toolTipText='View Quiz Attempt'>
+                        <li className='w-full' onKeyDown={handlers} onClick={(e) => handleClick(e, index)}>
+                            <HistoryListItem history={historyItem} />
+                        </li>
+                    </ToolTip>
+                ))}
+            </ul>
+        </div>
+
     ) : <p>Take the Quiz to see your history!</p>
 }

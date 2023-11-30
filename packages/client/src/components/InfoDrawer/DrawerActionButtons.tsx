@@ -1,27 +1,26 @@
 import { ToolTip } from '../ToolTip';
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
+import { trimClasses } from '../../utils';
 import { useMountedState } from '../../hooks';
 import { FolderPlus } from '../../assets/icons';
-import { VirtualFileSystem, trimClasses } from '../../utils';
-import { AddFolderToRoot } from '../InputModals/hooks/AddFolderToRoot';
-
+import { AddFolderToRoot } from '../VirtualFileSystem';
+import { useInputModalSignal } from '../../signals';
 
 const actionIconStyle = `h-5 w-5 text-gray-300 hover:text-white cursor-pointer hover:w-6 hover:h-6 ease-in-out
 duration-300 transition-all`;
 
-export interface ActionButtonsProps {
-    virtualFileSystem: VirtualFileSystem[],
-    needToRefresh: () => void,
-    updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void,
-}
+export function DrawerActionButtons(): JSX.Element {
 
-
-export function ActionButtons({ virtualFileSystem, needToRefresh, updateVirtualFileSystem }: ActionButtonsProps): JSX.Element {
     const [showInputModal, setShowInputModal] = useState(false);
+    const { toggleModal } = useInputModalSignal();
     const isMounted = useMountedState();
 
-    const toggleState = () => setShowInputModal(!showInputModal)
+    const toggleState = () => {
+        setShowInputModal(!showInputModal);
+        toggleModal();
+    };
+
     return isMounted ? (
         <>
             <div className={'w-full h-8 bg-slate-950 flex flex-row justify-end items-center p-2 text-gray-200'}>
@@ -29,13 +28,7 @@ export function ActionButtons({ virtualFileSystem, needToRefresh, updateVirtualF
                     <FolderPlus className={trimClasses(actionIconStyle)} onClick={toggleState} />
                 </ToolTip>
             </div>
-            {showInputModal && <AddFolderToRoot
-                toggleClose={toggleState}
-                needToRefresh={needToRefresh}
-                virtualFileSystem={virtualFileSystem}
-                updateVirtualFileSystem={updateVirtualFileSystem}
-            />}
+            {showInputModal && <AddFolderToRoot toggleClose={toggleState} />}
         </>
-
     ) : <></>;
 }

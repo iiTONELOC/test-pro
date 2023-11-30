@@ -1,56 +1,62 @@
 import { JSX } from 'preact/jsx-runtime';
 import { useMountedState } from '../../hooks';
 import VirtualComponent from './VirtualComponent';
-import { Folder, FolderOpen } from '../../assets/icons';
+import { ChevronDown, ChevronRight, Folder, FolderOpen } from '../../assets/icons';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { VirtualFileSystemComponent } from './VirtualFileSystem';
 import {
-    API, IVirtualDirectory, VirtualFileSystem, getVirtualFileSystem,
-    convertArrayToStateObject, createVfsObject, toJsonObj
+    API, IVirtualDirectory, getVirtualFileSystem,
+    convertArrayToStateObject, createVfsObject, toJsonObj, findFolderInVfs, keyHandler
 } from '../../utils';
+import { useContextMenuSignal } from '../../signals';
+import { ReactNode } from 'preact/compat';
 
 
 export interface IVirtualFolderProps {
     virtualFolder: IVirtualDirectory;
     dropHandler: (draggedItemId: string, targetItemId: string) => void;
-    updateVirtualFileSystem: (virtualFileSystem: VirtualFileSystem[]) => void;
 }
 
-export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSystem }: IVirtualFolderProps): JSX.Element {// NOSONAR
+function Span({ children }: Readonly<{ children: ReactNode | ReactNode[] }>): JSX.Element {
+    return <span className={'w-auto flex flex-row justify-start items-center gap-1'}>{children}</span>
+}
+
+export function VirtualFolder({ dropHandler, virtualFolder }: IVirtualFolderProps): JSX.Element {// NOSONAR
     const listItemRef = useRef<HTMLLIElement>(null);
+    const { showContextMenu } = useContextMenuSignal();
+
     const [isOpen, setIsOpen] = useState(false);
     const isMounted = useMountedState();
 
-    const folderClassNames = 'w-5 h-5';
+    const folderClassNames = 'w-4 h-4';
 
     const toggleOpen = (e: Event) => {
-        e.stopPropagation();
-        e.preventDefault();
+        e?.stopPropagation();
+        e?.preventDefault();
+
+        const tagName = (e.target as HTMLElement).tagName;
+        const dataId = (e.target as HTMLElement).dataset.id;
+        // @ts-ignore
+        if ((dataId !== virtualFolder.name) && (tagName !== 'svg' && tagName !== 'SPAN' && tagName !== 'LI')) {
+            return
+        };
+
+        // if we didn't click on any of the above, then we need to ensure that the context menu is closed
+        if (showContextMenu.value) {
+            showContextMenu.value && (showContextMenu.value = false);
+        }
+
+
         setIsOpen(!isOpen);
 
         if (virtualFolder.isOpen !== !isOpen) {
             virtualFolder.isOpen = !isOpen;
             (async () => {
-                const storage = await getVirtualFileSystem()
-                const lookForFolder = (
-                    virtualFileSystem: VirtualFileSystem[],
-                    virtualFolder: IVirtualDirectory
-                ): VirtualFileSystem | undefined => {
+                const storage = await getVirtualFileSystem();
+                const data = findFolderInVfs(storage, virtualFolder.name);
+                const found = data.found as IVirtualDirectory;
 
-                    for (const entry of virtualFileSystem) {
-                        if (entry.name === virtualFolder.name) {
-                            // @ts-ignore
-                            return entry;
-                        }
-                        if ('children' in entry) {
-                            let found = lookForFolder(entry.children, virtualFolder);
-                            if (found) return found;
-                        }
-                    }
-                }
-
-                const found = lookForFolder(storage, virtualFolder) as IVirtualDirectory;
-                found.isOpen = !isOpen;
+                found && (found.isOpen = !isOpen);
 
                 const updatedVfs = createVfsObject(convertArrayToStateObject(storage));
                 await API.updateVfs(toJsonObj(updatedVfs));
@@ -58,25 +64,40 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
         }
     }
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+        keyHandler({
+            event: e,
+            keyToWatch: 'Enter',
+            callback: () => toggleOpen(e as unknown as Event)
+        });
+
+        keyHandler({
+            event: e,
+            keyToWatch: ' ',
+            callback: () => toggleOpen(e as unknown as Event)
+        });
+    };
+
     useEffect(() => {
         if (!isMounted) return;
         setIsOpen(virtualFolder.isOpen);
-    }, [isMounted]);
+    }, [isMounted, virtualFolder.isOpen]);
 
     return (
         <VirtualComponent
             isFolder={true}
             ref={listItemRef}
             onClick={toggleOpen}
-            onKeyDown={() => { }}
+            onKeyDown={handleKeyDown}
             draggableId={virtualFolder.name}
         >
-            <span tabIndex={0} className={'w-full flex flex-row gap-1 items-center '}>
+            <span className={'w-full flex flex-row gap-1 items-center '}>
                 {isOpen ?
-                    <FolderOpen className={folderClassNames} /> :
-                    <Folder className={folderClassNames} />
+                    <Span> <ChevronDown className={folderClassNames} /><FolderOpen className={folderClassNames} /> </Span> :
+
+                    <Span> <ChevronRight className={folderClassNames} /><Folder className={folderClassNames} /> </Span>
                 }
-                <p data-id={virtualFolder.name} className={'text-sm'}>
+                <p data-id={virtualFolder.name} className={'text-xs'}>
                     {virtualFolder.name}
                 </p>
             </span>
@@ -85,7 +106,6 @@ export function VirtualFolder({ dropHandler, virtualFolder, updateVirtualFileSys
                 <VirtualFileSystemComponent
                     dropHandler={dropHandler}
                     virtualFileSystem={virtualFolder.children}
-                    updateVirtualFileSystem={updateVirtualFileSystem}
                 />
             }
         </VirtualComponent>

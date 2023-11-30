@@ -1,13 +1,13 @@
 import { ToolTip } from '../ToolTip';
+import { useRef } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 import { useMountedState } from '../../hooks';
-import { useEffect, useRef } from 'preact/hooks';
 import VirtualComponent from './VirtualComponent';
 import { Document as DocumentIcon } from '../../assets/icons';
-import { clickHandler, dateTime, keyHandler, IVirtualFile } from '../../utils';
+import { dateTime, keyHandler, IVirtualFile } from '../../utils';
 import { useSelectedFileSignal, useQuizViewSignal, QuizViews } from '../../signals';
 
-const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:bg-slate-800
+const listItemClasses = `text-gray-300 w-full flex flex-row items-center hover:bg-slate-800 focus:bg-slate-800
 rounded-md p-1 transition ease-in delay-100 cursor-pointer gap-1`;
 
 export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Element {
@@ -17,9 +17,8 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     const isMounted = useMountedState();
 
     const currentFile = selectedFile.value;
-
-    const tip = 'Topics:\n' + file.topics?.map((topic: string) => `# ${topic}`).join('\n');
-    const createdAndModified = `Created:  ${dateTime(file.createdAt)}\nModified: ${dateTime(file.updatedAt)}`;
+    const createdAndModified = `\nCreated:  ${dateTime(file.createdAt)}\nModified: ${dateTime(file.updatedAt)}`;
+    const toolTipText = `${file.name}\nTopics:\n${file.topics?.map((topic: string) => `# ${topic}`).join('\n')}${createdAndModified}`
 
     const handleSetSelectedFile = () => {
         if (currentFile !== file.entryId) {
@@ -28,8 +27,9 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
     };
 
     const handleClick = (event: MouseEvent) => {
-        // sets the selected file and sets the quiz view to the quiz details
-        clickHandler({ event, callback: handleSetSelectedFile, stopPropagation: true });
+        event.stopPropagation();
+        event.preventDefault();
+        handleSetSelectedFile();
         setCurrentQuizView(QuizViews.QuizDetails);
     };
 
@@ -37,27 +37,6 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
         keyHandler({ event, keyToWatch: 'Enter', direction: 'down', callback: handleSetSelectedFile, stopPropagation: true })
     };
 
-    useEffect(() => {
-        // if the element within the list item is focused then change the background color like it would be if it was hovered
-        const handleFocus = () => {
-            if (listItemRef?.current?.contains(document.activeElement)) {
-                listItemRef.current.classList.add('bg-slate-800');
-            }
-        };
-
-        const handleFocusOut = () => {
-            listItemRef?.current?.classList.remove('bg-slate-800');
-        };
-
-        listItemRef?.current?.addEventListener('focusin', handleFocus);
-        listItemRef?.current?.addEventListener('focusout', handleFocusOut);
-
-        return () => {
-            if (!isMounted) return;
-            listItemRef?.current?.removeEventListener('focusin', handleFocus);
-            listItemRef?.current?.removeEventListener('focusout', handleFocusOut);
-        };
-    }, [listItemRef]);
 
     return isMounted ? (
         <VirtualComponent
@@ -67,13 +46,12 @@ export function VirtualFile({ file }: Readonly<{ file: IVirtualFile }>): JSX.Ele
             draggableId={file.entryId}
             className={listItemClasses}
         >
-            <ToolTip toolTipText={tip + '\n' + createdAndModified}>
+            <ToolTip toolTipText={toolTipText}>
                 <span
-                    tabIndex={0}
-                    className={'w-full flex flex-row gap-1 items-center ml-1'}>
-                    <DocumentIcon className='w-4 h-4' />
+                    className={'w-full flex flex-row gap-1 items-center ml-1 truncate overflow-clip'}>
+                    <DocumentIcon className='w-3 h-3' />
 
-                    <p data-id={file.entryId} className={'text-xs'}>{file.name}</p>
+                    <p data-id={file.entryId} className={'text-xs '}>{file.name}</p>
                 </span>
             </ToolTip>
         </VirtualComponent>

@@ -28,7 +28,7 @@ export const keyHandler = ({ event, keyToWatch, callback = null, stopPropagation
     try {
         if (event?.key === keyToWatch && event?.type === `key${direction}`) {
             event?.preventDefault();
-            stopPropagation && event?.stopPropagation();
+            stopPropagation && event?.stopPropagation?.();
             callback?.();
         }
 

@@ -1,37 +1,29 @@
 import { uuid } from '../../../utils';
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
+import { useContextMenuSignal } from '../../../signals';
+import { AddFolderToFolder } from '../../VirtualFileSystem';
 
 const folderActions = [
     {
-        name: 'Create Quiz Here',
-        action: () => {
-            console.log('Add File');
-        }
+        name: 'Create Quiz Here'
     },
     {
-        name: 'Add Folder',
-        action: () => {
-            console.log('Add Folder');
-        }
+        name: 'Add Folder'
+
     },
     {
-        name: 'Rename',
-        action: () => {
-            console.log('Rename');
-        }
+        name: 'Rename'
+
     },
     {
-        name: 'Delete',
-        action: () => {
-            console.log('Delete');
-        }
+        name: 'Delete'
     }
 ];
 
 
 export interface IFolderActionsProps {
-    className?: string,
+    className?: string
 }
 
 
@@ -40,9 +32,12 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
     const [handleAddFolder, setHandleAddFolder] = useState(false);
     const [handleRename, setHandleRename] = useState(false);
     const [handleDelete, setHandleDelete] = useState(false);
+    const { id, showContextMenu } = useContextMenuSignal();
+
+
     const { className } = props;
 
-    const handleClick = (e: Event, name: string, action: () => void) => {
+    const handleClick = (e: Event, name: string) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -55,6 +50,7 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
         }
 
         if (name === 'Add Folder') {
+            console.log('Add Folder');
             setHandleAddFolder(true);
         }
 
@@ -62,23 +58,26 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
             console.log('Create Quiz Here');
             setHandleAddNewQuiz(true);
         }
-
-        action();
     };
+
+    const toggleAddFolderToFolder = () => {
+        setHandleAddFolder(false);
+        showContextMenu.value = false;
+    }
+
     return (
         <>
-            {folderActions.map(({ name, action }) => (
+            {folderActions.map(({ name }) => (
                 <button
                     key={uuid()}
-                    onClick={(e: Event) => handleClick(e, name, action)}
+                    onClick={(e: Event) => handleClick(e, name)}
                     className={className ?? ''}>
                     {name}
                 </button>
             ))}
             {handleRename && <></>}
             {handleDelete && <></>}
-            {handleAddFolder && <></>}
-            {handleAddFolder && <></>}
+            {handleAddFolder && <AddFolderToFolder toggleClose={toggleAddFolderToFolder} targetFolderName={id.value} />}
             {handleAddNewQuiz && <></>}
         </>
     );

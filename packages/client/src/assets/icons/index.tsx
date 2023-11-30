@@ -5,5 +5,7 @@ export { Document } from './Document';
 export { FolderPlus } from './FolderPlus';
 export { FolderOpen } from './FolderOpen';
 export { CloseCircle } from './CloseCircle';
+export { ChevronDown } from './ChevronDown';
+export { ChevronRight } from './ChevronRight';
 export { DocumentPlus } from './DocumentPlus';
 export { Window as WindowIcon } from './Window';

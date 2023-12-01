@@ -9,3 +9,5 @@ export { ChevronDown } from './ChevronDown';
 export { ChevronRight } from './ChevronRight';
 export { DocumentPlus } from './DocumentPlus';
 export { Window as WindowIcon } from './Window';
+export { ArrowLeftCircle } from './ArrowLeftCircle';
+export { ArrowRightCircle } from './ArrowRightCircle';

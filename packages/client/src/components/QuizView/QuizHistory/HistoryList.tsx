@@ -1,4 +1,3 @@
-import { ToolTip } from '../../ToolTip';
 import { JSX } from 'preact/jsx-runtime';
 import { useEffect, useState } from 'preact/hooks';
 import { HistoryListItem } from './HistoryListItem';
@@ -15,7 +14,10 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
 
     const autoFocus = () => {
         const selector: NodeListOf<HTMLElement> = document.querySelectorAll('li > button');
-        selector.length > 0 && selector[selectedIndex].focus();
+        selector.length > 0 && (() => {
+            selector[selectedIndex].focus();
+            selector[selectedIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        })();
     };
 
     const setAttempt = (index: number) => setViewAttempt(history[index]);
@@ -68,17 +70,19 @@ export function HistoryList({ history, setViewAttempt }: HistoryListProps): JSX.
 
 
     return history.length > 0 ? (
-        <div className={'w-full h-full min-h-max flex flex-row justify-center items-center py-2 my-4 place-self-center'}>
-            <ul className={'rounded-md w-5/6 min-h-min max-h-[70vh] overflow-y-auto flex flex-col gap-3'}>
+        <div className={'w-full h-full bg-slate-900 h-auto flex flex-row justify-center items-center py-2 place-self-center'}>
+            <ul className={'rounded-md w-5/6 h-auto flex flex-col gap-3'}>
                 {history.map((historyItem, index) => (
-                    <ToolTip key={uuid()} toolTipText='View Quiz Attempt'>
-                        <li className='w-full' onKeyDown={handlers} onClick={(e) => handleClick(e, index)}>
-                            <HistoryListItem history={historyItem} />
-                        </li>
-                    </ToolTip>
+                    <li
+                        key={uuid()}
+                        className='w-full'
+                        onKeyDown={handlers}
+                        onClick={(e: Event) => handleClick(e as MouseEvent, index)}>
+                        <HistoryListItem history={historyItem} />
+                    </li>
                 ))}
             </ul>
         </div>
 
-    ) : <p>Take the Quiz to see your history!</p>
+    ) : <></>
 }

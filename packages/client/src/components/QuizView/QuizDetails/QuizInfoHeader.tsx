@@ -3,15 +3,15 @@ import QuizMetaData from './QuizMetaData';
 import { useMountedState } from '../../../hooks';
 import { QuizDetailHeader } from '../QuizDetailHeader';
 
-const sectionClasses = 'w-full min-w-max p-2 flex flex-col justify-start items-start lg:items-center gap-4 h-full min-h-[calc(100vh-150px)]';
+const sectionClasses = 'w-full p-2 flex flex-col justify-start items-start lg:items-center gap-4 h-auto';
 
-export function QuizInfoHeader(): JSX.Element {// NOSONAR
+export function QuizInfoHeader({ showHistory }: { showHistory: boolean }): JSX.Element {// NOSONAR
     const isMounted = useMountedState();
 
     return isMounted ? (
         <section className={sectionClasses}>
             <QuizDetailHeader />
-            <QuizMetaData />
+            {!showHistory && <QuizMetaData />}
         </section>
     ) : <></>
 }

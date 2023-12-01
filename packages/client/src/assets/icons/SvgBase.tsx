@@ -6,17 +6,20 @@ export type IconProps = {
 
 export const defaultIconProps = {
     IconClassName: 'w-6 h-6',
-    IconColor: 'currentColor'
+    IconColor: 'currentColor',
+    IconFill: 'currentColor'
 };
 
 export type SvgBaseProps = & IconProps & {
-    d: string
+    d: string,
+    IconFill?: string
 }
 
 export function SvgBase({ // NOSONAR
     className = defaultIconProps.IconClassName,
     color = defaultIconProps.IconColor,
     d = '',
+    IconFill,
     onClick
 }: SvgBaseProps) {
 
@@ -24,7 +27,7 @@ export function SvgBase({ // NOSONAR
     return (<svg
         onClick={onClick ?? (() => { })}
         xmlns="http://www.w3.org/2000/svg"
-        fill="none"
+        fill={IconFill ?? 'none'}
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke={color}

@@ -17,7 +17,7 @@ export function HistoryListItem({ history }: Readonly<{ history: PopulatedQuizHi
     return (
         <button tabIndex={0} className={trimClasses(buttonClasses)}>
             <p className={'text-md lg:text-base '}>{taken}</p>
-            <span className={'flex flex-wrap flex-row gap-2 items-center text-sm md:text-md lg:text-lg'}>
+            <span className={'flex flex-wrap flex-row gap-2 items-center text-sm md:text-md '}>
                 <p> Result: {passed}</p>
                 <p> Score: {score}%</p>
                 <p> Time: {displayElapsedTime(history.attempt.elapsedTimeInMs)}</p>

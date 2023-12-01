@@ -1,6 +1,6 @@
 import { JSX } from 'preact/jsx-runtime';
 import { useQuizViewSignal } from '../../signals';
-import { QuizDetails, QuizHistory, QuizOptions, Quiz } from './index';
+import { QuizDetails, QuizOptions, Quiz } from './index';
 
 /**
  * The different views that can be displayed in the main view
@@ -11,7 +11,6 @@ import { QuizDetails, QuizHistory, QuizOptions, Quiz } from './index';
  *     QuizEdit = 'QuizEdit',
  *     QuizCreate = 'QuizCreate',
  *     QuizDelete = 'QuizDelete',
- *     QuizHistory = 'QuizHistory'
  * }
  * ```
  */
@@ -39,8 +38,6 @@ export function QuizViewRouter(): JSX.Element {
             return <>QuizCreate </>;
         case QuizViews.QuizDelete:
             return <QuizOptions />;
-        case QuizViews.QuizHistory:
-            return <QuizHistory />;
         default:
             return <QuizDetails />;
     }

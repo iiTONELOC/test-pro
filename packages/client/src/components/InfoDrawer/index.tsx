@@ -36,7 +36,7 @@ export function InfoDrawer(): JSX.Element {
 
     // fetch quiz data from the database, this will update the quizzesDb signal
     useEffect(() => {
-        if (isMounted && isDrawerOpen.value) {
+        if (isMounted) {
             (async () => {
                 try {
                     await API.getAllQuizzes({
@@ -49,11 +49,11 @@ export function InfoDrawer(): JSX.Element {
 
             })();
         }
-    }, [isMounted, isDrawerOpen.value]);
+    }, [isMounted]);
 
     // if the quizSignal has been updated, update the virtual file system
     useEffect(() => {
-        if (isMounted && isDrawerOpen.value && quizData.length > 0) {
+        if (isMounted && quizData.length > 0) {
             (async () => {
                 const tempFileSystem = generateFileSystem([...quizData as PopulatedQuizModel[]],
                     await getVirtualFileSystem())

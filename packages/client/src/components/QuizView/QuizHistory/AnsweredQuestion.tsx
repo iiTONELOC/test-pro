@@ -28,7 +28,7 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
     const [showCorrectAnswer, setShowCorrectAnswer] = useState<boolean>(false);
 
     const isMounted = useMountedState();
-    const questionRef = useRef<HTMLDivElement>(null);
+    const questionRef = useRef<HTMLLIElement>(null);
 
     // @ts-ignore
     const topics = questionResult.question.topics.map((topic: TopicModelType) => topic.name);
@@ -95,7 +95,7 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
 
 
     return isMounted ? (
-        <div className={'w-full h-auto flex justify-center ease-in-out duration-300 transition-all'} ref={questionRef}>
+        <li className={'w-full h-auto flex justify-center ease-in-out duration-300 transition-all p-2'} ref={questionRef}>
             <QuestionCard>
                 <span className={'w-full flex flex-wrap flex-row justify-between '}>
                     <QuestionCardHeader topics={topics} />
@@ -145,7 +145,7 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
                     </span>
                 }
             </QuestionCard>
-        </div >
+        </li>
 
     ) : <></>
 }

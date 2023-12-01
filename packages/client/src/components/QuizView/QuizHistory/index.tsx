@@ -4,9 +4,8 @@ import { HistoryList } from './HistoryList';
 import { HistoryStats } from './HistoryStats';
 import { useMountedState } from '../../../hooks';
 import { useEffect, useState } from 'preact/hooks';
-import { QuizDetailHeader } from '../QuizDetailHeader';
+import { useCurrentFileSignal } from '../../../signals';
 import API, { PopulatedQuizHistoryType } from '../../../utils/api';
-import { useCurrentFileSignal, useInViewAttemptSignal } from '../../../signals';
 import { QuizModelResponse, calculateAverage, calculateScore } from '../../../utils';
 
 export interface IHistoryStats {
@@ -41,14 +40,10 @@ const generateHistoryStats = (history: PopulatedQuizHistoryType[]): IHistoryStat
     };
 };
 
-const divContainerClasses = 'h-full min-h-[calc(100vh-10vh)] flex-col justify-start items-center p-2';
-
-
 export function QuizHistory(): JSX.Element {//NOSONAR
     const [stats, setStats] = useState<IHistoryStats | null>(null);
     const [currentHistory, setCurrentHistory] = useState<PopulatedQuizHistoryType[]>([]);
     const [viewAttempt, setViewAttempt] = useState<PopulatedQuizHistoryType | null>(null);
-    const { inViewAttempt, setInViewAttempt } = useInViewAttemptSignal();
     const { fileDetails } = useCurrentFileSignal();
     const isMounted = useMountedState();
 
@@ -56,7 +51,6 @@ export function QuizHistory(): JSX.Element {//NOSONAR
 
     const handleSetViewAttempt = (attempt: PopulatedQuizHistoryType) => {
         if (attempt) {
-            setInViewAttempt(true);
             setViewAttempt(attempt);
         }
     };
@@ -79,27 +73,16 @@ export function QuizHistory(): JSX.Element {//NOSONAR
         }
     }, [currentFile, isMounted]);
 
-    // handles the back button logic.
-    useEffect(() => {
-        if (!inViewAttempt.value && viewAttempt) setViewAttempt(null);
-    }, [inViewAttempt.value]);
 
+    return isMounted && currentHistory !== null ?   //NOSONAR
+        <>
+            {stats && !viewAttempt && <HistoryStats stats={stats.stats} />}
+            {viewAttempt && <ViewAttempt attempt={viewAttempt} hideAttempt={() => setViewAttempt(null)} />}
+            {!viewAttempt && <HistoryList
+                history={currentHistory ?? []}
+                setViewAttempt={handleSetViewAttempt}
+            />}
 
-    return isMounted && (currentHistory?.length ?? 0) > 0 ? (
-        <div className={divContainerClasses}>
-            <QuizDetailHeader isHistory={true} />
-            {
-                (currentHistory !== null && !viewAttempt) ? (
-                    <>
-                        {stats && <HistoryStats stats={stats.stats} />}
-                        <HistoryList
-                            history={currentHistory ?? []}
-                            setViewAttempt={handleSetViewAttempt}
-                        />
-                    </>
-                ) :
-                    <ViewAttempt attempt={viewAttempt} />
-            }
-        </div>
-    ) : <></>
+        </>
+        : <></>
 }

@@ -81,7 +81,7 @@ function AnsweredAnswerOptionSwitch({ question }: Readonly<AnsweredQuizQuestionP
     }
 }
 
-const sectionClasses = 'flex flex-col flex-start w-full h-full items-center p-2 overflow--auto';
+const sectionClasses = 'flex flex-col flex-start w-full h-full items-center p-2';
 
 export function AnswerOptions(props: Readonly<(AnswerOptionProps | AnsweredQuizQuestionProps)>): JSX.Element { // NOSONAR
     const isMounted = useMountedState();

@@ -56,6 +56,14 @@ export function QuizHistory(): JSX.Element {//NOSONAR
     };
 
     useEffect(() => {
+        if (isMounted) {
+            setCurrentHistory([]);
+            setViewAttempt(null);
+            setStats(null);
+        }
+    }, [isMounted, currentFile]);
+
+    useEffect(() => {
         if (currentFile && isMounted) {
             (async () => {
                 // fetch the history for the current quiz
@@ -74,7 +82,7 @@ export function QuizHistory(): JSX.Element {//NOSONAR
     }, [currentFile, isMounted]);
 
 
-    return isMounted && currentHistory !== null ?   //NOSONAR
+    return isMounted ? ( // NOSONAR
         <>
             {stats && !viewAttempt && <HistoryStats stats={stats.stats} />}
             {viewAttempt && <ViewAttempt attempt={viewAttempt} hideAttempt={() => setViewAttempt(null)} />}
@@ -84,5 +92,5 @@ export function QuizHistory(): JSX.Element {//NOSONAR
             />}
 
         </>
-        : <></>
+    ) : <></>;
 }

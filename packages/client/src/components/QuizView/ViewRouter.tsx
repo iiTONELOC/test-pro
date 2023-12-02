@@ -38,6 +38,8 @@ export function QuizViewRouter(): JSX.Element {
             return <>QuizCreate </>;
         case QuizViews.QuizDelete:
             return <QuizOptions />;
+        case QuizViews.QuizHistory:
+            return <QuizDetails />;
         default:
             return <QuizDetails />;
     }

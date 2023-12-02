@@ -1,5 +1,4 @@
 import { JSX } from 'preact/jsx-runtime';
-import { useShowQuizDetails } from '../../../hooks';
 import { trimClasses, uuid } from '../../../utils';
 import { QuizViews, useQuizViewSignal, useInfoDrawerSignal } from '../../../signals';
 
@@ -9,8 +8,7 @@ hover:bg-green-700 hover:text-gray-200 hover:scale-110 hover:shadow-xl transitio
 hover:border-1 hover:border-black text-base`;
 
 export function ActionButtons({ toggleHistory, showHistory }: { toggleHistory: () => void, showHistory: boolean }): JSX.Element { // NOSONAR
-    const hasDetails = useShowQuizDetails();
-    const { setCurrentQuizView } = useQuizViewSignal();
+    const { setCurrentQuizView, currentQuizView } = useQuizViewSignal();
     const { isDrawerOpen, toggleDrawer } = useInfoDrawerSignal();
 
     const quizActions = [
@@ -35,7 +33,7 @@ export function ActionButtons({ toggleHistory, showHistory }: { toggleHistory: (
         }
     ];
 
-    return hasDetails ? (
+    return currentQuizView.value === QuizViews.QuizDetails || currentQuizView.value === QuizViews.QuizHistory ? (
         <div className={divClasses}>
             {quizActions.map(action => (
                 <button

@@ -2,12 +2,24 @@ import fs from 'fs';
 import path from 'path';
 
 const folderLocation = '../data/vfs';
-const nodeEnv = process.env.NODE_ENV || 'development';
-const vfsStorageLocation = path.resolve(__dirname, (folderLocation + '-' + nodeEnv));
-const vfsStorageFile = path.join(vfsStorageLocation, 'vfs.json');
+const getNodeEnv = () => process.env.NODE_ENV ?? 'development';
+const getVfsStorageFile = () => path.join(getVfsStorageLocation(), 'vfs.json');
+const getVfsStorageLocation = () => path.resolve(__dirname, (folderLocation + '-' + getNodeEnv()));
+
+
+const getVfsLocations = () => {
+    const vfsStorageLocation = getVfsStorageLocation();
+    const vfsStorageFile = getVfsStorageFile();
+    return {
+        vfsStorageLocation,
+        vfsStorageFile
+    }
+}
 
 
 function createVfs() {
+    const { vfsStorageLocation, vfsStorageFile } = getVfsLocations();
+
     const locationExists = fs.existsSync(vfsStorageLocation);
 
     if (!locationExists) {
@@ -30,6 +42,7 @@ function readVfs() {
 }
 
 function writeVfs(vfs: JSON) {
+    const { vfsStorageFile } = getVfsLocations();
     try {
         const isValidJson = JSON.stringify(vfs) === JSON.stringify(JSON.parse(JSON.stringify(vfs)));
         if (!isValidJson) throw new Error('Invalid JSON')
@@ -48,6 +61,7 @@ function writeVfs(vfs: JSON) {
 }
 
 function deleteVfs() {
+    const { vfsStorageLocation, vfsStorageFile } = getVfsLocations();
     // delete the vfsStorageLocation and vfsStorageFile
     fs.unlinkSync(vfsStorageFile);
     fs.rmdirSync(vfsStorageLocation);

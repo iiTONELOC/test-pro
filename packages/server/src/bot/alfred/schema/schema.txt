@@ -1,0 +1,30 @@
+/**
+ * ```typescript
+ * enum QuestionTypeEnums  {
+ *     MultipleChoice = 'MultipleChoice',
+ *     FillInTheBlank = 'FillInTheBlank',
+ *     ShortAnswer = 'ShortAnswer',
+ *     Matching = 'Matching',
+ *     Ordering = 'Ordering',
+ *     Image = 'Image'
+ *  }
+ * ```
+ */
+/**
+ * ```typescript
+ * interface IQuizByJsonData {
+ *   name: string;
+ *   topics: string[];
+ *   questions:[{
+ *      type: QuestionTypeEnums;
+ *      question: string;
+ *      topics: string[];
+ *      answer: string
+ *      options: string[];
+ *      explanation: string;
+ *      areaToReview: string;
+ *   }];
+ *  }
+ * ```
+ */
+ 

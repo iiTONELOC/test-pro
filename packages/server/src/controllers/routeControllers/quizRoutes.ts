@@ -3,9 +3,9 @@ import { quizController, questionController } from '../dbControllers';
 import { handleRouteError, httpStatusCodes, extractDbQueryParams } from './routeUtils';
 
 import type { IApiResponse, QuizModelResponse, dbQueryParams } from '../types';
-import { QuestionTypeEnums, TopicModelType } from '../../db/types';
+import { QuestionTypeEnums } from '../../db/types';
 import { Topic, Quiz, Question } from '../../db/models';
-import { Types } from 'mongoose';
+
 
 /**
  * ```ts
@@ -30,6 +30,18 @@ export interface IQuizQuestionJsonData {
     areaToReview: string[];
 }
 
+/**
+ * ```ts
+ * enum QuestionTypeEnums  {
+ *     MultipleChoice = 'MultipleChoice',
+ *     FillInTheBlank = 'FillInTheBlank',
+ *     ShortAnswer = 'ShortAnswer',
+ *     Matching = 'Matching',
+ *     Ordering = 'Ordering',
+ *     Image = 'Image'
+ *  }
+ * ```
+ */
 /**
  * ```ts
  * interface IQuizByJsonData {

@@ -10,7 +10,7 @@
     "dev": "nodemon -x ts-node src/app.ts ",
     "build": "npm run lint && rimraf ./lib && tsc && node build.mjs",
     "start": "node lib/app.js",
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "jest --detectOpenHandles --forceExit --testTimeout=120000",
     "lint": "eslint src/**/*.ts",
     "test-dev": "jest --watch",
     "test-cov": "jest --coverage",
@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
+    "langchain": "^0.0.212",
     "mongoose": "^7.6.2"
   },
   "devDependencies": {

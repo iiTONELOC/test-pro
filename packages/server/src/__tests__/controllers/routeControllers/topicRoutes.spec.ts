@@ -13,7 +13,7 @@ beforeAll(async () => {
 
     await dbConnection(process.env.DB_TEST_NAME).then(async () => {
         await Topic.deleteMany({});
-        await startServer();
+        await startServer(undefined, String(PORT));
     });
 });
 

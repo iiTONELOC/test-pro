@@ -9,9 +9,9 @@ import { handleBodyParser } from './middleware';
 
 loadEnv();
 
-const port = process.env.PORT ?? '3000';
 
-export const startServer = async (callback?: Function) => {
+
+export const startServer = async (callback?: Function, port = '3000') => {
     // Create Express server
     const app = express();
 

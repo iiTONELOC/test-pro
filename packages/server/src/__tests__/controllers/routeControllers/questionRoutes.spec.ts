@@ -14,7 +14,7 @@ let question: PopulatedQuestionModelType | null = null;
 beforeAll(async () => {
     process.env.PORT = PORT.toString();
     await dbConnection(process.env.DB_TEST_NAME).then(async () => {
-        await startServer();
+        await startServer(undefined, String(PORT));
     });
 });
 

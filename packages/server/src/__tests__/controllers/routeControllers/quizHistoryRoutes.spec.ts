@@ -90,7 +90,7 @@ beforeAll(async () => {
     await dbConnection(process.env.TEST_DB_NAME)
         .then(async () => {
             await createNeededDbEntries();
-            await startServer();
+            await startServer(undefined, String(PORT));
         });
 });
 

@@ -14,7 +14,7 @@ const PORT = 3004;
 beforeAll(async () => {
     process.env.PORT = PORT.toString();
     await dbConnection(process.env.TEST_DB_NAME).then(async () => {
-        await startServer();
+        await startServer(undefined, String(PORT));
     });
 });
 

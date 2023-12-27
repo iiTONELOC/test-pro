@@ -1,0 +1,575 @@
+Question 1		
+Kernel Mode is also referred to as system mode, supervisor mode, or privileged mode.
+
+	True
+	False
+Question 2		
+You are part of the design team for a security kernel. The most important part is the
+
+
+Coverage
+
+
+Compactness
+
+
+Separation
+
+
+Reference Monitor
+
+Question 3		
+In high-level programming languages such as C, C++, and Java, the "main" method is actually called by the the fundamental controller of the computer. From the list below, what is it that calls the "main" method of a program?
+
+
+Device drivers
+
+
+The Master Boot Record (MBR)
+
+
+Operating System
+
+
+The Memory Management Unit (MMU)
+
+Question 4		
+The recent breach your company experienced resulted in data exfiltration of sensitive Intellectual Property. This was a loss of
+
+
+Virtual memory
+
+
+User-space
+
+
+Availability
+
+
+Confidentiality
+
+Question 5		
+A trusted program is one that does exactly what it should and:
+
+
+Is inexpensive
+
+
+Is accurate and precise
+
+
+Does not do what it should not
+
+
+Free from any vulnerabilities
+
+Question 6		
+The following are all OS types EXCEPT:
+
+
+Real Time Operating System (RTOS)
+
+
+Multi-User Operating System
+
+
+Developer Mode Operating System (DMOS)
+
+
+Single-User Multitasking Operating Systems
+
+
+Hide question 6 feedback
+Correct!!  This is NOT a real OS type!
+
+There are four general types of operating systems. Their use depends on the type of computer and the type of applications that will be run on those computers.
+
+Real-time operating systems (RTOS) are used to control machinery, scientific instruments, and industrial systems. In general, the user does not have much control over the functions performed by the RTOS.
+Single-user, single task operating systems allow one user to do one thing at a time. And example of a single-user, single task operating system is the operating system used by personal digital assistants (PDAs), also known as handheld computers.
+Single-user, multi-tasking operating systems allow a single user to simultaneously run multiple applications on their computer. This is the type of operating system found on most personal desktop and laptop computers. The Windows (Microsoft) and Macintosh (Apple) platforms are the most popular single-user, multi-tasking operating systems.
+Multi-user operating systems allow multiple users to simultaneously use the resources on a single computer. Unix is an example of a multi-user operating system.
+
+
+Read more: http://www.referenceforbusiness.com/management/Ob-Or/Operating-Systems.html#ixzz4MTO5dqot
+
+
+SOURCE:  http://www.referenceforbusiness.com/management/Ob-Or/Operating-Systems.html
+
+Question 7		
+During a recent security audit, one of the lessons learned was that the integrity of an object has been preserved when the item is:
+
+
+Modified only in acceptable ways
+
+
+Modified only by authorized people
+
+
+Modified only by authorized processes
+
+
+All of the above 
+
+Question 8		
+Preboot Execution Environment (PXE) and Apple NetBoot are two examples of technologies that enable booting a computer system with an OS located on a network drive.
+
+	True
+	False
+Question 9		
+When designing a new web-based application you are including a text field for a user to input a phone number. Since you can reasonably assume the user will never enter more that 11 digits, to allow for the inclusion of a country code, you will not need to take any action to validate the input.
+
+	True
+	False
+Question 10		
+You work for a Department of Defense contractor as a system administrator. You are using secure access control principles. The best option for your systems are to require  non-administrative privileges in order to run on a daily basis.
+
+	True
+	False
+Question 11		
+A ________ is a piece of malicious code that interferes with normal system functions and goes to great lengths not to be discovered, or if discovered and removed, to reestablish itself whenever possible
+
+
+Rootkit
+
+
+Virus
+
+
+Malware
+
+
+Worm
+
+Question 12		
+An email to one of the sales team members was intercepted and successfully read by an attacker, it was a failure of which of the following?
+
+
+Availability 
+
+
+Integrity
+
+
+Confidentiality 
+
+
+Non-Repudiation
+
+Question 13		
+You are a black hat hacker. You want to conceal, and maintain your access to a system you compromised. Your best option is to install
+
+
+A virus
+
+
+A new user with administrative privileges
+
+
+A rootkit
+
+
+A worm
+
+Question 14		
+Which of the following is NOT one of the Secure Software Design Elements
+
+
+Linear
+
+
+Information Hiding
+
+
+Encapsulation
+
+
+Modular
+
+Question 15		
+Keeping the design of an application secret so that any flaws are hidden is a preferred security practice.
+
+	True
+	False
+Question 16		
+Operating systems are designed in layers in order to provide isolation thereby limiting the effects of problems.
+
+	True
+	False
+Question 17		
+Which of the following does not describe Interception?
+
+
+Wiretapping
+
+
+Eavesdropping
+
+
+Changing bits of data
+
+
+Packet Sniffing
+
+Question 18		
+Rootkits are a type of malware that modifies the operating system so that an attacker can maintain access and hide on a victim machine.
+
+	True
+	False
+Question 19		
+Beginning with Windows Vista, the OS has provided a security feature which limits privileges of software applications and access to administrative tasks. When a program attempts to make a change requiring elevated permissions, it triggers an on-screen prompt requiring an administrator password to proceed. Select this feature from the list
+
+
+User Account Control (UAC)
+
+
+Windows Firewall
+
+
+Windows Defender
+
+
+Trusted Platform Module (TPM)
+
+Question 20		
+You have designed an exceptionally secure application. It employs many secure design principles such as Least Privilege, Economy of Mechanism, Open Design, and Permission Based conditions. You want to include a security mechanism that requires the user to authenticate with a pin for every system call the program executes if the user is logged in without an administrator account.
+
+
+This is a good idea because it will alert the user if the process gets hijacked by another process
+
+
+This is a bad idea because it will violate the concept of Confidentiality
+
+Incorrect Response
+This is a good idea because it will increase security
+
+Correct Answer
+This is a bad idea because it violates Ease of Use and will encourage the user to circumvent the security
+
+Question 21		
+When programming for a single-user operating system what is the simplest type of memory protection will you use to separate the operating system files from user-space?
+
+
+A segment
+
+
+A gate
+
+
+A frame
+
+
+A fence
+
+Question 22		
+Separation is a tool used to compartmentalize processes and increase the security of concurrently running applications
+
+	True
+	False
+Question 23		
+The heart of the operating system is the
+
+
+Kernel
+
+
+Unified Extensible Firmware Interface (UEFI)
+
+
+Physical memory
+
+
+The Basic Input/Output System (BIOS)
+
+Question 24		
+Your application ensures that each user and each program should operate using the fewest privileges possible. This secure design principle is called:
+
+
+Permission-Based
+
+
+Least Privilege
+
+
+Complete Mediation
+
+
+Open Design
+
+Question 25		
+ Security should be designed into the System architecture instead of added after deployment.
+
+	True
+	False
+Question 26		
+Parts of the security suite include (select all that apply)
+
+
+Authentication
+
+
+Auditing
+
+
+Confidentiality
+
+
+Identification
+
+Question 27		
+As a member of the Incident Response team you use certain techniques to identify suspicious activities. You can identify what happened during a recent successful attack by looking in the
+
+
+Sandbox
+
+
+Browser history
+
+
+Firewall rules
+
+
+Audit logs
+
+Question 28		
+Your new role as the Chief Information Security Officer involves protection of the items valued by the company. These protected items are called assets.
+
+	True
+	False
+Question 29		
+Bolt-On security solutions are best described by which of the following?
+
+
+Rarely if ever work effectively
+
+
+Far more complex and prone to failure
+
+
+Leave seams, gaps and overlaps that can create attack vectors
+
+
+All of the above
+
+Question 30		
+Your software design team is considering implementing security from the very beginning of the design. Your only option for security is to include a security kernel.
+
+	True
+	False
+Question 31		
+When programming for a multi-user operating system, you want to keep the memory allocated to one user isolated from the memory allocated to another user. The intent is to deny unauthorized viewing. This technique will preserve:
+
+
+Non-repudiation
+
+
+Confidentiality
+
+
+Integrity
+
+
+Availability
+
+Question 32		
+Checking for software security correctness can be ensured with regular formal reviews and simulations
+
+	True
+	False
+Question 33		
+Bolt-On security solutions rarely if ever work effectively.  They are typically much more expensive, far more complex, and more prone to failure. They also can leave seams, gaps and overlaps that can create new attack vectors. 
+
+	True
+	False
+Question 34		
+You are working on a team building a secure Operating System. The most sensitive operations will exist at what level?
+
+
+User
+
+
+The Memory Management Unit (MMU)
+
+
+Hardware
+
+
+Inner-most layer (Ring 0) of the ring structure
+
+Question 35		
+The security kernel reference monitor must be tamperproof. This means it should be small enough to analyze or test.
+
+Incorrect Response
+	True
+Correct Answer
+	False
+Question 36		
+Which of the two mechanisms below are used to provide policy enforcement?
+
+
+ACLs and policy configurations
+
+
+Configuration of Internet Options Settings pushed from the Windows Server
+
+
+Firewall Settings and Intrusion Detection Systems
+
+
+Addition of Malware and Virus prevention software to all client and server systems
+
+
+Hide question 36 feedback
+SOURCE:  http://www.infosectoday.com/Articles/Security_Weaknesses_Interface.htm
+
+Question 37		
+You are a black hat hacker. You want to conceal, and maintain your access to a system you compromised. Your best option is to install
+
+
+A rootkit
+
+
+A worm
+
+
+A new user with administrative privileges
+
+
+A virus
+
+Question 38		
+As a software developer maintaining legacy code you discover that the architecture of the program is inherently insecure. You have found evidence that the program violates the separation of privilege principle. Of the following choices, which could mitigate the vulnerability?
+
+
+Ensure the protection system should be small, simple, and straightforward
+
+Incorrect Response
+Employ physical or logical separation to reduce risk from sharing
+
+Correct Answer
+Require user authentication plus a cryptographic key
+
+
+Check every access attempt
+
+Question 39		
+As a programmer of secure software, you will code applications to use memory that is divided into two main sections. From the list, select the two.
+
+
+User-space
+
+
+Quantum-space
+
+
+Cyber-space
+
+
+Kernel-space
+
+Question 40		
+User mode is used when executing harmless code in user applications.
+
+	True
+	False
+Question 41		
+You work for a Department of Defense contractor as a software developer. You are using secure coding principles. The best option for your application is to require administrative privileges in order to run on a daily basis.
+
+	True
+	False
+Question 42		
+Virtual memory could consist of the following 
+
+
+Segmentation alone
+
+
+Paging alone
+
+
+A combination of Segmentation and Paging
+
+
+Fencing
+
+Question 43		
+You are a new programmer hired to maintain some code originally written in C and migrated to C++. Some of the code was written 20 years ago. You need to ensure the older functions are still supported. The complexity of the code could result in
+
+
+Exploit writers capitalizing on the complexity and developing zero-day exploits
+
+
+Maintaining confidentiality
+
+
+User non-repudiation
+
+
+Allowing senior programmers to cross train and maintain separation of duties
+
+Question 44		
+An object or service is thought to be available if which of the following are true?
+
+
+It is present in a usable form.
+
+
+It has enough capacity to meet the service’s needs.
+
+
+It is making clear progress, and, if in wait mode, it has a bounded waiting time.
+
+
+All of the above
+
+Question 45		
+Designing software with security in mind at the beginning and ensuring security is a fundamental part of the process is impossible. It’s much more effective to add security appliances after the software is complete.
+
+	True
+	False
+Question 46		
+Access Control provides a mechanism whereby a process executing in Ring 3 can access highly privileged objects in Ring 0.
+
+Correct Answer
+	True
+Incorrect Response
+	False
+Question 47		
+A recent incident involving malware has led to data exfiltration at your company. Which of the following is an example of failing to maintain the confidentiality of the data?
+
+
+Only authorized parties can access specific data 
+
+
+An unauthorized process or program accesses a data item
+
+
+Unauthorized parties are prevented from reading private emails
+
+
+All data is protected by encryption
+
+Question 48		
+During a recent virus infestation, you decided to analyze the offending malware. After the cleanup, you intentionally run the malware in
+
+
+A honeypot
+
+
+Encapsulation
+
+
+A sandbox
+
+
+Virtual Memory
+
+Question 49		
+A rootkit is always used for malicious purposes.
+
+	True
+	False
+Question 50		
+Security applications added after the system is designed and deployed are the most effective at providing the required protection.
+
+	True
+	False

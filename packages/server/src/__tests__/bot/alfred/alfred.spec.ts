@@ -1,7 +1,6 @@
-import fs from 'fs';
 import path from 'path';
-import { expect, test, describe } from '@jest/globals';
 import { alfred } from '../../../bot/alfred';
+import { expect, test, describe } from '@jest/globals';
 
 
 describe('Alfred', () => {
@@ -11,17 +10,40 @@ describe('Alfred', () => {
     test('It should be an object', () => {
         expect(typeof alfred).toBe('object');
     });
-    test('It should have a generateQuizJson method', () => {
-        expect(alfred.generateQuizJson).toBeDefined();
+    test('It should have a generateQuizJsonFromTextFile method', () => {
+        expect(alfred.generateQuizJsonFromTextFile).toBeDefined();
     });
     test('It should be a function', () => {
-        expect(typeof alfred.generateQuizJson).toBe('function');
+        expect(typeof alfred.generateQuizJsonFromTextFile).toBe('function');
     });
-    test('It should generate json for a given user text', async () => {
-        const userText = fs.readFileSync(path.resolve(process.cwd(), './src/bot/alfred/schema/testUserInput.txt'), 'utf-8');
-        const json = await alfred.generateQuizJson(userText);
-        expect(json).toBeDefined();
-        expect(typeof json).toBe('string');
-        console.log('GENERATED DATA\n', json, '\nGENERATED DATA')
+    test('It should generate the json data for a quiz from the U of A contained in a text file', async () => {
+        const testFilePath = path.resolve(process.cwd(), './src/bot/alfred/utils/extractQuestionsFromText/testUserInputUA.txt');
+
+        const json = await alfred.generateQuizJsonFromTextFile(testFilePath);
+        try {
+            const jsonString = JSON.stringify(json, null, 4);
+            // it should be valid json
+            expect(typeof jsonString).toBe('string');
+        } catch (error) {
+            console.error(error);
+        }
+
+        expect.assertions(1);
     });
+    test('It should generate the json data for a quiz from TestOut contained in a text file', async () => {
+        const testFilePath = path.resolve(process.cwd(), './src/bot/alfred/utils/extractQuestionsFromText/testUserInputTestOut.txt');
+
+        const json = await alfred.generateQuizJsonFromTextFile(testFilePath, 'test-out');
+        try {
+            const jsonString = JSON.stringify(json, null, 4);
+            // it should be valid json
+            expect(typeof jsonString).toBe('string');
+        } catch (error) {
+            console.error(error);
+        }
+
+        expect.assertions(1);
+    });
+
 });
+

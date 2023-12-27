@@ -7,7 +7,6 @@ import { TopicModelType } from './types';
  * ```ts
  *  enum QuestionTypeEnums {
  *     MultipleChoice = 'MultipleChoice',
- *     TrueFalse = 'TrueFalse',
  *     FillInTheBlank = 'FillInTheBlank',
  *     ShortAnswer = 'ShortAnswer',
  *     Matching = 'Matching',
@@ -18,7 +17,6 @@ import { TopicModelType } from './types';
  */
 export enum QuestionTypeEnums {
     MultipleChoice = 'MultipleChoice',
-    TrueFalse = 'TrueFalse',
     FillInTheBlank = 'FillInTheBlank',
     ShortAnswer = 'ShortAnswer',
     Matching = 'Matching',

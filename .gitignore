@@ -176,7 +176,6 @@ dist
 
 # Local files
 .local*
-data/
-lib/
-certs/
-~/
+
+/data
+~/.nvm

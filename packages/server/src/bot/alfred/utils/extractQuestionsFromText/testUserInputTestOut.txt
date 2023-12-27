@@ -1,0 +1,384 @@
+Question 1:
+
+Which of the following protocols allows hosts to exchange messages to indicate problems with packet delivery?
+
+
+ICMP
+
+
+
+TFTP
+
+
+
+IGMP
+
+
+
+DHCP
+
+Explanation
+Internet Control Message Protocol (ICMP) allows hosts to exchange messages to indicate a packet's status as it travels through a network.
+
+IGMP (Internet Group Management Protocol) establishes multicast group memberships, which allows a computer to send a single network packet to multiple hosts on a network at the same time.
+
+DHCP is used to automatically assign addresses and other configuration parameters to network hosts.
+
+TFTP (Trivial File Transfer Protocol) is often used when files need to be transferred between systems quickly.
+
+References
+
+2.4.4 Network Port and Protocol Facts
+q_network_protocol_facts_icmp_np6.question.fex
+
+Question 2:
+
+You have a large TCP/IP network and want to keep a host's real-time clock synchronized. Which protocol should you use?
+
+
+
+NTP
+
+
+
+SMTP
+
+
+
+FTP
+
+
+
+SNMP
+
+Explanation
+Network Time Protocol (NTP) keeps computers' clocks synchronized.
+
+SMTP is used to send mail between email servers.
+
+SNMP lets network administrators set up alerts to monitor the state of a network.
+
+FTP (File Transfer Protocol) provides a generic method for transferring files.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports
+q_network_protocol_facts_ntp_np6.question.fex
+
+Question 3:
+
+Your company has just acquired another company in the same city. You need to integrate the two email systems so that messages can be exchanged between email servers. Currently, each network uses an email package from a different vendor.
+
+Which TCP/IP protocol enables message exchange between systems?
+
+
+
+SMTP
+
+
+
+POP3
+
+
+
+ICMP
+
+
+
+IMAP4
+
+Explanation
+Simple Mail Transfer Protocol (SMTP) specifies how messages are exchanged between email servers. Email clients use POP3 and IMAP4 to download email messages from email servers.
+
+ICMP (Internet Control Message Protocol) is used with ping and traceroute to communicate network information.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports
+q_network_protocol_facts_smtp_02_np6.question.fex
+
+Question 4:
+
+You're an application developer, and you're writing a program for exchanging video files through a TCP/IP network. You need to select a transport protocol that will guarantee delivery.
+
+Which TCP/IP protocol provides this capability?
+
+
+
+UDP
+
+
+
+TCP
+
+
+
+FTP
+
+
+
+SIP
+
+Explanation
+In this scenario, you should write the application to use Transmission Control Protocol (TCP). TCP guarantees delivery through error checking and acknowledgments.
+
+FTP provides a generic method for transferring files. It can protect access to files by requiring usernames and passwords.
+
+UDP is a host-to-host protocol like TCP, but it doesn't acknowledge that each packet was transmitted.
+
+SIP is an open-source VoIP protocol.
+
+References
+
+2.4.4 Network Port and Protocol Facts
+q_network_protocol_facts_tcp_02_np6.question.fex
+
+Question 5:
+
+Which of the following features does UDP provide? (Select two.)
+
+
+Data packet sequencing
+
+
+
+Packet acknowledgement
+
+
+
+Lost packet retransmission
+
+
+
+Low overhead
+
+
+Connectionless datagram services
+
+Explanation
+UDP is a connectionless protocol used by applications that need low overhead and don't require guaranteed delivery.
+
+TCP provides data packet sequencing, packet acknowledgement, and lost packet retransmission.
+
+References
+
+2.4.4 Network Port and Protocol Facts
+q_network_protocol_facts_udp_np6.question.fex
+
+Question 6:
+
+You've recently installed a new Windows server. To ensure system time accuracy, you've loaded an application that synchronizes the hardware clock on the server with an external time source on the internet. Now you must configure your network firewall to allow time synchronization traffic through.
+
+Which of the following ports are you MOST LIKELY to open on the firewall?
+
+
+123
+
+
+
+110
+
+
+
+119
+
+
+
+80
+
+Explanation
+TCP/IP port 123 is assigned to Network Time Protocol (NTP). NTP is used to communicate time synchronization information between systems on a network.
+
+HyperText Transfer Protocol (HTTP) uses TCP/IP port 80. HTTP is the protocol used to send requests to a web server and retrieve web pages from the web server.
+
+TCP/IP port 119 is used by the Network News Transfer Protocol (NNTP). NNTP is used to access and retrieve messages from newsgroups.
+
+TCP/IP port 110 is used by Post Office Protocol version 3 (POP3). POP3 is used to download email from mail servers.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports
+q_common_ports_123_np6.question.fex
+
+Question 7:
+
+Which port number is used by SNMP?
+
+
+
+25
+
+
+
+110
+
+
+
+119
+
+
+
+161
+
+Explanation
+Simple Network Management Protocol (SNMP) uses port 161.
+
+The other listed ports are used by the following protocols:
+
+SMTP uses port 25.
+
+POP3 uses port 110.
+
+NNTP uses port 119.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports
+q_common_ports_161_np6.question.fex
+
+Question 8:
+
+You're configuring a network firewall to allow SMTP outbound email traffic and POP3 inbound email traffic.
+
+Which of the following TCP/IP ports should you open on the firewall? (Select two.)
+
+
+
+21
+
+
+
+443
+
+
+
+143
+
+
+
+25
+
+
+
+110
+
+Explanation
+Simple Mail Transfer Protocol (SMTP) uses TCP/IP port 25. Post Office Protocol version 3 (POP3) uses TCP/IP port 110.
+
+File Transfer Protocol (FTP) uses TCP/IP port 21.
+
+Internet Message Access Protocol version 4 (IMAP4) uses TCP/IP port 143.
+
+Secure Sockets Layer (SSL) uses TCP/IP port 443.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports
+q_common_ports_25_10_np6.question.fex
+
+Question 9:
+
+Which port does Telnet use?
+
+
+23
+
+
+
+80
+
+
+
+53
+
+
+
+25
+
+Explanation
+Telnet uses port 23.
+
+HyperText Transfer Protocol (HTTP) uses port 80.
+
+Simple Mail Transfer Protocol (SMTP) uses port 25.
+
+Domain Name System (DNS) uses port 53.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports
+q_common_ports_53_np6.question.fex
+
+Question 10:
+
+Which of the following network services or protocols uses TCP/IP port 69?
+
+
+
+SMTP
+
+
+
+NNTP
+
+
+
+POP3
+
+
+TFTP
+
+Explanation
+Trivial File Transfer Protocol (TFTP) uses TCP/IP port 69. TFTP is a connectionless service for downloading files from a remote system. It's often used for downloading firmware to networking devices.
+
+Network News Transfer Protocol (NNTP) is used to access and download messages from newsgroup servers. NNTP uses TCP/IP port 119.
+
+Simple Mail Transfer Protocol (SMTP) is used to send and receive email. SMTP uses TCP/IP port 25.
+
+Post Office Protocol version 3 (POP3) is used to download email from a remote system. POP3 uses TCP/IP port 110.
+
+References
+
+2.4.1 TCP/IP Protocols
+
+2.4.3 Explore Network Services
+
+2.4.4 Network Port and Protocol Facts
+
+2.4.5 Common Ports

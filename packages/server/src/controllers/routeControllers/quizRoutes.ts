@@ -32,6 +32,18 @@ export interface IQuizQuestionJsonData {
 
 /**
  * ```ts
+ * enum QuestionTypeEnums  {
+ *     MultipleChoice = 'MultipleChoice',
+ *     FillInTheBlank = 'FillInTheBlank',
+ *     ShortAnswer = 'ShortAnswer',
+ *     Matching = 'Matching',
+ *     Ordering = 'Ordering',
+ *     Image = 'Image'
+ *  }
+ * ```
+ */
+/**
+ * ```ts
  * interface IQuizByJsonData {
  *   name: string;
  *   topics: string[];

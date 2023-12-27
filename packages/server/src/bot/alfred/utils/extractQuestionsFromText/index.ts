@@ -16,7 +16,7 @@ const cleanQuestionText = (questionText: string) => questionText.replace('\n\n',
  * @param text - The text to parse questions from
  * @returns - An array of parsed questions
  */
-export const extractQuestionsFromTextUofA = (text: string): Partial<Partial<IQuizQuestionJsonData>>[] => {
+export const extractQuestionsFromTextUofA = (text: string): Partial<IQuizQuestionJsonData>[] => {
     const extractedQuestions: IterableIterator<RegExpMatchArray> = text.matchAll(QUESTION_EXTRACTOR_U_OF_A);
     const parsedQuestions: Partial<parsedQuestionsType>[] = [];
 
@@ -37,7 +37,7 @@ export const extractQuestionsFromTextUofA = (text: string): Partial<Partial<IQui
     return parsedQuestions;
 };
 
-export const extractedQuestionsFromTextTestOut = (text: string): Partial<Partial<IQuizQuestionJsonData>>[] => {
+export const extractedQuestionsFromTextTestOut = (text: string): Partial<IQuizQuestionJsonData>[] => {
     const extractedQuestions: IterableIterator<RegExpMatchArray> = text.matchAll(QUESTION_EXTRACTOR_TEST_OUT);
     const parsedQuestions: Partial<parsedQuestionsType>[] = [];
 

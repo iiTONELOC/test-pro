@@ -15,6 +15,11 @@ router.route('/json-upload')
     // CREATE a quiz by JSON
     .post(quizRouteController.createQuizByJSON);
 
+// api/quizzes/text-convert
+router.route('/convert-to-json')
+    // CREATE a quiz by text
+    .post(quizRouteController.convertTextToJSON);
+
 // api/quizzes/:id
 router.route('/:id')
     // GET a quiz by id

@@ -1,15 +1,17 @@
-import { afterAll, beforeAll, expect, test, describe } from '@jest/globals';
-import { Question, Topic, Quiz, QuestionTypeEnums } from '../../../db/models';
+import fs from 'fs';
+import path from 'path';
+import { Types } from 'mongoose';
+import { startServer } from '../../../server';
 import { topicController } from '../../../controllers';
 import { dbConnection, dbClose } from '../../../db/connection';
 import { IApiResponse, IQuizByJsonData } from '../../../controllers/types';
-import { startServer } from '../../../server';
-import { Types } from 'mongoose';
-
+import { afterAll, beforeAll, expect, test, describe } from '@jest/globals';
+import { Question, Topic, Quiz, QuestionTypeEnums } from '../../../db/models';
 
 import {
     IQuiz, ITopic, IQuestion, TopicModelType, PopulatedQuizModel, QuizModelType, QuestionModelType
 } from '../../../db/types';
+import { jsonQuizData } from '../../../bot/alfred/utils/types';
 
 
 const PORT = 3003;
@@ -465,6 +467,42 @@ describe('POST /api/quizzes/json-upload', () => {
             expect(quizResponse?.data?.topics.length).toBe(1);
             expect(quizResponse?.data?.createdAt).toBeDefined();
             expect(quizResponse?.data?.updatedAt).toBeDefined();
+        });
+    });
+
+
+    describe('POST /api/quizzes/convert-to-json', () => {
+        describe('Converting quiz text data to json', () => {
+            test('Should be able to convert a quiz text file to json', async () => {
+                // read the test quiz text file
+                const testFilePath = path.resolve(process.cwd(), './src/bot/alfred/utils/extractQuestionsFromText/testUserInputTestOut.txt');
+                const testFile = fs.readFileSync(testFilePath, 'utf8');
+
+                const requestBody = {
+                    text: testFile,
+                    type: 'test-out',
+                    name: 'testQuizConvertToJson'
+                };
+
+                const response: Response = await fetch(`http://localhost:${PORT}/api/quizzes/convert-to-json`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const quizResponse: IApiResponse<jsonQuizData[]> = await response.json() as IApiResponse<jsonQuizData[]>;
+
+                expect(response.status).toBe(200);
+                const data = quizResponse?.data ?? [] as jsonQuizData[];
+                const quiz = data[0] ?? {} as jsonQuizData;
+                expect(quiz?.name).toBe('testQuizConvertToJson');
+
+                const jsonString = JSON.stringify(quiz, null, 4);
+                // it should be valid json
+                expect(typeof jsonString).toBe('string');
+            }, 120000);
         });
     });
 });

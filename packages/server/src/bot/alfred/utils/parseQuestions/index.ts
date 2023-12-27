@@ -26,19 +26,16 @@ export const readTextFile = async (pathToFile: string): Promise<string> => {
  * @param userText  The user provided text
  * @returns        The parsed questions as an array of partial parsed questions
  */
-export const parseQuestionsUofA = async (pathToFile: string): Promise<Partial<parsedQuestionsType>[]> => {
-    const quizQuestionsText = await readTextFile(pathToFile);
-    return extractQuestionsFromText.UofA(quizQuestionsText);
-};
+export const parseQuestionsUofA = (userText: string): Partial<parsedQuestionsType>[] => extractQuestionsFromText.UofA(userText);
 
-export const parseQuestionsTestOut = async (pathToFile: string): Promise<Partial<parsedQuestionsType>[]> => {
-    const quizQuestionsText = await readTextFile(pathToFile);
-    quizQuestionsText
+
+export const parseQuestionsTestOut = (userText: string): Partial<parsedQuestionsType>[] => {
+    userText = userText
         .replace(/Correct Answer:?/g, '')
         .replace(/Correct/g, '')
         .replace(/Answer:?/g, '')
 
-    return extractQuestionsFromText.TestOut(quizQuestionsText);
+    return extractQuestionsFromText.TestOut(userText);
 };
 
 export const parseQuestions = {

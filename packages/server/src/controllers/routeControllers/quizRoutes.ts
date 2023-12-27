@@ -1,10 +1,14 @@
+import { alfred } from '../../bot';
 import { Request, Response } from 'express';
+import { Topic, Quiz, Question } from '../../db/models';
 import { quizController, questionController } from '../dbControllers';
 import { handleRouteError, httpStatusCodes, extractDbQueryParams } from './routeUtils';
 
 import type { IApiResponse, QuizModelResponse, dbQueryParams } from '../types';
 import { QuestionTypeEnums } from '../../db/types';
-import { Topic, Quiz, Question } from '../../db/models';
+import { quizType } from '../../bot/types';
+import { jsonQuizData } from '../../bot/alfred/utils/types';
+
 
 
 /**
@@ -72,6 +76,7 @@ export interface IQuizRouteController {
     updateById: (req: Request, res: Response) => Promise<IApiResponse<(QuizModelResponse)>>;
     deleteById: (req: Request, res: Response) => Promise<IApiResponse<(QuizModelResponse)>>;
     createQuizByJSON: (req: Request, res: Response) => Promise<IApiResponse<(QuizModelResponse)>>;
+    convertTextToJSON: (req: Request, res: Response) => Promise<IApiResponse<(QuizModelResponse)>>;
 }
 
 
@@ -176,6 +181,40 @@ export const quizRouteController: IQuizRouteController = {
             return res.status(httpStatusCodes.CREATED).json({ data: created });
         } catch (error: any) {
             console.log('CREATE QUIZ BY JSON ERROR', error.message)
+            return handleRouteError(res, error.message);
+        }
+    },
+    convertTextToJSON: async (req: Request, res: Response): Promise<IApiResponse<(QuizModelResponse)>> => {
+        try {
+            const { text, type, name } = req.body as { text: string, type: string, name: string };
+
+            const converted: jsonQuizData[] = await alfred.generateQuizJsonFromText(text, type as quizType);
+
+            // the converted may contain multiple quizzes, so we need to create the json object for each quiz
+            // which means we need to add the title to each quiz but we need to make sure the title is unique
+            // we will do this by using a numbering system appended to the end of the title
+            let quizzes: jsonQuizData[] = [];
+            const numberOfQuizzes = converted.length;
+
+
+            if (numberOfQuizzes > 1) {
+                const quizTitles = Array.from({ length: numberOfQuizzes }, (_, i) => `${name} ${i + 1}`);
+
+                // loop over the converted quizzes and add the title to each one
+                quizzes = converted.map((quiz, i) => {
+                    quiz.name = quizTitles[i];
+                    return quiz;
+                });
+            } else {
+                // if there is only one quiz then we don't need to append a number to the end of the title
+                quizzes = converted.map(quiz => {
+                    quiz.name = name;
+                    return quiz;
+                });
+            }
+
+            return res.status(httpStatusCodes.OK).json({ data: quizzes });
+        } catch (error: any) {
             return handleRouteError(res, error.message);
         }
     }

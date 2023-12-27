@@ -113,14 +113,14 @@ export const flattenToOneQuiz = (quizData: jsonQuizData[]): jsonQuizData => {
 /**
  * Generates an array of json quiz data from a user provided text file
  *
- * @param pathToFile - The path to the file that contains the user provided text
+ * @param fileText - The text of the file
  * @param quizType - The type of quiz to parse, the only options are `'ua'` or `'test-out'`
  * @param individualQuizzes - Whether or not to generate individual quizzes or one large quiz. This defaults to individual quizzes that
  * contain the maximum number of questions per quiz. So if a user provides 100 questions and the max questions per quiz is 30 then 4 quizzes will be generated.
  * If this is set to false then one large quiz will be generated with all 100 questions.
  * @returns An array of json quiz data. Each sub-array is a quiz to be generated
  */
-export const generateQuizJsonFromTextFile = async (pathToFile: string, quizType: quizType = 'ua', individualQuizzes = true): Promise<jsonQuizData[]> => {
+export const generateQuizJsonFromText = async (fileText: string, quizType: quizType = 'ua', individualQuizzes = true): Promise<jsonQuizData[]> => {
     const isUofA = quizType === 'ua';
 
     // configure lang chain
@@ -139,7 +139,7 @@ export const generateQuizJsonFromTextFile = async (pathToFile: string, quizType:
     const chain = prompt.pipe(functionCallModel).pipe(outputParser);
 
     // parse question details from text file
-    const questions = isUofA ? await parseQuestions.UofA(pathToFile) : await parseQuestions.TestOut(pathToFile);
+    const questions = isUofA ? parseQuestions.UofA(fileText) : parseQuestions.TestOut(fileText);
 
     // split the quiz into quizzes of the max number of questions
     const questionGroups = questions.reduce((acc, question, index) => {
@@ -169,10 +169,12 @@ export const generateQuizJsonFromTextFile = async (pathToFile: string, quizType:
         quiz.questions = quiz.questions.map((question: Partial<IQuizByJsonData>, outerIndex: number) => {
             const currentGroup = (questionGroups[innerIndex] ?? []) as Partial<IQuizQuestionJsonData>[];
             const currentQuestion = (currentGroup[outerIndex] ?? {});
-            return {
+            const data = {
                 ...currentQuestion,
                 ...question
             }
+            data.areaToReview = data.areaToReview?.filter(area => area !== '' && !area.includes('_')).filter(Boolean);
+            return data;
         })
         // ensure unique topics
         const topicSet = new Set();
@@ -182,6 +184,7 @@ export const generateQuizJsonFromTextFile = async (pathToFile: string, quizType:
         });
         // expects an array
         quiz.topics = Array.from(topicSet) as string[];
+
         return quiz;
     });
 
@@ -193,14 +196,14 @@ export const alfred = {
     /**
      * Generates an array of json quiz data from a user provided text file
      *
-     * @param pathToFile - The path to the file that contains the user provided text
+     * @param fileText - The path to the file that contains the user provided text
      * @param quizType - The type of quiz to parse, the only options are `'ua'` or `'test-out'`
      * @param individualQuizzes - Whether or not to generate individual quizzes or one large quiz. This defaults to individual quizzes that
      * contain the maximum number of questions per quiz. So if a user provides 100 questions and the max questions per quiz is 30 then 4 quizzes will be generated.
      * If this is set to false then one large quiz will be generated with all 100 questions.
      * @returns An array of json quiz data. Each sub-array is a quiz to be generated
      */
-    generateQuizJsonFromTextFile
+    generateQuizJsonFromText
 };
 
 export default alfred;

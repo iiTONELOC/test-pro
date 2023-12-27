@@ -1,5 +1,6 @@
 import path from 'path';
-import { alfred } from '../../../bot/alfred';
+import { alfred } from '../../../bot';
+import { quizType } from '../../../bot/types';
 import { expect, test, describe } from '@jest/globals';
 
 
@@ -33,7 +34,7 @@ describe('Alfred', () => {
     test('It should generate the json data for a quiz from TestOut contained in a text file', async () => {
         const testFilePath = path.resolve(process.cwd(), './src/bot/alfred/utils/extractQuestionsFromText/testUserInputTestOut.txt');
 
-        const json = await alfred.generateQuizJsonFromTextFile(testFilePath, 'test-out');
+        const json = await alfred.generateQuizJsonFromTextFile(testFilePath, 'test-out' as quizType);
         try {
             const jsonString = JSON.stringify(json, null, 4);
             // it should be valid json

@@ -1,4 +1,4 @@
-import { TopBar, Footer, ActionBar, MainViewContainer } from './';
+import { TopBar, Footer, ActionBar, MainViewContainer, AddQuizModal } from './';
 import { InputModal } from './InputModals';
 
 export function Layout() {
@@ -9,6 +9,7 @@ export function Layout() {
             <MainViewContainer />
             <Footer />
             <InputModal />
+            <AddQuizModal />
         </>
     );
 }

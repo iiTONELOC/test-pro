@@ -2,13 +2,14 @@ import { ToolTip } from './ToolTip';
 import { trimClasses } from '../utils';
 import { JSX } from 'preact/jsx-runtime';
 import { DocumentPlus } from '../assets/icons';
+import { useShowAddQuizModalSignal } from '../signals';
 
 
 const icons = [
     {
         Icon: DocumentPlus,
         title: 'Create a new quiz',
-        action: () => console.log('Create a new quiz')
+        action: () => useShowAddQuizModalSignal().showAddQuizModalSignal.value = true
     }
 ];
 

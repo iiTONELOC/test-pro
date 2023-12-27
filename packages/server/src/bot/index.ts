@@ -1,0 +1,1 @@
+export { alfred } from './alfred';

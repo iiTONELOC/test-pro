@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { quizType } from './types';
 import { jsonQuizData } from './utils/types';
 import { schema, schemaTestOut } from './schema';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -119,7 +120,7 @@ export const flattenToOneQuiz = (quizData: jsonQuizData[]): jsonQuizData => {
  * If this is set to false then one large quiz will be generated with all 100 questions.
  * @returns An array of json quiz data. Each sub-array is a quiz to be generated
  */
-export const generateQuizJsonFromTextFile = async (pathToFile: string, quizType: ('ua' | 'test-out') = 'ua', individualQuizzes = true): Promise<jsonQuizData[]> => {
+export const generateQuizJsonFromTextFile = async (pathToFile: string, quizType: quizType = 'ua', individualQuizzes = true): Promise<jsonQuizData[]> => {
     const isUofA = quizType === 'ua';
 
     // configure lang chain

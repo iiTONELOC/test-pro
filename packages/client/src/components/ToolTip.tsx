@@ -24,8 +24,11 @@ export type ToolTipProps = {
 
 const groupContainerClasses = 'group';
 
+// const tooltipClasses = `absolute hidden group-hover:block group-focus:block bg-black/[.85] rounded-md
+// text-xs px-2 py-1 min-w-max max-w-xs border border-gray-700 z-50 m-2`;
+
 const tooltipClasses = `absolute hidden group-hover:block group-focus:block bg-black/[.85] rounded-md
-text-xs px-2 py-1 min-w-max max-w-xs border border-gray-700 z-50 m-2`;
+text-xs px-2 py-1 w-auto border border-gray-700 z-50 m-2`;
 
 export function ToolTip(props: ToolTipProps): JSX.Element { //NOSONAR
     const { children, toolTipText } = props;

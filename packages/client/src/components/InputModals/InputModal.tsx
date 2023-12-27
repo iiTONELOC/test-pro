@@ -37,7 +37,7 @@ export function InputModal(): JSX.Element {
                         <ToolTip toolTipText='Close Modal'>
                             <CloseCircle
                                 onClick={toggleModal}
-                                className='static w-6 h-6 hover:w-8 hover:h-8 hover:text-red-600 hover:text-bold cursor-pointer text-gray-400'
+                                className='static w-6 h-6 hover:w-7 hover:h-7 hover:text-red-600 hover:text-bold cursor-pointer text-gray-400 ease-in-out transition-all duration-200'
                             />
                         </ToolTip>
                     </span>

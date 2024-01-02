@@ -11,7 +11,7 @@ export const toJsonObj = (any: any): any => JSON.parse(JSON.stringify(any));
 // Export the API
 export type {
     IApiResponse, QuizModelResponse, QuestionModelResponse, dbQueryParams,
-    PopulatedQuizModel, TopicModelType, PopulatedQuestionModelType
+    PopulatedQuizModel, TopicModelType, PopulatedQuestionModelType, jsonQuizData
 } from './api';
 export { default as API, defaultAPIQueryParams } from './api';
 

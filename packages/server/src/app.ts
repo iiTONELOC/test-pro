@@ -1,6 +1,8 @@
+import { loadEnv } from './loadEnv';
 import { startServer } from './server';
 import { dbConnection, dbClose } from './db/connection';
 
+loadEnv();
 
 (async () => {
     await dbConnection().then(async () => {

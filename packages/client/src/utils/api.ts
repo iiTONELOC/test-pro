@@ -1,4 +1,6 @@
 import type {
+    quizType,
+    jsonQuizData,
     IQuizAttempt,
     IApiResponse,
     IQuizHistory,
@@ -22,6 +24,8 @@ import { IQuizAttemptData, IAnsweredQuestionData } from '.';
 import { useQuizzesDbSignal, QuizzesDbSignal } from '../signals';
 
 export type {
+    quizType,
+    jsonQuizData,
     IQuizAttempt,
     IApiResponse,
     IQuizHistory,
@@ -280,6 +284,35 @@ export const API = {
             return null;
         }
     },
+    convertTextToJSON: async (text: string, quizType: quizType, name: string): Promise<jsonQuizData[] | null> => {
+        try {
+            const body = { text, quizType, name };
+            const response: Response = await fetch(`${API_URL}/quizzes/convert-to-json`, {
+                body: JSON.stringify(body),
+                method: 'POST', headers: { 'Content-Type': 'application/json' }
+            });
+
+            const { data }: IApiResponse<jsonQuizData[]> = await response.json() as IApiResponse<jsonQuizData[]>;
+            return data ?? null;
+        } catch (error) {
+            console.error('An error occurred while converting text to json', error);
+            return null;
+        }
+    },
+    createQuizByJSON: async (quizData: jsonQuizData): Promise<QuizModelResponse | null> => {
+        try {
+            const response: Response = await fetch(`${API_URL}/quizzes/json-upload`, {
+                body: JSON.stringify({ quizData }),
+                method: 'POST', headers: { 'Content-Type': 'application/json' }
+            });
+
+            const { data }: IApiResponse<QuizModelResponse> = await response.json() as IApiResponse<QuizModelResponse>;
+            return data ?? null;
+        } catch (error) {
+            console.error('An error occurred while creating a quiz by json', error);
+            return null;
+        }
+    }
 };
 
 export default API;

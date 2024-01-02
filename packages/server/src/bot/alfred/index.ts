@@ -15,10 +15,13 @@ export const MAX_QUESTIONS_PER_QUIZ = (process.env.MAX_QUESTIONS_PER_QUIZ ? pars
 export const MODEL_NAME = process.env.OPENAI_MODEL_NAME ?? 'gpt-4';
 
 export const Z_TYPE = z.string().describe(`The type of question, valid types are: MultipleChoice, FillInTheBlank, ShortAnswer, Matching, Ordering, Image.
- Currently MultipleChoice is the only supported option.`);
+ Currently MultipleChoice is the only supported option. This value should be a string and not an enum.`);
 export const Z_ANSWER = z.string().describe('The answer to the question, must be one of the options');
-export const Z_TOPICS = z.string().describe(`Topics should be concise and as specific and generic as possible, ideally one word summaries
- of the question, should not include the answer nor give it away`);
+export const Z_TOPICS = z.string().describe(`Topics are a way to tag and categorize questions. They should be as specific as possible and can not be hyphenated.
+Topic names should be selected like indexing a book. For example, if the question is about the OSI model then the topic should be 'OSI Model' and not 'Networking' or 'Model'.
+Similarly, if the question comes from a section like '2.4.1 TCP/IP' then the topic should be 'TCP/IP' and not 'Networking' or 'IP'.
+If a question encompasses multiple topics then it is appropriate to use multiple topics.
+ For example, if a question is about the OSI model and TCP/IP then the topics should be 'OSI Model' and 'TCP/IP'`);
 export const Z_TOPIC_QUIZ = z.array(z.string()
     .describe(`The overarching topics that the user provided text is related to. Can not be hyphenated. Should be as general as possible these will be used like an index.`));
 export const Z_QUIZ_DESC = 'An array of questions that come from the user provided text. Each question should be converted to a multiple choice question if possible.';
@@ -32,9 +35,9 @@ export const zodSchema = z.object({
             z.object({
                 type: Z_TYPE,
                 answer: Z_ANSWER,
-                topics: Z_TOPICS,
+                topics: z.array(Z_TOPICS),
                 explanation: z.string().optional().describe('A textbook explanation for the answer to the question'),
-                areaToReview: z.array(z.string().describe('Subject matter that the student should review to better understand the question, this is like a topic')),
+                areaToReview: z.array(z.string().describe('Subject matter or matters that the student should review to better understand the question, this is like a topic')),
             })
         )
         .describe(Z_QUIZ_DESC),
@@ -66,7 +69,9 @@ export const prompt = new ChatPromptTemplate({
         SystemMessagePromptTemplate.fromTemplate(
             ['You are a Cybersecurity Engineering expert that is assisting in creating quizzes for students',
                 `You have been given the following structured text from a student and need to help convert it to the quiz format.`,
-                'All questions should be multiple choice and your generated output must match the following data schema exactly:{schema}'
+                'All questions should be multiple choice and your generated output must match the following data schema:{schema},',
+                'As a side node, all question types should be listed specifically as MultipleChoice, the enum was provided to give you',
+                'The values being used. In JS Enums do not exist so you will need to use a string for the type.'
             ].join(' ')
         ),
         // mimics user input
@@ -74,11 +79,6 @@ export const prompt = new ChatPromptTemplate({
     ],
     inputVariables: ['userText', 'schema']
 });
-
-/**
- * Our configured LLM, which is using GPT4 or 3.5 Turbo
- */
-export const llm = new ChatOpenAI({ modelName: MODEL_NAME, temperature: 0.9, openAIApiKey: process.env.OPENAI_API_KEY });
 
 
 /**
@@ -122,6 +122,12 @@ export const flattenToOneQuiz = (quizData: jsonQuizData[]): jsonQuizData => {
  */
 export const generateQuizJsonFromText = async (fileText: string, quizType: quizType = 'ua', individualQuizzes = true): Promise<jsonQuizData[]> => {
     const isUofA = quizType === 'ua';
+
+    /**
+     * Our configured LLM, which is using GPT4 or 3.5 Turbo
+     */
+    const llm = new ChatOpenAI({ modelName: MODEL_NAME, temperature: 0.9, openAIApiKey: process.env.OPENAI_API_KEY });
+
 
     // configure lang chain
     const functionCallModel = llm.bind({
@@ -173,15 +179,13 @@ export const generateQuizJsonFromText = async (fileText: string, quizType: quizT
                 ...currentQuestion,
                 ...question
             }
-            data.areaToReview = data.areaToReview?.filter(area => area !== '' && !area.includes('_')).filter(Boolean);
+
+            data.topics = data.topics?.map(topic => topic.replace(/-/g, ''));
             return data;
         })
         // ensure unique topics
         const topicSet = new Set();
-        quiz?.topics?.forEach(topic => {
-            // remove hyphens
-            topicSet.add(topic.replace(/-/g, ' '));
-        });
+        quiz?.topics?.forEach(topic => topicSet.add(topic));
         // expects an array
         quiz.topics = Array.from(topicSet) as string[];
 

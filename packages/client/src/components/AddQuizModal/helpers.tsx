@@ -1,4 +1,8 @@
-import { findFileInVfs, VirtualFileSystem } from '../../utils';
+import { useQuizzesDbSignal, useVirtualFileSystemSignal } from '../../signals';
+import {
+    convertStateObjectToArray, createFolderForQuizzesAndAddToFileSystem,
+    createVirtualQuizFileAndAddToFileSystem, findFileInVfs, PopulatedQuizModel, VirtualFileSystem
+} from '../../utils';
 
 export const isTextFile = (file: File) => file.type === 'text/plain' && (file.name.endsWith('.txt') || file.name.endsWith('.text'));
 
@@ -55,4 +59,26 @@ export const handleValidateQuizTitle = async (
         setQuizTitleError(null);
         setQuizTitleValid(true);
     }
+};
+
+
+export const handleUpdateVfsWithQuizData = async (quizData: PopulatedQuizModel[], quizTitle: string) => {
+    const { virtualFileSystem, updateVirtualFileSystem } = useVirtualFileSystemSignal();
+    const { quizzesDb } = useQuizzesDbSignal();
+
+    const quizzes = quizzesDb.value;
+    const vfs = convertStateObjectToArray(virtualFileSystem.value);
+
+    let updatedVfs = [...vfs];
+
+    if (quizData.length > 1) {
+        updatedVfs = createFolderForQuizzesAndAddToFileSystem(quizData.map(quiz => quiz._id.toString()), vfs, quizData, quizTitle);
+    }
+
+    if (quizData.length === 1) {
+        updatedVfs = createVirtualQuizFileAndAddToFileSystem([quizData[0]._id.toString()], vfs, [quizData[0]]);
+    }
+
+    updateVirtualFileSystem(updatedVfs);
+    quizzes?.push(...quizData);
 };

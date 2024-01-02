@@ -33,7 +33,7 @@ const TopicSchema = new Schema({
         unique: true,
         maxLength: 150,
         trim: true,
-        match: /^[a-zA-Z0-9\s]+$/i
+        match: /^[a-zA-Z0-9+-/)(\s]+$/i
     }
 }, {
     id: false,

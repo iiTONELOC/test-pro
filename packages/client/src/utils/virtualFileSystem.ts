@@ -53,7 +53,7 @@ export const createVirtualDirectory = (name: string, children: VirtualFileSystem
  * @returns The created virtual file object
  */
 const createVirtualFile = (name: string, entryId: string, topics: string[], createdAt: Date, updatedAt: Date): IVirtualFile => (
-    { name, entryId, topics, createdAt, updatedAt, });
+    { name, entryId, topics, createdAt, updatedAt });
 
 /**
  *  Checks the virtual file system for the quiz ids
@@ -86,7 +86,7 @@ const checkFolder = (existingFolder: VirtualFileSystem[], quizIds: string[]): st
  * @param quizData an array of populated quiz data from the db to get the quiz names and topics from
  * @returns the updated virtual file system
  */
-const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFileSystem: VirtualFileSystem[], quizData: PopulatedQuizModel[]): VirtualFileSystem[] => {
+export const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFileSystem: VirtualFileSystem[], quizData: PopulatedQuizModel[]): VirtualFileSystem[] => {
     for (const id of quizIds) {
         // get the quiz from the quizData
         const quiz = quizData.find((quiz: QuizModelResponse): boolean => quiz?._id.toString() === id);
@@ -107,6 +107,48 @@ const createVirtualQuizFileAndAddToFileSystem = (quizIds: string[], existingFile
             existingFileSystem.push(quizFile);
         }
     }
+
+    return existingFileSystem;
+}
+
+/**
+ * Creates a virtual folder for all the quizzes and adds it to the existingFileSystem
+ * @param quizIds an array of quiz ids to create virtual files for
+ * @param existingFileSystem an existing virtual file system to add the virtual files to
+ * @param quizData an array of populated quiz data from the db to get the quiz names and topics from
+ * @param folderName the name of the folder to create
+ * @returns the updated virtual file system
+ */
+export const createFolderForQuizzesAndAddToFileSystem = (
+    quizIds: string[], existingFileSystem: VirtualFileSystem[],
+    quizData: PopulatedQuizModel[], folderName: string): VirtualFileSystem[] => {
+
+    const folder: IVirtualDirectory = createVirtualDirectory(folderName);
+
+    // create a virtual file for each quiz id and add it to the folder
+    for (const id of quizIds) {
+        // get the quiz from the quizData
+        const quiz = quizData.find((quiz: QuizModelResponse): boolean => quiz?._id.toString() === id);
+
+        // if the quiz exists then create a file for it
+        if (quiz) {
+            const quizTopics = quiz?.topics as TopicModelType[];
+            const topics: string[] = quizTopics.map(topic => topic?.name) ?? [];
+
+            const quizFile: IVirtualFile = createVirtualFile(
+                quiz?.name as string,
+                quiz?._id.toString() as string,
+                topics,
+                quiz?.createdAt as Date,
+                quiz?.updatedAt as Date
+            );
+            // add the quizFile to the existingFileSystem
+            folder.children.push(quizFile);
+        }
+    }
+
+    // add the folder to the existingFileSystem
+    existingFileSystem.push(folder);
 
     return existingFileSystem;
 }

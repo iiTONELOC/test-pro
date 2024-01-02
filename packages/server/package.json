@@ -7,9 +7,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development && nodemon -x ts-node src/app.ts ",
+    "dev": "nodemon -x ts-node src/app.ts ",
     "build": "npm run lint && rimraf ./lib && tsc",
-    "start": "export NODE_ENV=production && node lib/app.js",
+    "start": "export NODE_ENV=development && node lib/app.js",
     "test": "jest --detectOpenHandles --forceExit --testPathIgnorePatterns='src/__tests__/bot/alfred/alfred.spec.ts'",
     "test-full": "jest --detectOpenHandles --forceExit --testTimeout=240000",
     "lint": "eslint src/**/*.ts",

@@ -34,8 +34,13 @@ export const parseQuestionsTestOut = (userText: string): Partial<parsedQuestions
         .replace(/Correct Answer:?/g, '')
         .replace(/Correct/g, '')
         .replace(/Answer:?/g, '')
+    const extracted = extractQuestionsFromText.TestOut(userText);
 
-    return extractQuestionsFromText.TestOut(userText);
+    // clean up the areaToReview property, we need to remove empty strings and entries with underscores
+    extracted.forEach(question => {
+        question.areaToReview = question.areaToReview?.filter(area => area !== '' && !area.includes('_'));
+    });
+    return extracted
 };
 
 export const parseQuestions = {

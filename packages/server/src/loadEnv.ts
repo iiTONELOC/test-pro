@@ -26,6 +26,7 @@ function parseEnvFile(envPath: string): Record<string, string> {
 
 export function loadEnv(path = './.env') {
     const envVariables = parseEnvFile(path);
+
     // Set environment variables
     Object.keys(envVariables).forEach(key => {
         process.env[key] = envVariables[key];

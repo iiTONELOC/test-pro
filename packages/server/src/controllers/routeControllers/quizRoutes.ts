@@ -125,12 +125,17 @@ export const quizRouteController: IQuizRouteController = {
         }
     },
     createQuizByJSON: async (req: Request, res: Response): Promise<IApiResponse<(QuizModelResponse)>> => {
-        const getOrCreateTopic = async (topicName: string): Promise<string> => {
+        const getOrCreateTopic = async (topicName: string): Promise<string | null> => {
             let topic = await Topic.findOne({ name: topicName });
             if (!topic) {
-                topic = await Topic.create({ name: topicName });
+                try {
+                    topic = await Topic.create({ name: topicName });
+                } catch (error) {
+                    topic = await Topic.findOne({ name: topicName });
+                }
+
             }
-            return topic._id.toString();
+            return topic?._id.toString() ?? null;
         };
 
         const getOrCreateQuestion = async (questionData: IQuizQuestionJsonData): Promise<string | null> => {
@@ -138,7 +143,7 @@ export const quizRouteController: IQuizRouteController = {
             let question = await Question.findOne({ question: questionData.question });
 
             if (!question) {
-                const questionTopicIds = await Promise.all(questionData.topics.map(getOrCreateTopic));
+                const questionTopicIds = await Promise.all(questionData.topics.map(getOrCreateTopic).filter(Boolean));
                 question = await questionController.create({
                     questionType: questionData.type,
                     question: questionData.question,
@@ -163,7 +168,7 @@ export const quizRouteController: IQuizRouteController = {
                 return handleRouteError(res, `Quiz with name ${name} already exists`);
             }
 
-            const topicIds = await Promise.all(topics.map(getOrCreateTopic));
+            const topicIds = await Promise.all(topics.map(getOrCreateTopic).filter(Boolean));
             const questionIds = await Promise.all(questions.map(getOrCreateQuestion));
 
             if (topicIds.length === 0 || questionIds.length === 0) {
@@ -186,16 +191,15 @@ export const quizRouteController: IQuizRouteController = {
     },
     convertTextToJSON: async (req: Request, res: Response): Promise<IApiResponse<(QuizModelResponse)>> => {
         try {
-            const { text, type, name } = req.body as { text: string, type: string, name: string };
+            const { text, quizType, name } = req.body as { text: string, quizType: string, name: string };
 
-            const converted: jsonQuizData[] = await alfred.generateQuizJsonFromText(text, type as quizType);
+            const converted: jsonQuizData[] = await alfred.generateQuizJsonFromText(text, quizType as quizType);
 
             // the converted may contain multiple quizzes, so we need to create the json object for each quiz
             // which means we need to add the title to each quiz but we need to make sure the title is unique
             // we will do this by using a numbering system appended to the end of the title
             let quizzes: jsonQuizData[] = [];
             const numberOfQuizzes = converted.length;
-
 
             if (numberOfQuizzes > 1) {
                 const quizTitles = Array.from({ length: numberOfQuizzes }, (_, i) => `${name} ${i + 1}`);
@@ -215,6 +219,7 @@ export const quizRouteController: IQuizRouteController = {
 
             return res.status(httpStatusCodes.OK).json({ data: quizzes });
         } catch (error: any) {
+            console.log('CONVERT TEXT TO JSON ERROR\n\n', error)
             return handleRouteError(res, error.message);
         }
     }

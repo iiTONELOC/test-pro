@@ -1,30 +1,77 @@
 import { JSX } from 'preact/jsx-runtime';
-import { trimClasses, } from '../../utils';
-import { AddQuizForm } from './addQuizForm';
+import { ModalCard } from './ModalCard';
+import { trimClasses } from '../../utils';
+import { AddQuizForm } from './AddQuizForm';
+import { useMountedState } from '../../hooks';
+import { jsonQuizData } from '../../utils/api';
 import { CloseCircle } from '../../assets/icons';
+import { useEffect, useState } from 'preact/hooks';
+import { ModalBackground } from './ModalBackground';
 import { useShowAddQuizModalSignal } from '../../signals';
+import { VerifyConvertedData } from './VerifyConvertedData';
+import { WaitForJsonConversion } from './WaitForJsonConversion';
 
 
-const titleClasses = 'text-2xl my-3';
 const iconClasses = `w-7 h-7 hover:w-8 hover:h-8 hover:text-red-600 hover:text-bold cursor-pointer 
 text-gray-400 justify-self-end absolute top-1 right-1 ease-in-out transition-all duration-200`;
 
 export const handleCloseModal = () => useShowAddQuizModalSignal().showAddQuizModalSignal.value = false;
 
-
-
 export function AddQuizModal(): JSX.Element {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [fileUploaded, setFileUploaded] = useState<boolean>(false);
+    const [waitingForJsonConversion, setWaitingForJsonConversion] = useState<boolean>(false);
+    const [convertedFileData, setConvertedFileData] = useState<jsonQuizData[] | null>(null);
+
+    const isMounted = useMountedState();
     const show = useShowAddQuizModalSignal().showAddQuizModalSignal.value;
 
-    return show ? (
-        <div className={'w-full h-full absolute z-50 bg-gray-950/90 flex flex-wrap flex-row justify-center items-center p-3'}>
-            <div className={'w-5/6 md:w-4/6 lg:w-1/2 p-2  h-auto bg-slate-950 border-2 border-slate-700 rounded-md flex flex-col justify-center items-center relative'}>
+    const resetState = () => {
+        setLoading(false);
+        setFileUploaded(false);
+        setConvertedFileData(null);
+        setWaitingForJsonConversion(false);
+    };
+
+    useEffect(() => {
+        if (isMounted && show) {
+            resetState();
+        }
+    }, [show]);
+
+    useEffect(() => {
+        if (convertedFileData) {
+            setFileUploaded(true);
+        }
+    }, [convertedFileData]);
+
+    useEffect(() => {
+        if (loading) {
+            setWaitingForJsonConversion(true);
+        } else {
+            setWaitingForJsonConversion(false);
+        }
+    }, [loading]);
+
+    return show && isMounted ? (
+        <ModalBackground>
+            <ModalCard>
                 <CloseCircle className={trimClasses(iconClasses)} onClick={handleCloseModal} />
+                {/* FILE UPLOADING */}
+                {!loading && !fileUploaded &&
+                    <AddQuizForm setConvertedFileData={setConvertedFileData} setLoading={setLoading} />
+                }
 
-                <h1 className={titleClasses}>Import Quiz From File</h1>
+                {/* FILE CONVERTING */}
+                {waitingForJsonConversion && !fileUploaded &&
+                    <WaitForJsonConversion />
+                }
 
-                <AddQuizForm />
-            </div>
-        </div>
+                {/* FILE CONVERSION VERIFICATION */}
+                {convertedFileData && fileUploaded &&
+                    <VerifyConvertedData data={convertedFileData} />
+                }
+            </ModalCard>
+        </ModalBackground>
     ) : <></>;
 }

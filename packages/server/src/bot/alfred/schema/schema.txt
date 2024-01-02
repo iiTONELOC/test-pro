@@ -19,7 +19,7 @@
  *      topics: string[];
  *      answer: string
  *      explanation: string;
- *      areaToReview: string;
+ *      areaToReview: string[];
  *   }];
  *  }
  * ```

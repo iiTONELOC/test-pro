@@ -312,6 +312,30 @@ export const API = {
             console.error('An error occurred while creating a quiz by json', error);
             return null;
         }
+    },
+    updateQuizNameById: async (id: string, name: string): Promise<QuizModelResponse | null> => {
+        try {
+            const response: Response = await fetch(`${API_URL}/quizzes/${id}`, {
+                body: JSON.stringify({ name }),
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }
+            });
+
+            const { data }: IApiResponse<QuizModelResponse> = await response.json() as IApiResponse<QuizModelResponse>;
+            return data ?? null;
+        } catch (error) {
+            console.error('An error occurred while updating a quiz name by id', error);
+            return null;
+        }
+    },
+    deleteQuizById: async (id: string): Promise<QuizModelResponse | null> => {
+        try {
+            const response: Response = await fetch(`${API_URL}/quizzes/${id}`, { method: 'DELETE' });
+            const { data }: IApiResponse<QuizModelResponse> = await response.json() as IApiResponse<QuizModelResponse>;
+            return data ?? null;
+        } catch (error) {
+            console.error('An error occurred while deleting a quiz by id', error);
+            return null;
+        }
     }
 };
 

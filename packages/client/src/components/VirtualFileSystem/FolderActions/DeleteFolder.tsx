@@ -3,8 +3,6 @@ import { useEffect } from 'preact/hooks';
 import { useVirtualFileSystemSignal, useContextMenuSignal } from '../../../signals';
 import { convertStateObjectToArray, findFolderInVfs, IVirtualDirectory } from '../../../utils';
 
-
-
 export function DeleteFolder(): JSX.Element {
     const { virtualFileSystem, updateVirtualFileSystem } = useVirtualFileSystemSignal();
     const { id, showContextMenu } = useContextMenuSignal();

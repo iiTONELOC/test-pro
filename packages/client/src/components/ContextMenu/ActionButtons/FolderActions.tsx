@@ -54,7 +54,6 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
         }
 
         if (name === 'Add Folder') {
-            console.log('Add Folder');
             setHandleAddFolder(true);
         } else {
             setHandleAddFolder(false);

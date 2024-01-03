@@ -5,7 +5,6 @@ import { useContextMenuSignal, useInputModalSignal, useVirtualFileSystemSignal }
 import { IVirtualDirectory, convertStateObjectToArray, createVirtualDirectory, findFolderInVfs } from '../../../utils';
 
 export interface IAddFolderToFolderProps {
-    toggleClose: () => void;
     targetFolderName: string;
 }
 
@@ -14,7 +13,7 @@ export function AddFolderToFolder(props: Readonly<IAddFolderToFolderProps>): JSX
     const { show, handleSubmit, headingText, toggleModal, input } = useInputModalSignal();
     const { checkForInputErrors } = useAddFolderFormState();
     const { showContextMenu, id } = useContextMenuSignal();
-    const { toggleClose, targetFolderName } = props;
+    const { targetFolderName } = props;
 
 
     const handleOnSubmit = (e: Event) => {
@@ -43,12 +42,13 @@ export function AddFolderToFolder(props: Readonly<IAddFolderToFolderProps>): JSX
             // reset the signal values
             input.value = '';
             id.value = '';
-            showContextMenu.value = false;
+
 
             // update the virtual file system, call the close callback and close the modal
             updateVirtualFileSystem(temp);
-            toggleClose();
             toggleModal();
+
+            showContextMenu.value = false;
         }
     }
 

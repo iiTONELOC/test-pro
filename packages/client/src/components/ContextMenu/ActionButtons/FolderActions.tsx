@@ -2,7 +2,7 @@ import { uuid } from '../../../utils';
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 import { useContextMenuSignal } from '../../../signals';
-import { AddFolderToFolder, AddQuizToFolder, RenameFolder } from '../../VirtualFileSystem';
+import { AddFolderToFolder, AddQuizToFolder, DeleteFolder, RenameFolder } from '../../VirtualFileSystem';
 
 const folderActions = [
     {
@@ -32,7 +32,7 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
     const [handleAddFolder, setHandleAddFolder] = useState(false);
     const [handleRename, setHandleRename] = useState(false);
     const [handleDelete, setHandleDelete] = useState(false);
-    const { id, showContextMenu } = useContextMenuSignal();
+    const { id } = useContextMenuSignal();
 
 
     const { className } = props;
@@ -67,11 +67,6 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
         }
     };
 
-    const toggleAddFolderToFolder = () => {
-        setHandleAddFolder(false);
-        showContextMenu.value = false;
-    }
-
     return (
         <>
             {folderActions.map(({ name }) => (
@@ -83,8 +78,8 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
                 </button>
             ))}
             {handleRename && <RenameFolder />}
-            {handleDelete && <></>}
-            {handleAddFolder && <AddFolderToFolder toggleClose={toggleAddFolderToFolder} targetFolderName={id.value} />}
+            {handleDelete && <DeleteFolder />}
+            {handleAddFolder && <AddFolderToFolder targetFolderName={id.value} />}
             {handleAddNewQuiz && <AddQuizToFolder targetFolderName={id.value} />}
         </>
     );

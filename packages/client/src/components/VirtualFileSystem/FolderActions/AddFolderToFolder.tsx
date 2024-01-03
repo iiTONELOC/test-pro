@@ -4,7 +4,6 @@ import { useAddFolderFormState } from '../../../hooks';
 import { useContextMenuSignal, useInputModalSignal, useVirtualFileSystemSignal } from '../../../signals';
 import { IVirtualDirectory, convertStateObjectToArray, createVirtualDirectory, findFolderInVfs } from '../../../utils';
 
-
 export interface IAddFolderToFolderProps {
     toggleClose: () => void;
     targetFolderName: string;
@@ -52,13 +51,11 @@ export function AddFolderToFolder(props: Readonly<IAddFolderToFolderProps>): JSX
         }
     }
 
-
     useEffect(() => {
         handleSubmit.value = handleOnSubmit;
         headingText.value = 'Enter a folder name';
         show.value = true;
     }, []);
-
 
     return (<></>)
 }

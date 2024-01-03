@@ -1,10 +1,10 @@
 import { useMountedState } from '../../hooks';
-import { ChangeEvent, JSX, useEffect, useState } from 'preact/compat';
-import { PopulatedQuizModel, jsonQuizData, API } from '../../utils';
 import { handleUpdateVfsWithQuizData } from './helpers';
 import { useShowAddQuizModalSignal } from '../../signals';
+import { PopulatedQuizModel, jsonQuizData, API } from '../../utils';
+import { ChangeEvent, JSX, useEffect, useRef, useState } from 'preact/compat';
 
-export function VerifyConvertedData({ data }: { data: jsonQuizData[] }): JSX.Element {
+export function VerifyConvertedData({ data, }: { data: jsonQuizData[] }): JSX.Element {
     const [quizData, setQuizData] = useState<jsonQuizData[]>(data);
     const [dataVerified, setDataVerified] = useState<boolean>(false);
     const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
@@ -12,8 +12,12 @@ export function VerifyConvertedData({ data }: { data: jsonQuizData[] }): JSX.Ele
     const [createdQuizData, setCreatedQuizData] = useState<PopulatedQuizModel[]>([]);
     const [textAreaState, setTextAreaState] = useState<string>(JSON.stringify(quizData[currentQuizIndex], null, 2));
 
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
     const isMounted = useMountedState();
     const showModal = useShowAddQuizModalSignal().showAddQuizModalSignal;
+    const addToFolderName = useShowAddQuizModalSignal().addQuizToFolderNameSignal;
+
 
     const resetState = () => {
         setQuizData(data);
@@ -54,6 +58,8 @@ export function VerifyConvertedData({ data }: { data: jsonQuizData[] }): JSX.Ele
             if (nextIndex !== 0) {
                 setCurrentQuizIndex(nextIndex);
                 setTextAreaState(JSON.stringify(quizData[nextIndex], null, 2));
+                textAreaRef.current?.focus();
+                textAreaRef.current?.scrollTo(0, 0);
             } else {
                 setDataVerified(true);
                 // update the virtual file system
@@ -61,9 +67,11 @@ export function VerifyConvertedData({ data }: { data: jsonQuizData[] }): JSX.Ele
                 // get the correct quiz title, if more than 1 quiz was created
                 const quizTitle = createdQuizData.length > 1 ? tokens.slice(0, tokens.length - 1).join(' ') : createdQuizData[0].name;
                 // adds our created quiz to the virtual file system
-                await handleUpdateVfsWithQuizData(createdQuizData, quizTitle);
+                // TO DO: handle updating the virtual file system by adding the quiz to a specific folder other than the root
+                await handleUpdateVfsWithQuizData(createdQuizData, quizTitle, addToFolderName.value);
                 // close the modal
                 resetState();
+                addToFolderName.value = '__root__';
                 showModal.value = false;
             }
         } else {
@@ -105,6 +113,7 @@ export function VerifyConvertedData({ data }: { data: jsonQuizData[] }): JSX.Ele
                                 onInput={handleTextAreaChange}
                                 onBlur={handleVerifyTextArea}
                                 value={textAreaState}
+                                ref={textAreaRef}
                                 rows={15}
                             />
                         </pre>

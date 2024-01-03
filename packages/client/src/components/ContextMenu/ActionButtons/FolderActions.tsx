@@ -2,7 +2,7 @@ import { uuid } from '../../../utils';
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 import { useContextMenuSignal } from '../../../signals';
-import { AddFolderToFolder } from '../../VirtualFileSystem';
+import { AddFolderToFolder, AddQuizToFolder } from '../../VirtualFileSystem';
 
 const folderActions = [
     {
@@ -55,7 +55,7 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
         }
 
         if (name === 'Create Quiz Here') {
-            console.log('Create Quiz Here');
+
             setHandleAddNewQuiz(true);
         }
     };
@@ -78,7 +78,7 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
             {handleRename && <></>}
             {handleDelete && <></>}
             {handleAddFolder && <AddFolderToFolder toggleClose={toggleAddFolderToFolder} targetFolderName={id.value} />}
-            {handleAddNewQuiz && <></>}
+            {handleAddNewQuiz && <AddQuizToFolder targetFolderName={id.value} />}
         </>
     );
 }

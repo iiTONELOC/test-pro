@@ -62,7 +62,7 @@ export const handleValidateQuizTitle = async (
 };
 
 
-export const handleUpdateVfsWithQuizData = async (quizData: PopulatedQuizModel[], quizTitle: string) => {
+export const handleUpdateVfsWithQuizData = async (quizData: PopulatedQuizModel[], quizTitle: string, addToFolderName: string) => {
     const { virtualFileSystem, updateVirtualFileSystem } = useVirtualFileSystemSignal();
     const { quizzesDb } = useQuizzesDbSignal();
 
@@ -72,11 +72,11 @@ export const handleUpdateVfsWithQuizData = async (quizData: PopulatedQuizModel[]
     let updatedVfs = [...vfs];
 
     if (quizData.length > 1) {
-        updatedVfs = createFolderForQuizzesAndAddToFileSystem(quizData.map(quiz => quiz._id.toString()), vfs, quizData, quizTitle);
+        updatedVfs = createFolderForQuizzesAndAddToFileSystem(quizData.map(quiz => quiz._id.toString()), vfs, quizData, quizTitle, addToFolderName);
     }
 
     if (quizData.length === 1) {
-        updatedVfs = createVirtualQuizFileAndAddToFileSystem([quizData[0]._id.toString()], vfs, [quizData[0]]);
+        updatedVfs = createVirtualQuizFileAndAddToFileSystem([quizData[0]._id.toString()], vfs, [quizData[0]], addToFolderName);
     }
 
     updateVirtualFileSystem(updatedVfs);

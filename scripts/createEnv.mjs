@@ -1,9 +1,13 @@
 import { promises as fs } from 'fs';
 
 const defaultEnv = [
-    "DB_NAME='<dbname>'",
-    "TEST_DB_NAME='<test-db>'",
-    "DB_URI='<MONGO_DB_URI>'"
+    'PORT=<3000>',
+    'DB_NAME=<test-pro-development>',
+    'PROD_DB_NAME=<test-pro-production>',
+    'TEST_DB_NAME=<test-pro-test-db>',
+    'DB_URI=mongodb://localhost:27017/',
+    'OPENAI_MODEL_NAME=<replaceWithDesiredModel_DefaultsToGPT-4>',
+    'OPENAI_API_KEY=<replaceWithYourOpenAI_APIKey>'
 ];
 
 const envPath = './packages/server/.env';

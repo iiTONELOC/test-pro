@@ -4,7 +4,7 @@
   "scripts": {
     "test": "cd packages/server && npm run test",
     "test-full": "cd packages/server && npm run test-full",
-    "start": "cd  packages/server && npm run start",
+    "start": "scripts/start.sh && cd  packages/server && npm run start",
     "install": "concurrently \"npm run install-server\" \"npm run install-client\"",
     "install-server": "cd packages/server && npm install",
     "install-client": "cd packages/client && npm install",

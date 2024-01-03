@@ -11,7 +11,6 @@ const actionIconStyle = `h-5 w-5 text-gray-300 hover:text-white cursor-pointer h
 duration-300 transition-all`;
 
 export function DrawerActionButtons(): JSX.Element {
-
     const [showInputModal, setShowInputModal] = useState(false);
     const { toggleModal } = useInputModalSignal();
     const isMounted = useMountedState();

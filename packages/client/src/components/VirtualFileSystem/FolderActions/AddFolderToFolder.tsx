@@ -13,7 +13,7 @@ export function AddFolderToFolder(props: Readonly<IAddFolderToFolderProps>): JSX
     const { virtualFileSystem, updateVirtualFileSystem } = useVirtualFileSystemSignal();
     const { show, handleSubmit, headingText, toggleModal, input } = useInputModalSignal();
     const { checkForInputErrors } = useAddFolderFormState();
-    const { showContextMenu } = useContextMenuSignal();
+    const { showContextMenu, id } = useContextMenuSignal();
     const { toggleClose, targetFolderName } = props;
 
 
@@ -42,6 +42,7 @@ export function AddFolderToFolder(props: Readonly<IAddFolderToFolderProps>): JSX
 
             // reset the signal values
             input.value = '';
+            id.value = '';
             showContextMenu.value = false;
 
             // update the virtual file system, call the close callback and close the modal

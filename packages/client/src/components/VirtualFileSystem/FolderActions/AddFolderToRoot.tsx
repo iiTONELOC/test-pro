@@ -32,7 +32,6 @@ export function AddFolderToRoot(props: Readonly<IAddFolderToRootProps>): JSX.Ele
         }
     };
 
-
     useEffect(() => {
         handleSubmit.value = handleOnSubmit;
         headingText.value = 'Enter a folder name';

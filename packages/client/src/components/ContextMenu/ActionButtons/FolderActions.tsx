@@ -2,7 +2,7 @@ import { uuid } from '../../../utils';
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 import { useContextMenuSignal } from '../../../signals';
-import { AddFolderToFolder, AddQuizToFolder } from '../../VirtualFileSystem';
+import { AddFolderToFolder, AddQuizToFolder, RenameFolder } from '../../VirtualFileSystem';
 
 const folderActions = [
     {
@@ -43,20 +43,27 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
 
         if (name === 'Rename') {
             setHandleRename(true);
+        } else {
+            setHandleRename(false);
         }
 
         if (name === 'Delete') {
             setHandleDelete(true);
+        } else {
+            setHandleDelete(false);
         }
 
         if (name === 'Add Folder') {
             console.log('Add Folder');
             setHandleAddFolder(true);
+        } else {
+            setHandleAddFolder(false);
         }
 
         if (name === 'Create Quiz Here') {
-
             setHandleAddNewQuiz(true);
+        } else {
+            setHandleAddNewQuiz(false);
         }
     };
 
@@ -75,7 +82,7 @@ export function FolderActions(props: Readonly<IFolderActionsProps>): JSX.Element
                     {name}
                 </button>
             ))}
-            {handleRename && <></>}
+            {handleRename && <RenameFolder />}
             {handleDelete && <></>}
             {handleAddFolder && <AddFolderToFolder toggleClose={toggleAddFolderToFolder} targetFolderName={id.value} />}
             {handleAddNewQuiz && <AddQuizToFolder targetFolderName={id.value} />}

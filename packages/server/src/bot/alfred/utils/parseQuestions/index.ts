@@ -3,7 +3,6 @@ import { readFile } from 'fs/promises';
 import { parsedQuestionsType } from './types';
 import { extractQuestionsFromText } from '../extractQuestionsFromText';
 
-
 /**
  * Read a text file as a promise
  *
@@ -36,8 +35,8 @@ export const parseQuestionsTestOut = (userText: string): Partial<parsedQuestions
         .replace(/Answer:?/g, '')
     const extracted = extractQuestionsFromText.TestOut(userText);
 
-    // clean up the areaToReview property, we need to remove empty strings and entries with underscores
     extracted.forEach(question => {
+        // clean up the areaToReview property, we need to remove empty strings and entries with underscores
         question.areaToReview = question.areaToReview?.filter(area => area !== '' && !area.includes('_'));
     });
     return extracted

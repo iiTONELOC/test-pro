@@ -6,6 +6,7 @@ import { TopicModelType } from './types';
 /**
  * ```ts
  *  enum QuestionTypeEnums {
+ *     SelectAllThatApply = 'SelectAllThatApply',
  *     MultipleChoice = 'MultipleChoice',
  *     FillInTheBlank = 'FillInTheBlank',
  *     ShortAnswer = 'ShortAnswer',
@@ -16,6 +17,7 @@ import { TopicModelType } from './types';
  * ```
  */
 export enum QuestionTypeEnums {
+    SelectAllThatApply = 'SelectAllThatApply',
     MultipleChoice = 'MultipleChoice',
     FillInTheBlank = 'FillInTheBlank',
     ShortAnswer = 'ShortAnswer',
@@ -31,6 +33,7 @@ export enum QuestionTypeEnums {
  *    question: string;
  *    topics: Types.ObjectId[],
  *    options: string[],
+ *    matchOptions?: string[] | null,
  *    answer: string;
  *    explanation: string;
  *    areaToReview: string[];
@@ -42,6 +45,7 @@ export interface IQuestion {
     question: string;
     topics: Types.ObjectId[],
     options: string[],
+    matchOptions?: string[] | null,
     answer: string;
     explanation: string;
     areaToReview: string[];
@@ -55,6 +59,7 @@ export interface IQuestion {
  *    question: string;
  *    topics: Types.ObjectId[],
  *    options: string[],
+ *    matchOptions?: string[] | null,
  *    answer: string;
  *    explanation: string;
  *    areaToReview: string[];
@@ -81,6 +86,7 @@ export type QuestionModelType = HydratedDocument<IQuestion> & { createdAt?: Date
  *       }
  *    ],
  *    options: string[],
+ *    matchOptions?: string[] | null,
  *    answer: string;
  *    explanation: string;
  *    areaToReview: string[];
@@ -113,6 +119,13 @@ const QuestionSchema = new Schema({
         required: true,
         maxLength: 2000,
         trim: true
+    }],
+    matchOptions: [{
+        type: String,
+        maxLength: 2000,
+        trim: true,
+        required: false,
+        default: null
     }],
     answer: {
         type: String,

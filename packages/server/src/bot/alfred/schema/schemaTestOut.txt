@@ -1,6 +1,7 @@
 /**
  * ```typescript
  * enum QuestionTypeEnums  {
+       SelectAllThatApply = 'SelectAllThatApply',
  *     MultipleChoice = 'MultipleChoice',
  *     FillInTheBlank = 'FillInTheBlank',
  *     ShortAnswer = 'ShortAnswer',

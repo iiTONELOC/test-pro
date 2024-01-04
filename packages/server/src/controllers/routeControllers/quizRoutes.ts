@@ -19,6 +19,7 @@ import { jsonQuizData } from '../../bot/alfred/utils/types';
  *    topics: string[];
  *    answer: string
  *    options: string[];
+ *    matchOptions?: string[] | null,
  *    explanation: string;
  *    areaToReview: string;
  *  }
@@ -30,6 +31,7 @@ export interface IQuizQuestionJsonData {
     topics: string[];
     answer: string
     options: string[];
+    matchOptions?: string[] | null,
     explanation: string;
     areaToReview: string[];
 }
@@ -57,6 +59,7 @@ export interface IQuizQuestionJsonData {
  *      topics: string[];
  *      answer: string
  *      options: string[];
+ *      matchOptions?: string[] | null,
  *      explanation: string;
  *      areaToReview: string;
  *   }];

@@ -148,11 +148,70 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
             // loop over the answered questions and check if they are correct
             const answeredQuestions = ungradedAttempt.answeredQuestions as unknown as PopulatedQuizQuestionResultType[];
 
+
+            // TODO: handle other question types
+            // TODO: Refactor the question grading logic into a separate function
             for (const answeredQuestion of answeredQuestions) {
                 // check if the answer is correct if  if it is ensure the isCorrect flag is set to true
                 const question = answeredQuestion.question;
                 const correctAnswer = question.answer.trim().toLowerCase();
-                const isCorrect = correctAnswer === answeredQuestion.selectedAnswer.trim().toLowerCase();
+
+                let isCorrect = false;
+
+                if (question.questionType === 'MultipleChoice'
+                    || question.questionType === 'FillInTheBlank'
+                    || question.questionType === 'ShortAnswer') {
+                    isCorrect = correctAnswer === answeredQuestion.selectedAnswer.trim().toLowerCase();
+
+                } else if (question.questionType === 'Matching') {
+                    const aiProvidedDelims = ['|', ':', '->', '=>', '-'];
+
+                    // we dont exactly know what the delimiter is as GPT-4 doesn't exactly follow the rules
+                    // these are the ones I have seen returned so far
+                    const userSelections = answeredQuestion.selectedAnswer.split(',')
+                        .map((selection: string) => selection.trim().toLowerCase());
+
+                    const correctSelections = correctAnswer.split(',')
+                        .map((selection: string) => selection.trim().toLowerCase());
+
+                    const foundDelim = aiProvidedDelims.find((delim: string) => correctSelections[0].includes(delim));
+
+                    // Hopefully this does not happen but we need it to error if it does, we would have no immediate
+                    // way to grade the question
+                    if (!foundDelim) throw new Error('Could not find delimiter: ' + correctSelections[0]);
+
+                    const [correctLeft, correctRight] = correctSelections[0].split(foundDelim);
+                    const [userLeft, userRight] = userSelections[0].split('-');
+
+                    isCorrect = correctLeft === userLeft && correctRight === userRight;
+
+                } else if (question.questionType === 'SelectAllThatApply') {
+                    //here we need to check if the selected answers are all correct the order doesn't matter
+                    const selectedAnswers = answeredQuestion.selectedAnswer.split(',');
+                    const correctAnswers = correctAnswer.split(',');
+
+                    (() => {
+                        selectedAnswers.length !== correctAnswers.length && (isCorrect = false);
+                        selectedAnswers.length === correctAnswers.length && (() => {
+                            // set the isCorrect flag to true, if any of the answers are incorrect, set it to false
+                            isCorrect = true;
+
+                            // ensure that the selected answers are all correct
+                            selectedAnswers.forEach((selectedAnswer: string) => {
+                                !correctAnswers.includes(selectedAnswer.trim().toLowerCase()) &&
+                                    (isCorrect = false);
+                            });
+
+                            // ensure that all of the correct answers were selected
+                            correctAnswers.forEach((correctAnswer: string) => {
+                                !selectedAnswers.includes(correctAnswer.trim().toLowerCase()) &&
+                                    (isCorrect = false);
+                            });
+                        })();
+                    })();
+                } else {
+                    // TODO: handle other question types
+                }
 
                 // check the isCorrect variable against the isCorrect flag on the question
                 const isCorrectFlag = answeredQuestion.isCorrect;

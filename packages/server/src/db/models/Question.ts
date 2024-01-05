@@ -125,7 +125,7 @@ const QuestionSchema = new Schema({
         maxLength: 2000,
         trim: true,
         required: false,
-        default: null
+        default: []
     }],
     answer: {
         type: String,

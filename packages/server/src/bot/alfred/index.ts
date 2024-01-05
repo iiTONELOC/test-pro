@@ -22,7 +22,8 @@ export const Z_ANSWER = z.string().describe(`The answer to the question, must be
  If the question is a FillInTheBlank question then the answer should be the text that fills in the blank.
  If the question is a ShortAnswer question then the answer should be the text that answers the question.
  If the question is a Matching question or SelectAllThatApply then the answer should be a concatenated string
-  of the matching options using a comma as a delimiter between selections.`);
+  of the matching options using a comma as a delimiter between selections.
+  Within the individual selections, a hyphen or colon should be used to separate the option from the answer.`);
 export const Z_TOPICS = z.string().describe(`Topics are a way to tag and categorize questions. They should be as specific as possible and can not be hyphenated.
 Topic names should be selected like indexing a book. For example, if the question is about the OSI model then the topic should be 'OSI Model' and not 'Networking' or 'Model'.
 Similarly, if the question comes from a section like '2.4.1 TCP/IP' then the topic should be 'TCP/IP' and not 'Networking' or 'IP'.

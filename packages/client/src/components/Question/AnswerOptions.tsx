@@ -4,8 +4,10 @@ import { useMountedState } from '../../hooks';
 import { QuizQuestionProps } from '../QuizView/Quiz/QuizQuestion';
 import { AnswersMultipleChoice } from '../QuizView/Quiz/Answers/AnswersMultipleChoice';
 import { AnsweredMultipleChoice } from '../QuizView/QuizHistory/Answered/AnsweredMultipleChoice';
+import { AnswersSelectAllThatApply } from '../QuizView/Quiz/Answers/AnswersSelectAllThatApply';
 
 enum AnswerTypes {
+    SelectAllThatApply = 'SelectAllThatApply',
     MultipleChoice = 'MultipleChoice',
     FillInTheBlank = 'FillInTheBlank',
     ShortAnswer = 'ShortAnswer',
@@ -32,6 +34,11 @@ function AnswerOptionSwitch({ quizState, question }: Readonly<AnswerOptionProps>
     const selectedQuestionType = question?.questionType as unknown as AnswerTypes;
 
     switch (selectedQuestionType) {
+        case AnswerTypes.SelectAllThatApply:
+            return <AnswersSelectAllThatApply
+                options={question?.options ?? []}
+                quizState={quizState} />;
+
         case AnswerTypes.MultipleChoice:
             return <AnswersMultipleChoice options={question?.options ?? []} quizState={quizState} />;
         case AnswerTypes.FillInTheBlank:

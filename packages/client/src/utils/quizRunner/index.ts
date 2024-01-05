@@ -79,6 +79,7 @@ export function quizRunnerState() {
     // @ts-ignore
     const randomizeAnswerOptions = () => currentFileDetails?.questions.forEach((question: PopulatedQuestionModelType) => {
         question.options = shuffle(question.options);
+        question?.matchOptions && (question.matchOptions = shuffle(question?.matchOptions ?? []));
     });
 
     const resetState = () => {

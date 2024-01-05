@@ -154,6 +154,7 @@ export const quizRouteController: IQuizRouteController = {
                     options: questionData.options,
                     explanation: questionData.explanation,
                     areaToReview: questionData.areaToReview,
+                    matchOptions: questionData.matchOptions ?? [],
                     // @ts-ignore
                     topics: questionTopicIds
                 }, extractDbQueryParams(req));

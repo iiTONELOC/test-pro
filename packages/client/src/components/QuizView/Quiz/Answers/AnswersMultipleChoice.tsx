@@ -2,8 +2,9 @@ import { JSX } from 'preact/jsx-runtime';
 import { useEffect, useRef } from 'preact/hooks';
 import { clickHandler } from '../../../../utils';
 import { QuizQuestionProps } from '../QuizQuestion';
-import { MultipleChoiceOptions } from '../../../Question/MultipleChoiceOptions';
 import { useMountedState } from '../../../../hooks';
+import { MultipleChoiceOptions } from '../../../Question/MultipleChoiceOptions';
+
 
 export type MultipleChoiceProps = {
     options: string[];

@@ -60,8 +60,6 @@ export const extractedQuestionsFromTextTestOut = (text: string): Partial<IQuizQu
 }
 
 
-
-
 export const extractQuestionsFromText = {
     UofA: extractQuestionsFromTextUofA,
     TestOut: extractedQuestionsFromTextTestOut

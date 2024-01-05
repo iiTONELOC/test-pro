@@ -5,6 +5,7 @@ import { QuizQuestionProps } from '../QuizView/Quiz/QuizQuestion';
 import { AnswersMultipleChoice } from '../QuizView/Quiz/Answers/AnswersMultipleChoice';
 import { AnsweredMultipleChoice } from '../QuizView/QuizHistory/Answered/AnsweredMultipleChoice';
 import { AnswersSelectAllThatApply } from '../QuizView/Quiz/Answers/AnswersSelectAllThatApply';
+import { AnswersMatching } from '../QuizView/Quiz/Answers/AnswersMatching';
 
 enum AnswerTypes {
     SelectAllThatApply = 'SelectAllThatApply',
@@ -48,8 +49,12 @@ function AnswerOptionSwitch({ quizState, question }: Readonly<AnswerOptionProps>
             // TODO: implement ShortAnswer
             return <>Short Answer</>;
         case AnswerTypes.Matching:
-            // TODO: implement Matching
-            return <>Matching</>;
+            return <AnswersMatching
+                options={question?.options ?? []}
+                matchingOptions={question?.matchOptions ?? []}
+                quizState={quizState}
+                reUsableOptions={question?.question.toLocaleLowerCase().includes('can be used more than once')}
+            />;
         case AnswerTypes.Ordering:
             // TODO: implement Ordering
             return <>Ordering</>;

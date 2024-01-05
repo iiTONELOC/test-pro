@@ -178,3 +178,5 @@ dist
 ~/.nvm
 /packages/server/lib
 /packages/server/data
+
+dump/

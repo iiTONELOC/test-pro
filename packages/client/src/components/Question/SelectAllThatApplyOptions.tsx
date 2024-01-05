@@ -6,7 +6,7 @@ import { useState, useRef, StateUpdater } from 'preact/hooks';
 const divClasses = 'w-full h-full flex flex-col justify-start items-center gap-3 items-stretch';
 const buttonClasses = `bg-slate-700 rounded-md text-white p-2 `;
 const selectionClasses = 'w-full h-full flex flex-row justify-start items-center gap-3 items-stretch text-base';
-const highlightClasses = 'bg-indigo-700 rounded-md text-white p-2';
+const highlightClasses = 'bg-indigo-700 rounded-md text-white p-2 text-shadow';
 
 export interface ISelectAllThatApplyOptionsProps {
     options: string[];
@@ -38,6 +38,7 @@ export function SelectAllThatApplyOptions({ options, setCurrentQuestionAnswered,
     const onClick = (event: Event, answer: string) => {
         setShowActionButtons(true);
         hideActionButtons();
+
         // if we are checking the box, add the answer to the current answer state with a comma
         // if we are unchecking the box, remove the answer from the current answer state
         const isChecked = (event.target as HTMLInputElement).checked;

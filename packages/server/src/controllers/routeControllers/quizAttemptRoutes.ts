@@ -169,7 +169,7 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
                     // we dont exactly know what the delimiter is as GPT-4 doesn't exactly follow the rules
                     // these are the ones I have seen returned so far
                     const userSelections = answeredQuestion.selectedAnswer.split(',')
-                        .map((selection: string) => selection.trim().toLowerCase());
+                        .map((selection: string) => selection.trim().toLowerCase().replace(' - ', '-')).filter(str => str.length > 0);
 
                     const correctSelections = correctAnswer.split(',')
                         .map((selection: string) => selection.trim().toLowerCase());
@@ -180,15 +180,39 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
                     // way to grade the question
                     if (!foundDelim) throw new Error('Could not find delimiter: ' + correctSelections[0]);
 
-                    const [correctLeft, correctRight] = correctSelections[0].split(foundDelim);
-                    const [userLeft, userRight] = userSelections[0].split('-');
+                    // we now need to see if the user selected the correct answer by checking if the elements of the user's
+                    // selection match the elements of the correct answer, and all the elements of the correct answer are in the user's selection
+                    // order will vary since we randomize it each quiz
 
-                    isCorrect = correctLeft === userLeft && correctRight === userRight;
+
+                    for (let userSelection of userSelections) {
+                        userSelection = userSelection;
+                        if (!correctSelections.includes(userSelection)) {
+                            isCorrect = false;
+                            break;
+                        } else {
+                            isCorrect = true;
+                        }
+                    }
+
+                    // we also need to check that the correct answer is in the user's selection
+                    for (const correctSelection of correctSelections) {
+                        if (!userSelections.includes(correctSelection)) {
+                            isCorrect = false;
+                            break;
+                        }
+                    }
+
+                    // console.log({
+                    //     userSelections,
+                    //     correctSelections,
+                    //     isCorrect
+                    // });
 
                 } else if (question.questionType === 'SelectAllThatApply') {
                     //here we need to check if the selected answers are all correct the order doesn't matter
-                    const selectedAnswers = answeredQuestion.selectedAnswer.split(',');
-                    const correctAnswers = correctAnswer.split(',');
+                    const selectedAnswers = answeredQuestion.selectedAnswer.split(',').filter(str => str.length > 0).map(str => str.trim().toLowerCase());
+                    const correctAnswers = correctAnswer.split(',').map(str => str.trim().toLowerCase());
 
                     (() => {
                         selectedAnswers.length !== correctAnswers.length && (isCorrect = false);
@@ -209,6 +233,12 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
                             });
                         })();
                     })();
+
+                    // console.log({
+                    //     selectedAnswers,
+                    //     correctAnswers,
+                    //     isCorrect
+                    // });
                 } else {
                     // TODO: handle other question types
                 }

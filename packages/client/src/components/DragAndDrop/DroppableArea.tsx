@@ -5,10 +5,12 @@ import { useDraggingContextSignal } from '../../signals';
 export interface IDroppableAreaProps {
     onDrop: (draggedItemId: string, targetItemId: string) => void;
     children: ReactNode | ReactNode[];
+    className?: string;
     id?: string;
 }
 
-export const DroppableArea = ({ onDrop, children, id = '__root__' }: IDroppableAreaProps) => {
+export const DroppableArea = ({ onDrop, children, id = '__root__',
+    className = 'w-full min-h-[calc(100vh-97px)] overflow-auto overscroll-contain bg-slate-950' }: IDroppableAreaProps) => {
     const { isDragging } = useDraggingContextSignal();
 
     const handleDragOver = (e: DragEvent) => {
@@ -34,14 +36,14 @@ export const DroppableArea = ({ onDrop, children, id = '__root__' }: IDroppableA
 
         droppedItemId && (() => {
             onDrop(droppedItemId, targetItemId as string);
-            isDragging.value = false;
         })();
+        isDragging.value = false;
     };
 
 
     return (
         <div
-            className={'w-full min-h-[calc(100vh-97px)] overflow-auto overscroll-contain bg-slate-950'}
+            className={className}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             data-id={id}>

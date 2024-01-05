@@ -60,6 +60,8 @@ export function QuizHistory(): JSX.Element {//NOSONAR
             setCurrentHistory([]);
             setViewAttempt(null);
             setStats(null);
+
+
         }
     }, [isMounted, currentFile]);
 
@@ -76,6 +78,7 @@ export function QuizHistory(): JSX.Element {//NOSONAR
                 );
 
                 setCurrentHistory(history?.reverse() ?? []);
+                console.log('QuizHistory: useEffect: currentFile: ', history);
                 history && setStats(generateHistoryStats(history));
             })();
         }

@@ -41,7 +41,7 @@ export const removeShowCorrectAnswer = (questionRef: MutableRef<HTMLLIElement | 
 const buildSelectedAnswer = (questionResult: PopulatedQuizQuestionResultType, useAnswerKey = false): { [key: string]: string | null } => {
 
     const selectedAnswer = (!useAnswerKey ? questionResult.selectedAnswer.split(',')
-        : questionResult.question.answer.split(',')).map(answer => answer.trim())
+        : questionResult.question.answer.split(',')).map(answer => answer.trim().replace(' - ', '-'))
         .filter(answer => answer !== '' && answer !== undefined);
     const optionsToAnswer: { [key: string]: string | null } = {};
 
@@ -74,7 +74,7 @@ export function AnsweredMatching({ questionResult }: { questionResult: Populated
                     const answerId = `${option}-${optionsToAnswer[option]}`;
                     const answerKey = questionResult.question.answer
                         .split(',')
-                        .map(answer => answer.trim())
+                        .map(answer => answer.trim().replace(' - ', '-'))
                         .filter(answer => answer !== '');
                     const isAnsweredQuestionCorrect = answerKey.includes(answerId ?? '');
                     const bgClasses = (isAnsweredQuestionCorrect ? 'bg-green-700' : 'bg-red-700') + ' text-white rounded-sm p-1';

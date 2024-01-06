@@ -11,6 +11,7 @@ function HideAttempt({ hideAttempt }: Readonly<{ hideAttempt: (event: Event) => 
             className={'bg-slate-700 py-2 px-3 rounded-md hover:bg-red-700 mb-8 text-xl'}>Hide Attempt</button>
     )
 }
+
 export function ViewAttempt({ attempt, hideAttempt }: Readonly<{ attempt: PopulatedQuizHistoryType | null, hideAttempt: () => void }>): JSX.Element {
     const { earnedPoints, elapsedTimeInMs, passed, dateTaken, answeredQuestions } = attempt?.attempt || {};
 

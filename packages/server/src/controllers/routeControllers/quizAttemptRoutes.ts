@@ -203,11 +203,6 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
                         }
                     }
 
-                    // console.log({
-                    //     userSelections,
-                    //     correctSelections,
-                    //     isCorrect
-                    // });
 
                 } else if (question.questionType === 'SelectAllThatApply') {
                     //here we need to check if the selected answers are all correct the order doesn't matter
@@ -234,11 +229,6 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
                         })();
                     })();
 
-                    // console.log({
-                    //     selectedAnswers,
-                    //     correctAnswers,
-                    //     isCorrect
-                    // });
                 } else {
                     // TODO: handle other question types
                 }
@@ -247,8 +237,10 @@ export const quizAttemptRouteController: IQuizAttemptRouteController = {
                 const isCorrectFlag = answeredQuestion.isCorrect;
 
                 // if they don't match, update the question result
-                if (isCorrect !== isCorrectFlag) {
+                if (isCorrectFlag !== isCorrect) {
+
                     await QuizQuestionResult.updateOne({ _id: answeredQuestion._id }, { isCorrect });
+                    answeredQuestion.isCorrect = isCorrect;
                 }
             }
 

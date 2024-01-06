@@ -5,9 +5,9 @@ import { QuizQuestionProps } from '../QuizQuestion';
 import { useMountedState } from '../../../../hooks';
 import { DraggableItem, DroppableArea } from '../../../DragAndDrop';
 
-const buttonClasses = `bg-slate-700 rounded-md text-white p-2 `;
+const buttonClasses = `bg-slate-700 rounded-md  p-2 `;
 const divClasses = 'w-full h-full flex flex-row justify-start items-between gap-3 items-stretch';
-const selectionClasses = 'w-[35%] h-full flex flex-col justify-start items-center gap-3 items-stretch text-base';
+const selectionClasses = 'w-[35%] h-full flex flex-col justify-start items-center gap-3 items-stretch';
 
 export type Matching = {
     options: string[];
@@ -24,19 +24,24 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
     const [optionsToAnswer, setOptionsToAnswer] = useState<{ [key: string]: string | null }>({});
     const [matchingOptionsAvailable, setMatchingOptionsAvailable] = useState<string[]>(matchingOptions);
 
-
-
+    // Options are draggable, but the items they need to be matched to are not
+    // On drop we need to handle the drop event depending on the dragged item and the target item
     const handleDrop = (draggedItemId: string, targetItemId: string) => {
-        // check the targetItemId to see if it is a matching option
+        // Check to see if the targetItem is the non-draggable item that is awaiting its match
         // @ts-ignore
         if ((targetItemId !== 'options' || targetItemId !== 'matching') &&
             draggedItemId !== targetItemId && Object.keys(optionsToAnswer).includes(targetItemId)) {
+
             // look for the optionRefs with the targetItemId
             const targetSpanRef = document.querySelector(`span[data-id="${targetItemId}"]`) as HTMLSpanElement;
+
             // creates the next portion of the answer string
+            // when grading a quiz the answer expects the string to be in a specific format
+            // in the case of a Matching question, the answer string should be in the format of
+            // option-usersAnswer,option-usersAnswer, etc...
             const answerToSet = targetItemId + '-' + draggedItemId + ',';
 
-            // if the targetOptionRef is found, Change the optionsToAnswer state
+            // Update the optionsToAnswer state
             if (targetSpanRef && !draggedItemId.includes('-')) {
                 const opts = optionsToAnswer;
                 const currentOption = opts[targetItemId];
@@ -51,12 +56,15 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
                 opts[targetItemId] = draggedItemId;
                 setOptionsToAnswer({ ...opts });
 
+                // if the option is not reusable, we need to remove it from the options shown to the user
                 !reUsableOptions &&
                     matchingOptionsAvailable.includes(draggedItemId)
                     && setMatchingOptionsAvailable(matchingOptionsAvailable.filter(option => option !== draggedItemId))
             }
-        } else if (targetItemId === 'matching' && draggedItemId.includes('-')) {
-
+            // Its not an option awaiting its match
+            // Look for an option that has been placed on a match and is now being dragged back to its original container
+        } else if ((targetItemId === 'matching' || targetItemId === 'MatchingRoot') && draggedItemId.includes('-')) {
+            // get the option and answer from the draggedItemId
             const [targetOption, answer] = draggedItemId.split('-').map(item => item.trim());
 
             // remove the answer from the answers state
@@ -72,6 +80,7 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
                 !matchingOptionsAvailable.includes(answer)
                 && setMatchingOptionsAvailable([...matchingOptionsAvailable, answer])
 
+            // not a drop event we care about
         } else {
             // Do nothing
         }
@@ -82,6 +91,9 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
         setShowActionButtons(answeredOptions.length > 0);
     };
 
+    // Build the optionsToAnswer state object
+    // we need to keep track of the options that have been answered and the value of the answer
+    // this is used to display that value to the user
     const buildOptionsToAnswer = () => {
         const temp: { [key: string]: string | null } = {}
         options.forEach(option => {
@@ -99,7 +111,6 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
 
     const handleFinished = () => {
         setCurrentQuestionAnswered(answers);
-        setTimeout(() => { resetState() }, 750);
     };
 
     const handleReset = () => {
@@ -107,58 +118,61 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
     };
 
     useEffect(() => {
-        resetState();
-    }, [isMounted]);
+        isMounted && resetState();
+    }, [isMounted, options, matchingOptions]);
+
 
 
     return isMounted ? (
         <>
             <div className={divClasses}>
-                <div className={selectionClasses + ' bg-gray-900 p-2'}>
-                    {options.map((option) => {
-                        return (
-                            <DroppableArea onDrop={handleDrop} key={option} id={option}
-                                className=''>
-                                <div className={buttonClasses}>
-                                    <span data-id={option} className={'w-full h-auto flex flex-col gap-3 justify-start items-center items-stretch'}>
-                                        {option}
-                                        {optionsToAnswer[option]
-                                            && optionsToAnswer[option] !== ''
-                                            && optionsToAnswer[option] !== undefined &&
-                                            <>
-                                                <hr className={'bg-gray-200'} />
-
-                                                <DraggableItem id={`${option}-${optionsToAnswer[option]}`}>
-                                                    <span className={'bg-slate-950 p-2 rounded-sm'}>
-                                                        {optionsToAnswer[option]}
-                                                    </span>
-                                                </DraggableItem>
-                                            </>
-                                        }
-                                    </span>
-                                </div>
-                            </DroppableArea>
-                        )
-                    })}
-                </div>
-
-                <div className={'w-[75%] flex flex-wrap flex-row justify-end items-center'}>
-                    <div className={selectionClasses + ' bg-gray-600 p-2 rounded-sm'}>
-                        <DroppableArea onDrop={handleDrop} id='matching'
-                            className='h-full flex flex-col justify-start items-center gap-3 items-stretch'>
-                            {/* create divs for each option */}
-                            {matchingOptionsAvailable.map((option) => {
-                                return (
-                                    <DraggableItem id={option} key={uuid()}>
-                                        <div className={buttonClasses}>
+                <DroppableArea onDrop={handleDrop} id='MatchingRoot' className={divClasses}>
+                    <div className={selectionClasses + ' bg-gray-900 p-2'}>
+                        {options.map((option) => {
+                            return (
+                                <DroppableArea onDrop={handleDrop} key={option} id={option}
+                                    className=''>
+                                    <div className={buttonClasses}>
+                                        <span data-id={option} className={'w-full h-auto flex flex-col gap-3 justify-start items-center items-stretch'}>
                                             {option}
-                                        </div>
-                                    </DraggableItem>
-                                )
-                            })}
-                        </DroppableArea>
+                                            {optionsToAnswer[option]
+                                                && optionsToAnswer[option] !== ''
+                                                && optionsToAnswer[option] !== undefined &&
+                                                <>
+                                                    <hr className={'bg-gray-200'} />
+
+                                                    <DraggableItem id={`${option}-${optionsToAnswer[option]}`}>
+                                                        <span className={'bg-slate-950 p-2 rounded-sm'}>
+                                                            {optionsToAnswer[option]}
+                                                        </span>
+                                                    </DraggableItem>
+                                                </>
+                                            }
+                                        </span>
+                                    </div>
+                                </DroppableArea>
+                            )
+                        })}
                     </div>
-                </div>
+
+                    <div className={'w-[75%] flex flex-wrap flex-row justify-end items-center'}>
+                        <div className={'w-[45%] h-full flex flex-col justify-start items-center gap-3 items-stretch bg-gray-700 p-2 rounded-sm'}>
+                            <DroppableArea onDrop={handleDrop} id='matching'
+                                className='h-full flex flex-col justify-start items-center gap-3 items-stretch'>
+                                {/* create divs for each option */}
+                                {matchingOptionsAvailable.map((option) => {
+                                    return (
+                                        <DraggableItem id={option} key={uuid()}>
+                                            <div className={buttonClasses + ' bg-slate-800'}>
+                                                {option}
+                                            </div>
+                                        </DraggableItem>
+                                    )
+                                })}
+                            </DroppableArea>
+                        </div>
+                    </div>
+                </DroppableArea>
             </div>
 
             {showActionButtons &&

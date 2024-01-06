@@ -2,10 +2,15 @@ import { JSX } from 'preact/jsx-runtime';
 import { trimClasses } from '../../utils';
 import { useMountedState } from '../../hooks';
 import { QuizQuestionProps } from '../QuizView/Quiz/QuizQuestion';
-import { AnswersMultipleChoice } from '../QuizView/Quiz/Answers/AnswersMultipleChoice';
-import { AnsweredMultipleChoice } from '../QuizView/QuizHistory/Answered/AnsweredMultipleChoice';
-import { AnswersSelectAllThatApply } from '../QuizView/Quiz/Answers/AnswersSelectAllThatApply';
+import { PopulatedQuizQuestionResultType } from '../../utils/api';
 import { AnswersMatching } from '../QuizView/Quiz/Answers/AnswersMatching';
+import { AnsweredMatching } from '../QuizView/QuizHistory/Answered/AnsweredMatching';
+import { AnswersMultipleChoice } from '../QuizView/Quiz/Answers/AnswersMultipleChoice';
+import { AnswersSelectAllThatApply } from '../QuizView/Quiz/Answers/AnswersSelectAllThatApply';
+import { AnsweredMultipleChoice } from '../QuizView/QuizHistory/Answered/AnsweredMultipleChoice';
+import { AnsweredSelectAllThatApply } from '../QuizView/QuizHistory/Answered/AnsweredSelectAllThatApply';
+
+
 
 enum AnswerTypes {
     SelectAllThatApply = 'SelectAllThatApply',
@@ -66,13 +71,19 @@ function AnswerOptionSwitch({ quizState, question }: Readonly<AnswerOptionProps>
     }
 }
 
+
 // for history
-function AnsweredAnswerOptionSwitch({ question }: Readonly<AnsweredQuizQuestionProps>): JSX.Element {
-    const selectedQuestionType = question?.questionType as unknown as AnswerTypes;
+function AnsweredAnswerOptionSwitch({ questionResult }:
+    {
+        questionResult: PopulatedQuizQuestionResultType
+    }): JSX.Element {
+    const selectedQuestionType = questionResult?.question?.questionType as unknown as AnswerTypes;
 
     switch (selectedQuestionType) {
+        case AnswerTypes.SelectAllThatApply:
+            return <AnsweredSelectAllThatApply options={questionResult?.question?.options ?? []} />;
         case AnswerTypes.MultipleChoice:
-            return <AnsweredMultipleChoice options={question?.options ?? []} />;
+            return <AnsweredMultipleChoice options={questionResult?.question?.options ?? []} />;
         case AnswerTypes.FillInTheBlank:
             // TODO: implement FillInTheBlank
             return <>Fill in The Blank</>;
@@ -80,8 +91,8 @@ function AnsweredAnswerOptionSwitch({ question }: Readonly<AnsweredQuizQuestionP
             // TODO: implement ShortAnswer
             return <>Short Answer</>;
         case AnswerTypes.Matching:
-            // TODO: implement Matching
-            return <>Matching</>;
+            return <AnsweredMatching questionResult={questionResult} />;
+
         case AnswerTypes.Ordering:
             // TODO: implement Ordering
             return <>Ordering</>;
@@ -95,15 +106,18 @@ function AnsweredAnswerOptionSwitch({ question }: Readonly<AnsweredQuizQuestionP
 
 const sectionClasses = 'flex flex-col flex-start w-full h-full items-center p-2';
 
-export function AnswerOptions(props: Readonly<(AnswerOptionProps | AnsweredQuizQuestionProps)>): JSX.Element { // NOSONAR
+type IsHistoryProps = { isHistory: boolean, question: PopulatedQuizQuestionResultType };
+export function AnswerOptions(props: Readonly<(AnswerOptionProps | AnsweredQuizQuestionProps | IsHistoryProps)>): JSX.Element { // NOSONAR
     const isMounted = useMountedState();
+
+    const histProps = props as IsHistoryProps;
 
     return isMounted ? (
         <section className={trimClasses(sectionClasses)}>
             {
                 (!props.isHistory ?
                     <AnswerOptionSwitch {...props as AnswerOptionProps} /> :
-                    <AnsweredAnswerOptionSwitch {...props as AnsweredQuizQuestionProps} />
+                    <AnsweredAnswerOptionSwitch questionResult={histProps.question} />
                 )
             }
         </section>

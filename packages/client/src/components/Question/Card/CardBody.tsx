@@ -12,7 +12,9 @@ export function CardBody({ children }: { children: ReactNode | ReactNode[] }): J
 export function QuestionCardBody({ question }: { question: string }): JSX.Element {//NOSONAR
     return (
         <CardBody>
-            <h3 className={'text-xl sm:text-2xl font-thin text-start'}>{question}</h3>
+            <h3 className={'w-full h-auto'}>
+                <pre className={'w-full h-auto flex flex-wrap text-base flex-row text-start whitespace-pre-wrap font-arial'}> {question}</pre>
+            </h3>
         </CardBody>
     )
 }

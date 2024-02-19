@@ -134,7 +134,9 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
                                     className=''>
                                     <div className={buttonClasses}>
                                         <span data-id={option} className={'w-full h-auto flex flex-col gap-3 justify-start items-center items-stretch'}>
-                                            {option}
+                                            <span className={'w-full h-auto flex flex-wrap flex-row gap-3 justify-start items-center break-all'}>
+                                                {option}
+                                            </span>
                                             {optionsToAnswer[option]
                                                 && optionsToAnswer[option] !== ''
                                                 && optionsToAnswer[option] !== undefined &&
@@ -161,9 +163,11 @@ export function AnswersMatching({ options, matchingOptions, quizState, reUsableO
                                 className='h-full flex flex-col justify-start items-center gap-3 items-stretch'>
                                 {/* create divs for each option */}
                                 {matchingOptionsAvailable.map((option) => {
+                                
+                                    const id = option.replace(/-/g, ' ');
                                     return (
-                                        <DraggableItem id={option} key={uuid()}>
-                                            <div className={buttonClasses + ' bg-slate-800'}>
+                                        <DraggableItem id={id} key={uuid()}>
+                                            <div className={buttonClasses + ' bg-slate-800 break-all'}>
                                                 {option}
                                             </div>
                                         </DraggableItem>

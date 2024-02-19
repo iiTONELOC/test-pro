@@ -77,12 +77,14 @@ export function AnsweredMatching({ questionResult }: { questionResult: Populated
                         .map(answer => answer.trim().replace(' - ', '-'))
                         .filter(answer => answer !== '');
                     const isAnsweredQuestionCorrect = answerKey.includes(answerId ?? '');
-                    const bgClasses = (isAnsweredQuestionCorrect ? 'bg-green-700' : 'bg-red-700') + ' text-white rounded-sm p-1';
+                    const bgClasses = (isAnsweredQuestionCorrect ? 'bg-green-700' : 'bg-red-700') + ' text-white rounded-sm p-1 break-all';
 
                     return (
                         <div className={buttonClasses} key={option} data-id={option}>
                             <span className={'w-full h-auto flex flex-col gap-3 justify-start items-center items-stretch'}>
-                                {option}
+                                <span className={'w-full h-auto flex flex-wrap flex-row gap-3 justify-start items-center break-all'}>
+                                    {option}
+                                </span>
 
                                 <hr className={'bg-gray-200'} />
 

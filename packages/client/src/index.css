@@ -16,6 +16,11 @@
   scrollbar-color: var(--scrollbar-gutter) var(--scrollbar-arm);
 }
 
+pre {
+  font-family: Arial, sans-serif;
+  font-weight: lighter;
+}
+
 /* Scroll Bars - Cont*/
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {

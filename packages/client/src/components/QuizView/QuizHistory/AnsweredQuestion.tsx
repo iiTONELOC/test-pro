@@ -24,8 +24,8 @@ import {
 
 function StatKey({ label }: Readonly<{ label: string }>) {
     return (
-        <span className={'bg-slate-800 py-2 px-3 rounded-sm rounded-l-md h-full flex items-center'}>
-            <p>{label}</p>
+        <span className={'bg-slate-800 py-2 px-3 rounded-sm rounded-l-md h-full flex items-center w-[130px!important]'}>
+            <p className={'w-full'}>{label}</p>
         </span>
     )
 }
@@ -160,18 +160,24 @@ export function AnsweredQuizQuestion({ questionResult }: Readonly<{ questionResu
                     {!questionResult.isCorrect && (
                         <StatLine>
                             <StatKey label={'Areas to Review:'} />
+                            <span className={'flex flex-col w-auto gap-2'}>
                             {questionResult.question.areaToReview.map((area: string, index: number) => {
                                 const isLast = index === questionResult.question.areaToReview.length - 1;
                                 return (
                                     <p key={uuid()}>{titleCase(area)}{!isLast && ','}</p>
                                 )
                             })}
+                            </span>
                         </StatLine>
                     )}
                     {(questionResult.isCorrect || showCorrectAnswer) && (
                         <StatLine>
                             <StatKey label={'Answer Explanation:'} />
-                            <p>{questionResult.question.explanation}</p>
+                           
+                                <pre className={'w-auto h-auto flex flex-col text-start whitespace-pre-wrap'}>
+                                     <p>{questionResult.question.explanation}</p>
+                                </pre>
+                            
                         </StatLine>
                     )}
                 </div>

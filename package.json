@@ -8,13 +8,16 @@
     "install": "concurrently \"npm run install-server\" \"npm run install-client\"",
     "install-server": "cd packages/server && npm install",
     "install-client": "cd packages/client && npm install",
-    "dev": "scripts/setDev.sh && concurrently \"npm run dev-server\" \"npm run dev-client\"",
+    "dev": " concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "cd packages/client && npm run dev",
     "dev-server": "cd packages/server && npm run dev",
     "build": "concurrently \"npm run build-server\" \"npm run build-client\"",
     "build-server": "cd packages/server && npm run build",
     "build-client": "cd packages/client && npm run build",
-    "createEnv": "node scripts/createEnv.mjs"
+    "createEnv": "node scripts/createEnv.mjs",
+    "backupDBToJSON": "node scripts/backupDBToJSON.mjs",
+    "backupDBToDump": "node scripts/backupDB.mjs",
+    "backupDb": "npm run backupDBToJSON && npm run backupDBToDump"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

@@ -58,7 +58,7 @@ function AnswerOptionSwitch({ quizState, question }: Readonly<AnswerOptionProps>
                 options={question?.options ?? []}
                 matchingOptions={question?.matchOptions ?? []}
                 quizState={quizState}
-                reUsableOptions={question?.question.toLocaleLowerCase().includes('can be used more than once')}
+                reUsableOptions={question?.question.toLocaleLowerCase().includes('more than once')}
             />;
         case AnswerTypes.Ordering:
             // TODO: implement Ordering

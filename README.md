@@ -45,8 +45,6 @@ I am a FullStack Web Developer and CyberOps Engineering Student currently prepar
 
 ## Demo
 
-Click to watch the demo
-
 [![Demo](./assets/screenshots/demo.png)](https://drive.google.com/file/d/1GCLM1YE9Fu5b3wlTM_zq3bGPZeBMjU4v/view)
 
 ## Tech Stack

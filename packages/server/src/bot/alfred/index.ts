@@ -18,7 +18,7 @@ import {
 export const MAX_QUESTIONS_PER_QUIZ =
   (process.env.MAX_QUESTIONS_PER_QUIZ ? parseInt(process.env.MAX_QUESTIONS_PER_QUIZ, 10) : null) ??
   10;
-export const MODEL_NAME = process.env.OPENAI_MODEL_NAME ?? 'gpt-4';
+export const MODEL_NAME = process.env.OPENAI_MODEL_NAME ?? 'gpt-4o';
 
 export const Z_TYPE = z.string()
   .describe(`The type of question, valid types are: MultipleChoice, FillInTheBlank, SelectAllThatApply, ShortAnswer, Matching, Ordering, Image.
